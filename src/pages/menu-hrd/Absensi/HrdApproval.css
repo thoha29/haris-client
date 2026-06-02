@@ -1,0 +1,185 @@
+/* Container Utama */
+.hrd-approval-card {
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+/* Header Section */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header h2 {
+    color: var(--text-main);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+/* Tombol Refresh Elite */
+.btn-refresh {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-btn);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-refresh:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-refresh:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Box Error */
+.error-box {
+    padding: 15px 20px;
+    background-color: #fee2e2;
+    color: #991b1b;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Wrapper Tabel */
+.table-wrapper {
+    background: var(--bg-card);
+    overflow-x: auto;
+    border-radius: 8px;
+    /* Removed thick border for cleaner look */
+}
+
+/* Tabel Approval */
+.approval-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.approval-table thead tr {
+    background-color: rgba(65, 84, 241, 0.04);
+}
+
+.approval-table th {
+    padding: 14px 16px;
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.approval-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: #444;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.approval-table td strong {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+/* --- STYLING BADGE STATUS ATASAN --- */
+.badge-status,
+.badge-role {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.badge-role {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.badge-status.approved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-status.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.badge-status.rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Container Pembungkus Tombol */
+.action-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Base style untuk semua tombol di tabel */
+.btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+}
+
+.btn-approve {
+    background-color: #198754;
+}
+
+.btn-approve:hover {
+    background-color: #157347;
+}
+
+.btn-reject {
+    background-color: #dc3545;
+}
+
+.btn-reject:hover {
+    background-color: #bb2d3b;
+}
+
+.approval-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.approval-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+}

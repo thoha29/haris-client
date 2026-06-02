@@ -1,0 +1,181 @@
+/* Container Utama */
+.hrd-approval-container {
+    padding: 30px 40px;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Header & Filter Group */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.header h2 {
+    color: #0f172a;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Styling Input & Select */
+.filter-input {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13px;
+    background-color: white;
+    color: #334155;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+    border-color: #1e293b;
+    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.1);
+}
+
+/* Tombol Refresh & Reset */
+.btn-refresh,
+.btn-reset {
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-refresh {
+    background-color: #0f172a;
+    color: white;
+}
+
+.btn-reset {
+    background-color: #64748b;
+    color: white;
+}
+
+.btn-refresh:hover,
+.btn-reset:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Tabel Wrapper */
+.table-wrapper {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.approval-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.approval-table th {
+    background-color: #f8fafc;
+    padding: 15px 20px;
+    text-align: left;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.approval-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    color: #334155;
+}
+
+/* Badge Status */
+.badge-status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.badge-status.approved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-status.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.badge-status.rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Status Selesai */
+.status-done {
+    font-size: 11px;
+    font-weight: 800;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 5px;
+}
+
+/* Keterangan Telat & Lembur */
+.txt-late {
+    color: #ef4444;
+    font-weight: bold;
+}
+
+.txt-overtime {
+    color: #10b981;
+    font-weight: bold;
+}
+
+/* Action Buttons */
+.action-group {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    color: white;
+}
+
+.btn-approve {
+    background-color: #10b981;
+}
+
+.btn-reject {
+    background-color: #ef4444;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    color: #94a3b8;
+    font-style: italic;
+}

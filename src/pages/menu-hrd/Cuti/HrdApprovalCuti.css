@@ -1,0 +1,160 @@
+.hrd-container {
+    padding: 40px;
+    background: #f1f5f9;
+    min-height: 100vh;
+}
+
+.hrd-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.hrd-header {
+    margin-bottom: 25px;
+}
+
+.hrd-header h2 {
+    color: #0f172a;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.hrd-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.hrd-table th {
+    background: #f8fafc;
+    padding: 15px;
+    text-align: left;
+    color: #64748b;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.hrd-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    color: #334155;
+}
+
+.emp-name {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.reason-cell {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Status Pill */
+.status-pill {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-pill.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-pill.approved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-pill.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-acc {
+    background: #22c55e;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-acc:hover {
+    background: #16a34a;
+    transform: scale(1.05);
+}
+
+.btn-reject {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-reject:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
+.filter-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: flex-end;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.filter-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+}
+
+.filter-input:focus {
+    border-color: #3498db;
+}
+
+.btn-reset {
+    padding: 8px 15px;
+    background: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-reset:hover {
+    background: #7f8c8d;
+}

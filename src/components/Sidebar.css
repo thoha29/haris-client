@@ -1,0 +1,136 @@
+.sidebar {
+  position: fixed;
+  top: 70px;
+  left: -300px;
+  bottom: 0;
+  width: 300px;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: var(--bg-card);
+  border-right: 1px solid var(--border-color);
+  transition: left 0.3s ease;
+  z-index: 996;
+}
+
+/* Saat sidebar terbuka (semua ukuran layar) */
+.sidebar.sidebar-open {
+  left: 0;
+}
+
+/* Mobile sangat kecil: Sidebar lebih kecil */
+@media (max-width: 576px) {
+  .sidebar {
+    width: 250px;
+    left: -250px;
+  }
+
+  .sidebar.sidebar-open {
+    left: 0;
+  }
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #aab7cf;
+  border-radius: 10px;
+}
+
+.sidebar-nav {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.sidebar-nav li {
+  list-style: none;
+}
+
+.sidebar-nav .nav-item {
+  margin-bottom: 6px;
+}
+
+.sidebar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #012970;
+  background-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  text-decoration: none;
+}
+
+.sidebar-nav .nav-link i {
+  font-size: 16px;
+  color: #4154f1;
+}
+
+.sidebar-nav .nav-link:hover {
+  background-color: #f6f9ff;
+  color: #4154f1;
+}
+
+.sidebar-nav .nav-link.active {
+  background-color: #f6f9ff;
+  color: #4154f1;
+}
+
+.sidebar-nav .nav-link.collapsed {
+  background-color: transparent;
+  color: #012970;
+}
+
+.sidebar-nav .nav-link:not(.collapsed) {
+  background-color: transparent;
+  color: #012970;
+}
+
+.sidebar-nav .nav-link .bi-chevron-down {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-nav .nav-link:not(.collapsed) .bi-chevron-down {
+  transform: rotate(180deg);
+}
+
+.sidebar-nav .nav-content {
+  padding-left: 10px;
+  margin: 0;
+}
+
+.sidebar-nav .nav-content li {
+  margin: 0;
+}
+
+.sidebar-nav .nav-content a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0 8px 40px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #012970;
+  background: none;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.sidebar-nav .nav-content a i {
+  font-size: 6px;
+}
+
+.sidebar-nav .nav-content a:hover {
+  color: #4154f1;
+}
+
+.sidebar-nav .nav-content a.active {
+  color: #4154f1;
+  font-weight: 600;
+}

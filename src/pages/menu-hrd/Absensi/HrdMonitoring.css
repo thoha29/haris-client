@@ -1,0 +1,112 @@
+.monitoring-wrapper {
+    padding: 20px;
+    background-color: #f1f5f9;
+    min-height: 100vh;
+}
+
+.monitoring-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.monitoring-header h1 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.8rem;
+}
+
+.monitoring-header p {
+    margin: 5px 0 0;
+    color: #64748b;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box input {
+    padding: 12px 15px 12px 40px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    width: 300px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.search-box input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    color: #94a3b8;
+}
+
+.employee-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.employee-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.card-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.avatar-circle {
+    width: 50px;
+    height: 50px;
+    background: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.info span {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.btn-view-detail {
+    width: 100%;
+    padding: 10px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #475569;
+    transition: all 0.2s;
+}
+
+.btn-view-detail:hover {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}

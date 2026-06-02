@@ -1,0 +1,167 @@
+/* ===== Dashboard Karyawan ===== */
+
+.dash-wrap {
+    padding: 30px 25px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Greeting Header --- */
+.dash-greeting {
+    margin-bottom: 30px;
+    border-left: 4px solid #2c3e50;
+    padding-left: 18px;
+}
+
+.dash-greeting h2 {
+    margin: 0 0 6px 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2c3e50;
+    letter-spacing: -0.3px;
+}
+
+.dash-greeting p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #7f8c8d;
+}
+
+/* --- Table Card --- */
+.dash-table-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 1px solid #e8ecef;
+}
+
+.dash-table-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid #e8ecef;
+    background: #fafbfc;
+}
+
+.dash-table-header h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #34495e;
+}
+
+/* --- Table --- */
+.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dash-table thead {
+    background: #f5f6f8;
+}
+
+.dash-table th {
+    padding: 14px 24px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #95a5a6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    border-bottom: 1px solid #e8ecef;
+}
+
+.dash-table tbody tr {
+    border-bottom: 1px solid #f0f2f5;
+    transition: background 0.15s ease;
+}
+
+.dash-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.dash-table tbody tr:hover {
+    background: #f8f9fb;
+}
+
+.dash-table td {
+    padding: 15px 24px;
+    font-size: 0.93rem;
+    color: #2c3e50;
+}
+
+.td-tanggal {
+    font-weight: 500;
+}
+
+/* --- Row Hari Ini Highlight --- */
+.row-today {
+    background: #f0f7ff !important;
+    border-left: 3px solid #3498db;
+}
+
+.row-today:hover {
+    background: #e6f0fa !important;
+}
+
+/* --- Label Hari Ini --- */
+.label-today {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 2px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #c0392b;
+    background: #fdecea;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    vertical-align: middle;
+    letter-spacing: 0.3px;
+}
+
+/* --- Shift Tag --- */
+.shift-tag {
+    display: inline-block;
+    padding: 5px 14px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #1a7f64;
+    background: #e6f7f1;
+    border: 1px solid #b2dfdb;
+    border-radius: 5px;
+}
+
+/* --- Loading --- */
+.dash-loading {
+    padding: 40px;
+    text-align: center;
+    color: #95a5a6;
+    font-size: 0.95rem;
+}
+
+/* --- Empty State --- */
+.dash-empty {
+    padding: 50px 30px;
+    text-align: center;
+}
+
+.dash-empty p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #95a5a6;
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+    .dash-wrap {
+        padding: 16px 12px;
+    }
+
+    .dash-table th,
+    .dash-table td {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+    }
+
+    .dash-greeting h2 {
+        font-size: 1.3rem;
+    }
+}

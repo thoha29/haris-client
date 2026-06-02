@@ -1,0 +1,107 @@
+/* Container utama */
+.container {
+    max-width: 1100px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Judul & Icon */
+h2 {
+    font-weight: 700;
+    color: #333;
+}
+
+/* Styling Card */
+.card {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+    background: #fff;
+}
+
+.card-header {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Form Input */
+.form-label {
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 0.6rem;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #0d6efd;
+}
+
+/* Tabel */
+.table thead {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    border-top: none;
+    padding: 15px 10px;
+}
+
+.table td {
+    font-size: 0.95rem;
+    padding: 15px 10px;
+    color: #333;
+}
+
+/* Status Terkunci */
+.bg-lock {
+    display: inline-block;
+    background-color: #e9ecef;
+    color: #6c757d;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid #dee2e6;
+}
+
+/* Tombol */
+.btn {
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.btn-outline-info {
+    color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+
+.btn-outline-info:hover {
+    background-color: #0dcaf0;
+    color: #fff;
+}
+
+/* Responsive Table */
+.table-responsive {
+    border: none;
+}
+
+/* Small hint text */
+small.text-muted {
+    font-size: 0.75rem;
+    display: block;
+    margin-top: 4px;
+}
+
+.btn-link:hover {
+    color: #0056b3 !important;
+    transform: scale(1.1);
+    transition: transform 0.2s;
+}

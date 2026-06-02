@@ -1,0 +1,74 @@
+.data-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.profile-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    padding: 30px;
+}
+
+.profile-header {
+    border-bottom: 2px solid #eeeeee;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+}
+
+.profile-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    border-left: 4px solid #3498db;
+    padding-left: 10px;
+}
+
+/* Menggunakan Grid agar rapih 2 kolom */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 15px 40px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f1f1;
+    padding: 8px 0;
+}
+
+.info-label {
+    color: #7f8c8d;
+    font-weight: 500;
+    flex: 1;
+    /* Memberi ruang label */
+}
+
+.info-value {
+    color: #2c3e50;
+    font-weight: 600;
+    flex: 1.5;
+    /* Memberi ruang nilai lebih luas */
+    text-align: left;
+    padding-left: 10px;
+}
+
+.loading-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-weight: bold;
+}

@@ -1,0 +1,202 @@
+.skemagaji-container {
+    padding: 30px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.skemagaji-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header-text h2 {
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+}
+
+.header-text p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.btn-add-skemagaji {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(39, 174, 96, 0.2);
+    transition: background 0.2s;
+}
+
+.btn-add-skemagaji:hover {
+    background-color: #219653;
+}
+
+.skemagaji-table-wrapper {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.skemagaji-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.skemagaji-table th {
+    background-color: #34495e;
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.skemagaji-table td {
+    padding: 15px;
+    border-bottom: 1px solid #edf2f7;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.rate-badge {
+    background-color: #e8f4fd;
+    color: #2980b9;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-edit-sg {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-delete-sg {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* MODAL STYLES */
+.skemagaji-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.skemagaji-modal {
+    background: white;
+    width: 500px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.skemagaji-modal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+}
+
+.form-group-sg {
+    margin-bottom: 15px;
+}
+
+.form-row-sg {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row-sg .form-group-sg {
+    flex: 1;
+}
+
+.form-group-sg label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #34495e;
+}
+
+.form-group-sg input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-group-sg input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+}
+
+.info-box {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px dashed #bdc3c7;
+    margin-top: 10px;
+}
+
+.help-text {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.form-actions-sg {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-cancel-sg {
+    background: white;
+    border: 1px solid #95a5a6;
+    color: #7f8c8d;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-save-sg {
+    background: #2ecc71;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}

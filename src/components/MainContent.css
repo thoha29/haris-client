@@ -1,0 +1,25 @@
+.main {
+  margin-top: 70px;
+  margin-left: 0;
+  padding: 25px;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  transition: margin-left 0.3s ease;
+}
+
+/* SEMUA ukuran layar: Content bergeser saat sidebar terbuka */
+.main.sidebar-open {
+  margin-left: 300px;
+}
+
+/* Mobile sangat kecil: margin dan sidebar lebih kecil */
+@media (max-width: 576px) {
+  .main {
+    padding: 15px;
+  }
+
+  .main.sidebar-open {
+    margin-left: 250px;
+    /* Lebih kecil untuk mobile */
+  }
+}

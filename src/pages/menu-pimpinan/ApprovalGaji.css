@@ -1,0 +1,31 @@
+.history-page-wrapper {
+    padding: 20px;
+}
+
+.history-header-simple {
+    margin-bottom: 20px;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.status-pending {
+    background-color: #f39c12;
+}
+
+.status-paid {
+    background-color: #2ecc71;
+}
+
+.status-dropdown {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-weight: bold;
+    cursor: pointer;
+}

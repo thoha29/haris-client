@@ -1,0 +1,56 @@
+/* Styling Header Tanpa Tombol Kembali */
+.history-header-simple {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Employee Info Grid di Slip */
+.employee-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #eee;
+    background: #fdfdfd;
+    font-size: 13px;
+}
+
+.info-row {
+    margin-bottom: 5px;
+}
+
+.info-row span {
+    display: inline-block;
+    width: 100px;
+    color: #666;
+}
+
+.total-summary-box {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.thp-amount {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2ecc71;
+}
+
+.btn-open-slip {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}

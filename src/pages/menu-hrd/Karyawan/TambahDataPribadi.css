@@ -1,0 +1,70 @@
+.tambah-data-container {
+    background: #fdfdfd;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.form-header {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tambah-data-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.section-divider {
+    grid-column: span 2;
+    margin-top: 15px;
+    padding: 8px;
+    background: #34495e;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-box label {
+    font-size: 12px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #444;
+}
+
+.input-box input,
+.input-box select,
+.input-box textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.full {
+    grid-column: span 2;
+}
+
+.btn-simpan {
+    grid-column: span 2;
+    margin-top: 20px;
+    padding: 12px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-simpan:hover {
+    background: #219150;
+}

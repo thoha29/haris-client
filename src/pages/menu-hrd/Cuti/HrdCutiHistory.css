@@ -1,0 +1,81 @@
+.history-wrapper {
+    padding: 25px;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.action-area {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-excel {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.history-table th {
+    background: #f8fafc;
+    padding: 15px;
+    text-align: left;
+    color: #64748b;
+}
+
+.history-table td {
+    padding: 15px;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge.approved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.pending {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.status-badge.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Tipe Styling */
+.tipe-cuti {
+    color: #3498db;
+    font-weight: bold;
+}
+
+.tipe-izin {
+    color: #e67e22;
+    font-weight: bold;
+}

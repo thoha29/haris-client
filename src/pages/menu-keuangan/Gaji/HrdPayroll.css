@@ -1,0 +1,496 @@
+.payroll-wrapper {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.payroll-header {
+    text-align: left;
+    margin-bottom: 40px;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 15px;
+}
+
+.payroll-header h1 {
+    color: #2c3e50;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+/* Form Styles */
+.payroll-form-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0;
+}
+
+.form-header h3 {
+    color: #2c3e50;
+    text-align: left;
+    margin-bottom: 25px;
+}
+
+.form-header span {
+    color: #3498db;
+}
+
+.input-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.input-group input,
+.input-group select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.input-row-flex {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
+}
+
+/* SPPD Section Box */
+.sppd-section-box {
+    background: #fffdf9;
+    border: 2px dashed #f39c12;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 25px 0;
+}
+
+.sppd-section-box h4 {
+    color: #d35400;
+    margin-top: 0;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.no-margin {
+    margin-bottom: 0;
+}
+
+/* Grid & Cards */
+.payroll-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.payroll-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: 0.3s;
+    border: 1px solid #eee;
+}
+
+.payroll-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.payroll-card-body {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.payroll-card-footer {
+    padding: 15px;
+    background: #f9f9f9;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-input-blue {
+    flex: 1;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-input-gray {
+    flex: 1;
+    background: #95a5a6;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-submit {
+    width: 100%;
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.btn-cancel {
+    width: 100%;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* --- CSS TAMBAHAN UNTUK SLIP GAJI DIGITAL --- */
+
+.preview-container {
+    display: flex;
+    justify-content: flex-start;
+    padding: 20px 0;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.slip-digital {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    padding: 40px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0;
+    border-top: 10px solid #2c3e50;
+    position: relative;
+}
+
+.slip-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.company-info h2 {
+    font-size: 22px;
+    color: #2c3e50;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.company-info p {
+    color: #7f8c8d;
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+
+.status-badge {
+    background: #d4edda;
+    color: #155724;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    border: 1px solid #c3e6cb;
+    align-self: center;
+}
+
+.slip-user-info {
+    display: flex;
+    gap: 40px;
+    background: #f8f9fa;
+    padding: 15px 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.info-box span {
+    font-size: 10px;
+    color: #888;
+    display: block;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+}
+
+.info-box strong {
+    font-size: 16px;
+    color: #333;
+}
+
+.slip-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.label-section {
+    font-size: 13px;
+    color: #3498db;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.line-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.line-item.highlight {
+    font-weight: bold;
+    color: #e67e22;
+    padding: 5px 0;
+}
+
+.minus {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.slip-footer {
+    background: #2c3e50;
+    color: white;
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.thp-area span {
+    font-size: 12px;
+    opacity: 0.8;
+    letter-spacing: 2px;
+}
+
+.thp-area h3 {
+    font-size: 36px;
+    margin: 10px 0;
+    color: #2ecc71;
+    font-weight: 800;
+}
+
+.note-text {
+    font-size: 12px;
+    font-style: italic;
+    opacity: 0.8;
+    margin-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-print {
+    flex: 1;
+    padding: 15px;
+    background: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-print:hover {
+    background: #7f8c8d;
+}
+
+.btn-close {
+    flex: 2;
+    padding: 15px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-close:hover {
+    background: #2980b9;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media print {
+
+    .preview-actions,
+    .payroll-header,
+    .sidebar,
+    #main>nav {
+        display: none !important;
+    }
+
+    .slip-digital {
+        box-shadow: none;
+        border: 1px solid #eee;
+        margin: 0;
+        width: 100%;
+    }
+
+    body {
+        background: white;
+    }
+}
+
+/* --- DETAIL TAMBAHAN UNTUK RINCIAN SLIP --- */
+
+.slip-section {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Garis pemisah antar kolom rincian */
+.slip-details-grid .slip-column:first-child {
+    border-right: 1px dashed #eee;
+    padding-right: 20px;
+}
+
+/* Styling teks nominal agar rapi rata kanan */
+.line-item span:last-child {
+    font-family: 'Courier New', Courier, monospace;
+    /* Biar angka sejajar */
+    font-weight: 600;
+}
+
+/* Section judul Pendapatan & Potongan */
+.label-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+/* Icon dekorasi (opsional jika lu pake font-awesome) */
+.label-section::before {
+    content: '';
+    width: 4px;
+    height: 15px;
+    background: #3498db;
+    border-radius: 2px;
+}
+
+/* Styling khusus untuk row SPPD agar lebih stand out */
+.line-item.highlight {
+    background: #fff8e1;
+    padding: 8px;
+    border-radius: 4px;
+    border-left: 3px solid #e67e22;
+}
+
+/* Area footer Slip Gaji */
+.slip-footer {
+    border-top: 2px dashed rgba(255, 255, 255, 0.2);
+}
+
+.thp-area {
+    margin-bottom: 10px;
+}
+
+/* Loading state animation */
+.loading-state {
+    text-align: center;
+    padding: 50px;
+    color: #3498db;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* Responsive adjustment buat layar kecil */
+@media (max-width: 600px) {
+    .slip-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .slip-details-grid .slip-column:first-child {
+        border-right: none;
+        border-bottom: 1px dashed #eee;
+        padding-right: 0;
+        padding-bottom: 20px;
+    }
+}
+@media print {
+    /* Sembunyikan semua elemen kecuali slip gaji */
+    body * {
+        visibility: hidden;
+    }
+    #printable-slip, #printable-slip * {
+        visibility: visible;
+    }
+    #printable-slip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+        border: 1px solid #eee;
+        padding: 20px;
+    }
+    /* Sembunyikan tombol aksi pas di-print */
+    .preview-actions {
+        display: none !important;
+    }
+}
