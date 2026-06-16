@@ -10,8 +10,9 @@ const Absensi = () => {
   const [riwayatSingkat, setRiwayatSingkat] = useState([]);
   const [loading, setLoading] = useState(false);
   const [jadwalAktif, setJadwalAktif] = useState(null);
-  const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
-  const [hasCheckedOutToday, setHasCheckedOutToday] = useState(false);
+const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
+const [hasCheckedOutToday, setHasCheckedOutToday] = useState(false);
+const [lokasi, setLokasi] = useState(null);
 
   const userId = localStorage.getItem('userId');
   const token = localStorage.getItem('access_token');
@@ -33,13 +34,37 @@ const Absensi = () => {
     return d.toISOString().split('T')[0];
   };
 
+const getLocation = () => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject('Browser tidak mendukung GPS');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => reject(error.message),
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  });
+};
+
   // FIX: Mengembalikan ke /api/jadwal karena di app.js backend menggunakan app.use('/api/jadwal', ...)
   const fetchMySchedule = useCallback(async () => {
     if (!userId || role === 'user' || role === 'hrd') return;
     try {
       const today = formatDate(new Date());
       const res = await axios.get(
-        `https://api1.ptbss.id/api/jadwal/check/${userId}?tanggal=${today}`,
+        `http://localhost:3000/api/jadwal/check/${userId}?tanggal=${today}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -55,7 +80,7 @@ const Absensi = () => {
     if (!userId) return;
     try {
       const res = await axios.get(
-        `https://api1.ptbss.id/absensi/riwayat/${userId}`,
+        `http://localhost:3000/absensi/riwayat/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -84,50 +109,71 @@ const Absensi = () => {
     fetchMySchedule();
   }, [fetchTodayStatus, fetchMySchedule]);
 
-  const handleAbsen = async (type) => {
-    if (!userId) {
-      Swal.fire('Akses Ditolak', 'Silakan login ulang!', 'error');
-      return;
-    }
+const handleAbsen = async (type) => {
+  if (!userId) {
+    Swal.fire('Akses Ditolak', 'Silakan login ulang!', 'error');
+    return;
+  }
 
-    if (role !== 'user' && role !== 'hrd' && !jadwalAktif) {
-      setMessage('Anda tidak memiliki jadwal kerja hari ini.');
-      setMessageType('error');
-      return;
-    }
 
-    setLoading(true);
-    try {
-      const payload = {
-        id_user: userId,
-        role: role,
-        id_skema:
-          role === 'user' || role === 'hrd' ? null : jadwalAktif.id_skema,
-        tanggal: formatDate(currentTime),
-        [type === 'in' ? 'jam_masuk' : 'jam_keluar']: formatTime(currentTime),
-      };
+  setLoading(true);
 
-      // FIX: Hapus /api/absensi menjadi /absensi
-      const url = `https://api1.ptbss.id/absensi/${
-        type === 'in' ? 'checkin' : 'checkout'
-      }`;
-      const response = await axios({
-        method: type === 'in' ? 'post' : 'put',
-        url: url,
-        data: payload,
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  try {
+    // Ambil GPS
+    const locationData = await getLocation();
 
-      setMessage(response.data.message);
-      setMessageType('success');
-      fetchTodayStatus();
-    } catch (error) {
-      setMessage(error.response?.data?.error || 'Gagal absen!');
-      setMessageType('error');
-    } finally {
-      setLoading(false);
-    }
-  };
+    setLokasi(locationData);
+
+    // Payload lengkap
+const payload = {
+  id_user: userId,
+  role: role,
+
+id_skema: jadwalAktif ? jadwalAktif.id_skema : null,
+
+  tanggal: formatDate(currentTime),
+
+  lokasi_absensi: 'GPS Aktif',
+
+  latitude: locationData.latitude,
+  longitude: locationData.longitude,
+
+  [type === 'in'
+    ? 'jam_masuk'
+    : 'jam_keluar']: formatTime(currentTime),
+};
+
+    const url = `http://localhost:3000/absensi/${
+      type === 'in' ? 'checkin' : 'checkout'
+    }`;
+
+    const response = await axios({
+      method: type === 'in' ? 'post' : 'put',
+      url,
+      data: payload,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setMessage(response.data.message);
+    setMessageType('success');
+
+    fetchTodayStatus();
+  } catch (error) {
+    console.error(error);
+
+    setMessage(
+      error.response?.data?.error ||
+      error.message ||
+      'Gagal absen!'
+    );
+
+    setMessageType('error');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="absensi-container">
@@ -172,26 +218,35 @@ const Absensi = () => {
             })}
           </div>
           <div className="time">{formatTime(currentTime)}</div>
+          {lokasi && (
+  <div
+    style={{
+      marginTop: '10px',
+      fontSize: '13px',
+      color: '#666',
+    }}
+  >
+    📍 {lokasi.latitude.toFixed(6)},
+    {lokasi.longitude.toFixed(6)}
+  </div>
+)}
         </div>
 
         <div className="button-group">
           <button
-            disabled={
+                    disabled={
               loading ||
-              hasCheckedInToday ||
-              (role !== 'user' && role !== 'hrd' && !jadwalAktif)
+              hasCheckedInToday
             }
             onClick={() => handleAbsen('in')}
             className="btn btn-checkin"
           >
             📥{' '}
-            {loading
-              ? '...'
-              : hasCheckedInToday
-              ? 'Sudah Check In'
-              : role !== 'user' && role !== 'hrd' && !jadwalAktif
-              ? 'Belum Ada Jadwal'
-              : 'Absen Masuk'}
+          {loading
+  ? '...'
+  : hasCheckedInToday
+  ? 'Sudah Check In'
+  : 'Absen Masuk'}
           </button>
 
           <button
