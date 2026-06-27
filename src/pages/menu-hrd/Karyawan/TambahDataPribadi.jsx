@@ -10,26 +10,34 @@ const TambahDataPribadi = () => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   // State FULL sesuai kolom di database lu (18 Kolom)
-  const [formData, setFormData] = useState({
-    id_user: '',
-    nik: '',
-    nip: '',
-    nama_lengkap: '',
-    tempat_lahir: '',
-    tanggal_lahir: '',
-    jenis_kelamin: 'L',
-    alamat: '',
-    agama: '',
-    status_perkawinan: '',
-    kewarganegaraan: 'WNI',
-    jabatan: '',
-    divisi: '',
-    status_karyawan: 'kontrak',
-    jenjang_pendidikan: '',
-    institusi: '',
-    jurusan: '',
-    tahun_lulus: '',
-  });
+const [formData, setFormData] = useState({
+  id_user: '',
+  nik: '',
+  nip: '',
+  nama_lengkap: '',
+  tempat_lahir: '',
+  tanggal_lahir: '',
+  jenis_kelamin: 'L',
+  alamat: '',
+  agama: '',
+  status_perkawinan: '',
+  kewarganegaraan: 'WNI',
+  jabatan: '',
+  divisi: '',
+  status_karyawan: 'kontrak',
+  jenjang_pendidikan: '',
+  institusi: '',
+  jurusan: '',
+  tahun_lulus: '',
+
+  // DATA KEPEGAWAIAN
+  tanggal_masuk: '',
+  tanggal_kontrak_berakhir: '',
+  atasan_langsung: '',
+  nama_atasan: '',
+  lokasi_proyek: '',
+  lokasi_kerja: '',
+});
 
   // Ambil token dari localStorage (Pastikan key-nya 'access_token')
   const token = localStorage.getItem('access_token');
@@ -81,28 +89,35 @@ const TambahDataPribadi = () => {
     }
   };
 
-  const resetForm = (id = '') => {
-    setFormData({
-      id_user: id,
-      nik: '',
-      nip: '',
-      nama_lengkap: '',
-      tempat_lahir: '',
-      tanggal_lahir: '',
-      jenis_kelamin: 'L',
-      alamat: '',
-      agama: '',
-      status_perkawinan: '',
-      kewarganegaraan: 'WNI',
-      jabatan: '',
-      divisi: '',
-      status_karyawan: 'kontrak',
-      jenjang_pendidikan: '',
-      institusi: '',
-      jurusan: '',
-      tahun_lulus: '',
-    });
-  };
+const resetForm = (id = '') => {
+  setFormData({
+    id_user: id,
+    nik: '',
+    nip: '',
+    nama_lengkap: '',
+    tempat_lahir: '',
+    tanggal_lahir: '',
+    jenis_kelamin: 'L',
+    alamat: '',
+    agama: '',
+    status_perkawinan: '',
+    kewarganegaraan: 'WNI',
+    jabatan: '',
+    divisi: '',
+    status_karyawan: 'kontrak',
+    jenjang_pendidikan: '',
+    institusi: '',
+    jurusan: '',
+    tahun_lulus: '',
+
+    tanggal_masuk: '',
+    tanggal_kontrak_berakhir: '',
+    atasan_langsung: '',
+    nama_atasan: '',
+    lokasi_proyek: '',
+    lokasi_kerja: '',
+  });
+};
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -123,13 +138,20 @@ const TambahDataPribadi = () => {
         Swal.fire('Berhasil!', 'Data berhasil disimpan!', 'success');
         setIsEditMode(true);
       }
-    } catch (error) {
-      const msg = error.response?.data?.message || 'Terjadi kesalahan';
-      Swal.fire('Error', 'Gagal: ' + msg, 'error');
-    }
-  };
+    } 
+catch (error) {
+  console.error("FULL ERROR:", error);
+  console.error("RESPONSE:", error.response?.data);
 
-  return (
+  Swal.fire(
+    'Error',
+    JSON.stringify(error.response?.data || error.message),
+    'error'
+  );
+}
+};
+
+return (
     <div className="tambah-data-container">
       <h2 className="form-header">
         {isEditMode ? 'EDIT DATA PRIBADI' : ' DATA PRIBADI'}
@@ -301,6 +323,69 @@ const TambahDataPribadi = () => {
             onChange={handleChange}
           />
         </div>
+        <div className="input-box">
+  <label>Tanggal Masuk</label>
+  <input
+    type="date"
+    name="tanggal_masuk"
+    value={formData.tanggal_masuk || ''}
+    onChange={handleChange}
+  />
+</div>
+
+<div className="input-box">
+  <label>Tanggal Kontrak Berakhir</label>
+  <input
+    type="date"
+    name="tanggal_kontrak_berakhir"
+    value={formData.tanggal_kontrak_berakhir || ''}
+    onChange={handleChange}
+  />
+</div>
+
+<div className="input-box">
+  <label>Atasan Langsung</label>
+  <input
+    type="text"
+    name="atasan_langsung"
+    value={formData.atasan_langsung || ''}
+    onChange={handleChange}
+    placeholder="Manager Operasional"
+  />
+</div>
+
+<div className="input-box">
+  <label>Nama Atasan</label>
+  <input
+    type="text"
+    name="nama_atasan"
+    value={formData.nama_atasan || ''}
+    onChange={handleChange}
+    placeholder="Budi Santoso"
+  />
+</div>
+
+<div className="input-box">
+  <label>Lokasi Proyek</label>
+  <input
+    type="text"
+    name="lokasi_proyek"
+    value={formData.lokasi_proyek || ''}
+    onChange={handleChange}
+    placeholder="Site Morowali"
+  />
+</div>
+
+<div className="input-box">
+  <label>Lokasi Kerja</label>
+  <input
+    type="text"
+    name="lokasi_kerja"
+    value={formData.lokasi_kerja || ''}
+    onChange={handleChange}
+    placeholder="Jakarta"
+  />
+</div>
 
         <button
           type="submit"
