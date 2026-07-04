@@ -25,7 +25,7 @@ const ApprovalGaji = () => {
   const fetchRiwayat = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('https://api1.ptbss.id/api/gaji/all');
+      const res = await axios.get('http://localhost:3000/api/gaji/all');
       setRiwayat(res.data);
     } catch (err) {
       console.error('Gagal ambil seluruh data gaji:', err.message);
@@ -40,7 +40,7 @@ const ApprovalGaji = () => {
 
   const handleUpdateStatus = async (id_slip, newStatus) => {
     try {
-      await axios.put(`https://api1.ptbss.id/api/gaji/status/${id_slip}`, {
+      await axios.put(`http://localhost:3000/api/gaji/status/${id_slip}`, {
         status_bayar: newStatus,
       });
       Swal.fire('Berhasil!', 'Status gaji berhasil diperbarui.', 'success');
@@ -64,7 +64,7 @@ const ApprovalGaji = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://api1.ptbss.id/api/gaji/hapus/${id_slip}`);
+        await axios.delete(`http://localhost:3000/api/gaji/hapus/${id_slip}`);
         Swal.fire('Terhapus!', 'Data gaji berhasil dihapus.', 'success');
         fetchRiwayat();
       } catch (error) {

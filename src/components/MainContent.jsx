@@ -8,6 +8,7 @@ import UserApprovalCuti from '../pages/menu-userkaryawan/UserApprovalCuti';
 import { SkemaManager, SetJadwalKaryawan } from '../pages/menu-userkaryawan';
 import Skemagaji from '../pages/menu-keuangan/Gaji/Skemagaji';
 import ApprovalGaji from '../pages/menu-pimpinan/ApprovalGaji';
+import UserApprovalLembur from '../pages/menu-userkaryawan/UserApprovalLembur';
 import './MainContent.css';
 
 // Named Imports dari Folder menu-hrd
@@ -20,14 +21,14 @@ import {
   HrdMonitoring,
   HrdKaryawanDetail,
   HrdRiwayatCuti,
-  HrdCutiRiwayatDetail
+  HrdCutiRiwayatDetail,
 } from '../pages/menu-hrd';
 
 // Named Imports dari Folder menu-keuangan
 import {
   HrdPayroll,
   RiwayatGaji,
-  DashboardKeuangan
+  DashboardKeuangan,
 } from '../pages/menu-keuangan';
 
 // Named Imports dari Folder menu-karyawan
@@ -41,8 +42,10 @@ import {
   Pengajuan,
   RiwayatKarier,
   RiwayatPengajuan,
-  SlipGaji
-} from "../pages/menu-karyawan";
+  SlipGaji,
+  AbsensiLembur,
+  RiwayatAbsensiLembur,
+} from '../pages/menu-karyawan';
 
 function MainContent({ isSidebarOpen }) {
   // --- TAMBAHKAN LOGIKA INI ---
@@ -50,10 +53,7 @@ function MainContent({ isSidebarOpen }) {
   const currentUserId = localStorage.getItem('userId');
 
   return (
-    <main
-      id="main"
-      className={`main ${isSidebarOpen ? 'sidebar-open' : ''}`}
-    >
+    <main id="main" className={`main ${isSidebarOpen ? 'sidebar-open' : ''}`}>
       <Routes>
         {/* Profile */}
         <Route path="Profile" element={<Profile />} />
@@ -80,6 +80,13 @@ function MainContent({ isSidebarOpen }) {
         <Route path="riwayat-pengajuan" element={<RiwayatPengajuan />} />
         <Route path="SlipGaji" element={<SlipGaji />} />
 
+        {/* untuk Lembur */}
+        <Route path="Absensi-Lembur" element={<AbsensiLembur />} />
+        <Route
+          path="riwayat-absensi-lembur"
+          element={<RiwayatAbsensiLembur />}
+        ></Route>
+
         {/* Menu HRD */}
         <Route path="Dashboard-HRD" element={<DashboardHRD />} />
         <Route path="HrdApproval" element={<HrdApproval />} />
@@ -90,7 +97,10 @@ function MainContent({ isSidebarOpen }) {
         <Route path="hrd/riwayat/:id_user" element={<HrdKaryawanDetail />} />
         <Route path="HrdRiwayatCuti" element={<HrdRiwayatCuti />} />
 
-        <Route path="hrd/cuti/riwayat/:id_user" element={<HrdCutiRiwayatDetail />} />
+        <Route
+          path="hrd/cuti/riwayat/:id_user"
+          element={<HrdCutiRiwayatDetail />}
+        />
 
         <Route path="SkemaManager" element={<SkemaManager />} />
         <Route path="SetJadwalKaryawan" element={<SetJadwalKaryawan />} />
@@ -100,11 +110,14 @@ function MainContent({ isSidebarOpen }) {
         {/* Menu Approval Tahap 1 (Atasan/User) */}
         <Route path="UserApproval" element={<UserApproval />} />
         <Route path="UserApprovalCuti" element={<UserApprovalCuti />} />
+        <Route
+          path="UserApprovalLembur"
+          element={<UserApprovalLembur />}
+        ></Route>
 
         {/* Menu Keuangan */}
         <Route path="Dashboard-Keuangan" element={<DashboardKeuangan />} />
         <Route path="Skemagaji" element={<Skemagaji />} />
-
       </Routes>
     </main>
   );

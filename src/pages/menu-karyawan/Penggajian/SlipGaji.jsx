@@ -38,7 +38,7 @@ const SlipGaji = () => {
         setLoading(true);
         // Memanggil API yang sudah di-JOIN dengan tabel data_pribadi di backend
         const res = await axios.get(
-          `https://api1.ptbss.id/api/gaji/riwayat/${id_user}`
+          `http://localhost:3000/api/gaji/riwayat/${id_user}`
         );
         setRiwayat(res.data);
       } catch (err) {

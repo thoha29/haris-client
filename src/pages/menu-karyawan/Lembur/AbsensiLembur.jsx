@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import './Absensi.css';
+import './Lembur.css';
 
-const Absensi = () => {
+const AbsensiLembur = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
@@ -80,7 +80,7 @@ const Absensi = () => {
     if (!userId) return;
     try {
       const res = await axios.get(
-        `http://localhost:3000/absensi/riwayat/${userId}`,
+        `http://localhost:3000/absensi-lembur/riwayat/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -144,7 +144,7 @@ const Absensi = () => {
           : { jam_keluar: formatTime(currentTime) }),
       };
 
-      const url = `http://localhost:3000/absensi/${
+      const url = `http://localhost:3000/absensi-lembur/${
         type === 'in' ? 'checkin' : 'checkout'
       }`;
 
@@ -183,7 +183,7 @@ const Absensi = () => {
           <span className="role-indicator">Akses: {role.toUpperCase()}</span>
         </div>
 
-        {role !== 'user' && role !== 'hrd' && (
+        {/* {role !== 'user' && role !== 'hrd' && (
           <div className={`schedule-card ${!jadwalAktif ? 'warning' : ''}`}>
             {jadwalAktif ? (
               <div className="schedule-content">
@@ -205,7 +205,7 @@ const Absensi = () => {
               </div>
             )}
           </div>
-        )}
+        )} */}
 
         <div className="clock-display">
           <div className="date">
@@ -230,7 +230,7 @@ const Absensi = () => {
           )}
         </div>
 
-        {/* <div className="button-group">
+        <div className="button-group">
           <button
             disabled={loading || hasCheckedInToday}
             onClick={() => handleAbsen('in')}
@@ -241,7 +241,7 @@ const Absensi = () => {
               ? '...'
               : hasCheckedInToday
               ? 'Sudah Check In'
-              : 'Absen Masuk'}
+              : 'Absen Lembur Masuk'}
           </button>
 
           <button
@@ -254,41 +254,7 @@ const Absensi = () => {
               ? '...'
               : hasCheckedOutToday
               ? 'Sudah Check Out'
-              : 'Absen Keluar'}
-          </button>
-        </div> */}
-
-        <div className="button-group">
-          <button
-            disabled={
-              loading ||
-              hasCheckedInToday ||
-              (role !== 'user' && role !== 'hrd' && !jadwalAktif)
-            }
-            onClick={() => handleAbsen('in')}
-            className="btn btn-checkin"
-          >
-            📥{' '}
-            {loading
-              ? '...'
-              : hasCheckedInToday
-              ? 'Sudah Check In'
-              : role !== 'user' && role !== 'hrd' && !jadwalAktif
-              ? 'Belum Ada Jadwal'
-              : 'Absen Masuk'}
-          </button>
-
-          <button
-            disabled={loading || !hasCheckedInToday || hasCheckedOutToday}
-            onClick={() => handleAbsen('out')}
-            className="btn btn-checkout"
-          >
-            📤{' '}
-            {loading
-              ? '...'
-              : hasCheckedOutToday
-              ? 'Sudah Check Out'
-              : 'Absen Keluar'}
+              : 'Absen Lembur Keluar'}
           </button>
         </div>
 
@@ -341,4 +307,4 @@ const Absensi = () => {
   );
 };
 
-export default Absensi;
+export default AbsensiLembur;

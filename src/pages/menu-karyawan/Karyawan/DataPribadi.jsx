@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import api from "../../../config/api";
-import "./DataPribadi.css";
+import { useEffect, useState } from 'react';
+import api from '../../../config/api';
+import './DataPribadi.css';
 
 export default function DataPribadi() {
   const [user, setUser] = useState(null);
@@ -9,8 +9,8 @@ export default function DataPribadi() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("access_token");
-        const userId = localStorage.getItem("userId");
+        const token = localStorage.getItem('access_token');
+        const userId = localStorage.getItem('userId');
         const res = await api.get(`/api/data-pribadi/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -46,7 +46,7 @@ export default function DataPribadi() {
   const InfoItem = ({ label, value }) => (
     <div className="info-item">
       <span className="info-label">{label}</span>
-      <span className="info-value">{value || "-"}</span>
+      <span className="info-value">{value || '-'}</span>
     </div>
   );
 
@@ -62,10 +62,25 @@ export default function DataPribadi() {
           <div className="info-grid">
             <InfoItem label="NIK" value={user.nik} />
             <InfoItem label="Nama Lengkap" value={user.nama_lengkap} />
-            <InfoItem label="Tempat, Tgl Lahir" value={user.tanggal_lahir ? `${user.tempat_lahir}, ${new Date(user.tanggal_lahir).toLocaleDateString('id-ID')}` : "-"} />
-            <InfoItem label="Jenis Kelamin" value={user.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'} />
+            <InfoItem
+              label="Tempat, Tgl Lahir"
+              value={
+                user.tanggal_lahir
+                  ? `${user.tempat_lahir}, ${new Date(
+                      user.tanggal_lahir
+                    ).toLocaleDateString('id-ID')}`
+                  : '-'
+              }
+            />
+            <InfoItem
+              label="Jenis Kelamin"
+              value={user.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
+            />
             <InfoItem label="Agama" value={user.agama} />
-            <InfoItem label="Status Perkawinan" value={user.status_perkawinan} />
+            <InfoItem
+              label="Status Perkawinan"
+              value={user.status_perkawinan}
+            />
             <InfoItem label="Alamat" value={user.alamat} />
           </div>
         </section>

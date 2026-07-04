@@ -22,8 +22,8 @@ const SetJadwalKaryawan = () => {
   const initData = useCallback(async () => {
     try {
       const [resKaryawan, resSkema] = await Promise.all([
-        axios.get('https://api1.ptbss.id/api/jadwal/list'),
-        axios.get('https://api1.ptbss.id/api/skema'),
+        axios.get('http://localhost:3000/api/jadwal/list'),
+        axios.get('http://localhost:3000/api/skema'),
       ]);
       setKaryawanList(resKaryawan.data);
       setDaftarSkema(resSkema.data);
@@ -35,7 +35,7 @@ const SetJadwalKaryawan = () => {
   const fetchDailyWorkers = useCallback(async (date) => {
     try {
       const res = await axios.get(
-        `https://api1.ptbss.id/api/jadwal/daily?tanggal=${date}`
+        `http://localhost:3000/api/jadwal/daily?tanggal=${date}`
       );
       setDailyWorkers(res.data);
       setSelectedDate(date);
@@ -48,7 +48,7 @@ const SetJadwalKaryawan = () => {
     if (!userId) return;
     try {
       const res = await axios.get(
-        `https://api1.ptbss.id/api/jadwal/detail/${userId}`
+        `http://localhost:3000/api/jadwal/detail/${userId}`
       );
       const formattedEvents = res.data.map((item) => ({
         id: `${item.id_user}-${item.tanggal}`,
@@ -97,7 +97,7 @@ const SetJadwalKaryawan = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.post('https://api1.ptbss.id/api/jadwal/assign', {
+        await axios.post('http://localhost:3000/api/jadwal/assign', {
           id_user: selectedUser,
           id_skema: selectedSkema,
           tanggal: arg.dateStr,
@@ -162,7 +162,7 @@ const SetJadwalKaryawan = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.post('https://api1.ptbss.id/api/jadwal/assign-bulk', {
+        await axios.post('http://localhost:3000/api/jadwal/assign-bulk', {
           id_user: selectedUser,
           id_skema: selectedSkema,
           tanggalArray: selectedDates,
@@ -195,7 +195,7 @@ const SetJadwalKaryawan = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://api1.ptbss.id/api/jadwal/delete-bulk`, {
+        await axios.delete(`http://localhost:3000/api/jadwal/delete-bulk`, {
           data: {
             id_user: selectedUser,
             tanggalArray: selectedDates,
@@ -238,7 +238,7 @@ const SetJadwalKaryawan = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://api1.ptbss.id/api/jadwal/delete`, {
+        await axios.delete(`http://localhost:3000/api/jadwal/delete`, {
           data: {
             id_user: id_user,
             tanggal: correctDate,

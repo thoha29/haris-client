@@ -26,7 +26,7 @@ const Skemagaji = () => {
   const fetchSkemas = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('https://api1.ptbss.id/api/skemagaji');
+      const res = await axios.get('http://localhost:3000/api/skemagaji');
       setSkemas(res.data);
     } catch (error) {
       console.error('Gagal mengambil data skema gaji:', error);
@@ -70,7 +70,7 @@ const Skemagaji = () => {
     try {
       if (isEditMode) {
         await axios.put(
-          `https://api1.ptbss.id/api/skemagaji/edit/${currentId}`,
+          `http://localhost:3000/api/skemagaji/edit/${currentId}`,
           formData
         );
         Swal.fire(
@@ -79,7 +79,7 @@ const Skemagaji = () => {
           'success'
         );
       } else {
-        await axios.post('https://api1.ptbss.id/api/skemagaji/add', formData);
+        await axios.post('http://localhost:3000/api/skemagaji/add', formData);
         Swal.fire(
           'Berhasil!',
           'Skema/Golongan baru berhasil ditambahkan!',
@@ -107,7 +107,7 @@ const Skemagaji = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://api1.ptbss.id/api/skemagaji/delete/${id}`);
+        await axios.delete(`http://localhost:3000/api/skemagaji/delete/${id}`);
         Swal.fire('Terhapus!', 'Skema/Golongan berhasil dihapus!', 'success');
         fetchSkemas();
       } catch (error) {

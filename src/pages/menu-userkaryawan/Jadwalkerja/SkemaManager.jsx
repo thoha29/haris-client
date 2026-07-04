@@ -17,7 +17,7 @@ const SkemaManager = () => {
   // 1. Ambil Data Skema
   const fetchSkema = async () => {
     try {
-      const res = await axios.get('https://api1.ptbss.id/api/skema');
+      const res = await axios.get('http://localhost:3000/api/skema');
       setSkemaList(res.data);
     } catch (err) {
       Swal.fire('Error', 'Gagal mengambil data skema', 'error');
@@ -39,12 +39,12 @@ const SkemaManager = () => {
     try {
       if (isEditing) {
         await axios.put(
-          `https://api1.ptbss.id/api/skema/edit/${currentId}`,
+          `http://localhost:3000/api/skema/edit/${currentId}`,
           formData
         );
         Swal.fire('Berhasil', 'Skema berhasil diperbarui', 'success');
       } else {
-        await axios.post('https://api1.ptbss.id/api/skema/add', formData);
+        await axios.post('http://localhost:3000/api/skema/add', formData);
         Swal.fire('Berhasil', 'Skema baru berhasil ditambahkan', 'success');
       }
       setFormData({
@@ -87,7 +87,7 @@ const SkemaManager = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://api1.ptbss.id/api/skema/delete/${id}`);
+        await axios.delete(`http://localhost:3000/api/skema/delete/${id}`);
         Swal.fire('Dihapus!', 'Skema berhasil dihapus.', 'success');
         fetchSkema();
       } catch (err) {

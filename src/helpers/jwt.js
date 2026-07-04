@@ -1,6 +1,7 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-const SECRET_KEY = process.env.SECRET_KEY || "secret_payroll";
+const SECRET_KEY = process.env.SECRET_KEY || 'secret_payroll';
 
 // bikin token
 const generateAccessToken = (user) => {
@@ -11,7 +12,7 @@ const generateAccessToken = (user) => {
       role: user.role,
     },
     SECRET_KEY,
-    { expiresIn: "1d" } // token berlaku 1 hari
+    { expiresIn: '1d' } // token berlaku 1 hari
   );
 };
 

@@ -43,8 +43,8 @@ const HrdPayroll = () => {
     const fetchData = async () => {
       try {
         const [resKaryawan, resSkema] = await Promise.all([
-          axios.get('https://api1.ptbss.id/absensi/hrd/list-karyawan'),
-          axios.get('https://api1.ptbss.id/api/skemagaji'),
+          axios.get('http://localhost:3000/absensi/hrd/list-karyawan'),
+          axios.get('http://localhost:3000/api/skemagaji'),
         ]);
         setKaryawan(resKaryawan.data);
         setSkemaGajiList(resSkema.data);
@@ -94,7 +94,7 @@ const HrdPayroll = () => {
       };
 
       const res = await axios.post(
-        'https://api1.ptbss.id/api/gaji/proses',
+        'http://localhost:3000/api/gaji/proses',
         payload
       );
 

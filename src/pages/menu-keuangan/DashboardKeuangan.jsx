@@ -16,7 +16,7 @@ function DashboardKeuangan() {
       }
       try {
         const res = await axios.get(
-          `https://api1.ptbss.id/api/jadwal/detail/${userId}`
+          `http://localhost:3000/api/jadwal/detail/${userId}`
         );
         const today = new Date();
         today.setHours(0, 0, 0, 0);

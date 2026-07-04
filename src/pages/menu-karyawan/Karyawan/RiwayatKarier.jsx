@@ -21,7 +21,7 @@ const RiwayatKarier = () => {
     const fetchRiwayat = async () => {
       try {
         const response = await axios.get(
-          `https://api1.ptbss.id/api/career/riwayat?id_user=${userId}`
+          `http://localhost:3000/api/career/riwayat?id_user=${userId}`
         );
         setRiwayat(response.data);
       } catch (error) {
@@ -55,7 +55,7 @@ const RiwayatKarier = () => {
 
     try {
       await axios.post(
-        'https://api1.ptbss.id/api/career/riwayat/simpan',
+        'http://localhost:3000/api/career/riwayat/simpan',
         data,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -77,7 +77,7 @@ const RiwayatKarier = () => {
 
       // Panggil ulang data setelah simpan
       const response = await axios.get(
-        `https://api1.ptbss.id/api/career/riwayat?id_user=${userId}`
+        `http://localhost:3000/api/career/riwayat?id_user=${userId}`
       );
       setRiwayat(response.data);
     } catch (error) {
@@ -220,7 +220,7 @@ const RiwayatKarier = () => {
                           title="Lihat Dokumen"
                           onClick={() =>
                             window.open(
-                              `https://api1.ptbss.id/uploads/riwayat/${item.foto_bukti}`,
+                              `http://localhost:3000/uploads/riwayat/${item.foto_bukti}`,
                               '_blank'
                             )
                           }

@@ -3,7 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import './UserApproval.css';
 
-const UserApproval = () => {
+const UserApprovalLembur = () => {
   const [listAbsensi, setListAbsensi] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [error, setError] = useState(null);
@@ -15,7 +15,7 @@ const UserApproval = () => {
     setError(null);
     try {
       const res = await axios.get(
-        'http://localhost:3000/absensi/hrd/pending-user'
+        'http://localhost:3000/absensi-lembur/hrd/pending-user'
       );
       setListAbsensi(res.data);
       setFilteredData(res.data);
@@ -58,8 +58,8 @@ const UserApproval = () => {
     if (!result.isConfirmed) return;
 
     try {
-      await axios.put('http://localhost:3000/absensi/hrd/approve-user', {
-        id_data_absensi: id,
+      await axios.put('http://localhost:3000/absensi-lembur/hrd/approve-user', {
+        id_absensi_lembur: id,
         status: status,
       });
       Swal.fire(
@@ -108,7 +108,7 @@ const UserApproval = () => {
           <tbody>
             {filteredData.length > 0 ? (
               filteredData.map((item) => (
-                <tr key={item.id_data_absensi}>
+                <tr key={item.id_absensi_lembur}>
                   <td>
                     <strong>{item.nama}</strong>
                   </td>
@@ -131,7 +131,7 @@ const UserApproval = () => {
                       <div className="action-group">
                         <button
                           onClick={() =>
-                            handleAction(item.id_data_absensi, 'approved')
+                            handleAction(item.id_absensi_lembur, 'approved')
                           }
                           className="btn btn-approve"
                         >
@@ -139,7 +139,7 @@ const UserApproval = () => {
                         </button>
                         <button
                           onClick={() =>
-                            handleAction(item.id_data_absensi, 'rejected')
+                            handleAction(item.id_absensi_lembur, 'rejected')
                           }
                           className="btn btn-reject"
                         >
@@ -166,4 +166,4 @@ const UserApproval = () => {
   );
 };
 
-export default UserApproval;
+export default UserApprovalLembur;

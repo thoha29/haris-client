@@ -31,7 +31,7 @@ const RiwayatGaji = () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `https://api1.ptbss.id/api/gaji/riwayat/${id_user}`
+          `http://localhost:3000/api/gaji/riwayat/${id_user}`
         );
         setRiwayat(res.data);
         if (res.data.length > 0 && res.data[0].username) {

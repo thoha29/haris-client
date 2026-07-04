@@ -12,7 +12,7 @@ const UserApprovalCuti = () => {
   const fetchPendingUser = async () => {
     try {
       // Pastikan API ini mengirimkan data yang sedang diproses oleh user ini
-      const res = await axios.get('https://api1.ptbss.id/cuti/pending-user');
+      const res = await axios.get('http://localhost:3000/cuti/pending-user');
       setListPengajuan(res.data);
     } catch (err) {
       console.error('Gagal ambil data pengajuan atasan:', err);
@@ -58,7 +58,7 @@ const UserApprovalCuti = () => {
 
     try {
       const response = await axios.put(
-        'https://api1.ptbss.id/cuti/approve-user',
+        'http://localhost:3000/cuti/approve-user',
         {
           id_cuti: id_cuti,
           status: statusBaru,

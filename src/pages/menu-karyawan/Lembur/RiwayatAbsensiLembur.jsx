@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import './RiwayatAbsensi.css';
+import './RiwayatAbsensiLembur.css';
 
-const RiwayatAbsensi = () => {
+const RiwayatAbsensiLembur = () => {
   const [riwayat, setRiwayat] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,7 +51,7 @@ const RiwayatAbsensi = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `http://localhost:3000/absensi/riwayat/${userId}`,
+        `http://localhost:3000/absensi-lembur/riwayat/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -87,7 +87,7 @@ const RiwayatAbsensi = () => {
     <div className="absensi-container">
       <div className="absensi-card" style={{ maxWidth: '1100px' }}>
         <div className="header">
-          <h1>Riwayat Absensi Lengkap</h1>
+          <h1>Riwayat Absensi Lembur</h1>
           <p className="subtitle">
             {getAuthData().username} ({getAuthData().role.toUpperCase()})
           </p>
@@ -229,4 +229,4 @@ const RiwayatAbsensi = () => {
   );
 };
 
-export default RiwayatAbsensi;
+export default RiwayatAbsensiLembur;

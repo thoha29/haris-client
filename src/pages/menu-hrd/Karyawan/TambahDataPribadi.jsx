@@ -10,34 +10,34 @@ const TambahDataPribadi = () => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   // State FULL sesuai kolom di database lu (18 Kolom)
-const [formData, setFormData] = useState({
-  id_user: '',
-  nik: '',
-  nip: '',
-  nama_lengkap: '',
-  tempat_lahir: '',
-  tanggal_lahir: '',
-  jenis_kelamin: 'L',
-  alamat: '',
-  agama: '',
-  status_perkawinan: '',
-  kewarganegaraan: 'WNI',
-  jabatan: '',
-  divisi: '',
-  status_karyawan: 'kontrak',
-  jenjang_pendidikan: '',
-  institusi: '',
-  jurusan: '',
-  tahun_lulus: '',
+  const [formData, setFormData] = useState({
+    id_user: '',
+    nik: '',
+    nip: '',
+    nama_lengkap: '',
+    tempat_lahir: '',
+    tanggal_lahir: '',
+    jenis_kelamin: 'L',
+    alamat: '',
+    agama: '',
+    status_perkawinan: '',
+    kewarganegaraan: 'WNI',
+    jabatan: '',
+    divisi: '',
+    status_karyawan: 'kontrak',
+    jenjang_pendidikan: '',
+    institusi: '',
+    jurusan: '',
+    tahun_lulus: '',
 
-  // DATA KEPEGAWAIAN
-  tanggal_masuk: '',
-  tanggal_kontrak_berakhir: '',
-  atasan_langsung: '',
-  nama_atasan: '',
-  lokasi_proyek: '',
-  lokasi_kerja: '',
-});
+    // DATA KEPEGAWAIAN
+    tanggal_masuk: '',
+    tanggal_kontrak_berakhir: '',
+    atasan_langsung: '',
+    nama_atasan: '',
+    lokasi_proyek: '',
+    lokasi_kerja: '',
+  });
 
   // Ambil token dari localStorage (Pastikan key-nya 'access_token')
   const token = localStorage.getItem('access_token');
@@ -65,6 +65,18 @@ const [formData, setFormData] = useState({
     fetchUsers();
   }, [token]);
 
+  const formatDate = (date) => {
+    if (!date) return '';
+    return date.split('T')[0];
+  };
+
+  const normalizeData = (data) => ({
+    ...data,
+    tanggal_lahir: formatDate(data.tanggal_lahir),
+    tanggal_masuk: formatDate(data.tanggal_masuk),
+    tanggal_kontrak_berakhir: formatDate(data.tanggal_kontrak_berakhir),
+  });
+
   // 2. Logic Auto-fill pas pilih user
   const handleUserChange = async (e) => {
     const userId = e.target.value;
@@ -79,7 +91,8 @@ const [formData, setFormData] = useState({
         headers: { Authorization: `Bearer ${token.trim()}` },
       });
       if (res.data) {
-        setFormData(res.data);
+        //setFormData(res.data);
+        setFormData(normalizeData(res.data));
         setIsEditMode(true);
       }
     } catch (err) {
@@ -89,35 +102,35 @@ const [formData, setFormData] = useState({
     }
   };
 
-const resetForm = (id = '') => {
-  setFormData({
-    id_user: id,
-    nik: '',
-    nip: '',
-    nama_lengkap: '',
-    tempat_lahir: '',
-    tanggal_lahir: '',
-    jenis_kelamin: 'L',
-    alamat: '',
-    agama: '',
-    status_perkawinan: '',
-    kewarganegaraan: 'WNI',
-    jabatan: '',
-    divisi: '',
-    status_karyawan: 'kontrak',
-    jenjang_pendidikan: '',
-    institusi: '',
-    jurusan: '',
-    tahun_lulus: '',
+  const resetForm = (id = '') => {
+    setFormData({
+      id_user: id,
+      nik: '',
+      nip: '',
+      nama_lengkap: '',
+      tempat_lahir: '',
+      tanggal_lahir: '',
+      jenis_kelamin: 'L',
+      alamat: '',
+      agama: '',
+      status_perkawinan: '',
+      kewarganegaraan: 'WNI',
+      jabatan: '',
+      divisi: '',
+      status_karyawan: 'kontrak',
+      jenjang_pendidikan: '',
+      institusi: '',
+      jurusan: '',
+      tahun_lulus: '',
 
-    tanggal_masuk: '',
-    tanggal_kontrak_berakhir: '',
-    atasan_langsung: '',
-    nama_atasan: '',
-    lokasi_proyek: '',
-    lokasi_kerja: '',
-  });
-};
+      tanggal_masuk: '',
+      tanggal_kontrak_berakhir: '',
+      atasan_langsung: '',
+      nama_atasan: '',
+      lokasi_proyek: '',
+      lokasi_kerja: '',
+    });
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -130,28 +143,36 @@ const resetForm = (id = '') => {
       const config = { headers: { Authorization: `Bearer ${token.trim()}` } };
       const url = '/api/data-pribadi';
 
+      const cleanDate = (val) => (val === '' ? null : val);
+
+      const payload = {
+        ...formData,
+        tanggal_lahir: cleanDate(formData.tanggal_lahir),
+        tanggal_masuk: cleanDate(formData.tanggal_masuk),
+        tanggal_kontrak_berakhir: cleanDate(formData.tanggal_kontrak_berakhir),
+      };
+
       if (isEditMode) {
-        await api.put(`${url}/${formData.id_user}`, formData, config);
+        await api.put(`${url}/${formData.id_user}`, payload, config);
         Swal.fire('Berhasil!', 'Data berhasil diupdate!', 'success');
       } else {
-        await api.post(url, formData, config);
+        await api.post(url, payload, config);
         Swal.fire('Berhasil!', 'Data berhasil disimpan!', 'success');
         setIsEditMode(true);
       }
-    } 
-catch (error) {
-  console.error("FULL ERROR:", error);
-  console.error("RESPONSE:", error.response?.data);
+    } catch (error) {
+      console.error('FULL ERROR:', error);
+      console.error('RESPONSE:', error.response?.data);
 
-  Swal.fire(
-    'Error',
-    JSON.stringify(error.response?.data || error.message),
-    'error'
-  );
-}
-};
+      Swal.fire(
+        'Error',
+        JSON.stringify(error.response?.data || error.message),
+        'error'
+      );
+    }
+  };
 
-return (
+  return (
     <div className="tambah-data-container">
       <h2 className="form-header">
         {isEditMode ? 'EDIT DATA PRIBADI' : ' DATA PRIBADI'}
@@ -324,68 +345,68 @@ return (
           />
         </div>
         <div className="input-box">
-  <label>Tanggal Masuk</label>
-  <input
-    type="date"
-    name="tanggal_masuk"
-    value={formData.tanggal_masuk || ''}
-    onChange={handleChange}
-  />
-</div>
+          <label>Tanggal Masuk</label>
+          <input
+            type="date"
+            name="tanggal_masuk"
+            value={formData.tanggal_masuk || ''}
+            onChange={handleChange}
+          />
+        </div>
 
-<div className="input-box">
-  <label>Tanggal Kontrak Berakhir</label>
-  <input
-    type="date"
-    name="tanggal_kontrak_berakhir"
-    value={formData.tanggal_kontrak_berakhir || ''}
-    onChange={handleChange}
-  />
-</div>
+        <div className="input-box">
+          <label>Tanggal Kontrak Berakhir</label>
+          <input
+            type="date"
+            name="tanggal_kontrak_berakhir"
+            value={formData.tanggal_kontrak_berakhir || ''}
+            onChange={handleChange}
+          />
+        </div>
 
-<div className="input-box">
-  <label>Atasan Langsung</label>
-  <input
-    type="text"
-    name="atasan_langsung"
-    value={formData.atasan_langsung || ''}
-    onChange={handleChange}
-    placeholder="Manager Operasional"
-  />
-</div>
+        <div className="input-box">
+          <label>Atasan Langsung</label>
+          <input
+            type="text"
+            name="atasan_langsung"
+            value={formData.atasan_langsung || ''}
+            onChange={handleChange}
+            placeholder="Manager Operasional"
+          />
+        </div>
 
-<div className="input-box">
-  <label>Nama Atasan</label>
-  <input
-    type="text"
-    name="nama_atasan"
-    value={formData.nama_atasan || ''}
-    onChange={handleChange}
-    placeholder="Budi Santoso"
-  />
-</div>
+        <div className="input-box">
+          <label>Nama Atasan</label>
+          <input
+            type="text"
+            name="nama_atasan"
+            value={formData.nama_atasan || ''}
+            onChange={handleChange}
+            placeholder="Budi Santoso"
+          />
+        </div>
 
-<div className="input-box">
-  <label>Lokasi Proyek</label>
-  <input
-    type="text"
-    name="lokasi_proyek"
-    value={formData.lokasi_proyek || ''}
-    onChange={handleChange}
-    placeholder="Site Morowali"
-  />
-</div>
+        <div className="input-box">
+          <label>Lokasi Proyek</label>
+          <input
+            type="text"
+            name="lokasi_proyek"
+            value={formData.lokasi_proyek || ''}
+            onChange={handleChange}
+            placeholder="Site Morowali"
+          />
+        </div>
 
-<div className="input-box">
-  <label>Lokasi Kerja</label>
-  <input
-    type="text"
-    name="lokasi_kerja"
-    value={formData.lokasi_kerja || ''}
-    onChange={handleChange}
-    placeholder="Jakarta"
-  />
-</div>
+        <div className="input-box">
+          <label>Lokasi Kerja</label>
+          <input
+            type="text"
+            name="lokasi_kerja"
+            value={formData.lokasi_kerja || ''}
+            onChange={handleChange}
+            placeholder="Jakarta"
+          />
+        </div>
 
         <button
           type="submit"

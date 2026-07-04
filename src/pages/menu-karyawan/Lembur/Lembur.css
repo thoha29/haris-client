@@ -1,0 +1,535 @@
+/* Container Utama */
+.absensi-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+    min-height: 85vh;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Card Absensi */
+.absensi-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 35px 30px;
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Header */
+.header h1 {
+    font-size: 24px;
+    color: #2d3436;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #636e72;
+    font-size: 14px;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Schedule Card Baru */
+.schedule-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.schedule-card.warning {
+    background: #fff5f5;
+    border-color: #feb2b2;
+}
+
+.schedule-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.schedule-badge-icon {
+    font-size: 14px;
+}
+
+.schedule-label {
+    font-size: 11px;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.schedule-name {
+    font-weight: 700;
+    font-size: 18px;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+}
+
+.schedule-time-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #eff6ff;
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1px solid #dbeafe;
+}
+
+.time-icon {
+    font-size: 16px;
+}
+
+.schedule-time {
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.time-divider {
+    font-weight: 400;
+    color: #94a3b8;
+    margin: 0 4px;
+    font-size: 13px;
+}
+
+.schedule-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.empty-icon {
+    font-size: 24px;
+}
+
+.schedule-error {
+    color: #e53e3e;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Jam dan Tanggal */
+.clock-display {
+    margin-bottom: 30px;
+    padding: 15px 0;
+    background: #f8fafc;
+    border-radius: 16px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.date {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.time {
+    font-size: 56px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 5px;
+    letter-spacing: -1px;
+    background: linear-gradient(to right, #0f172a, #334155);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 10px;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn:disabled {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.btn-checkin {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.btn-checkin:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-checkout {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.btn-checkout:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Message Alert */
+.message {
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.message.success {
+    background-color: #e6fffa;
+    color: #2c7a7b;
+    border: 1px solid #81e6d9;
+}
+
+.message.error {
+    background-color: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+/* Mini History */
+.mini-history {
+    text-align: left;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 25px;
+    margin-top: 10px;
+}
+
+.mini-history h4 {
+    margin: 0 0 18px 0;
+    color: #1e293b;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mini-history h4::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 18px;
+    background: #3b82f6;
+    border-radius: 4px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.history-item:hover {
+    transform: translateX(4px);
+    background: #f1f5f9;
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.history-date {
+    font-size: 12px;
+    font-weight: bold;
+    color: #636e72;
+}
+
+.history-time {
+    font-size: 13px;
+    color: #2d3436;
+}
+
+.history-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+/* Badges */
+.badge {
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.badge.pending {
+    background: #ffeaa7;
+    color: #d6a317;
+}
+
+.badge.approved {
+    background: #55efc4;
+    color: #00b894;
+}
+
+.badge.rejected {
+    background: #ff7675;
+    color: #d63031;
+}
+
+.badge.alpha {
+    background-color: #dc3545;
+    color: white;
+}
+
+.stat-late {
+    color: #d63031;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.stat-overtime {
+    color: #0984e3;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* =========================================
+   ANIMATIONS
+   ========================================= */
+
+/* Fade-in Animation untuk Card Utama */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.absensi-card {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Pulse Animation untuk Jam */
+@keyframes pulseTime {
+    0% {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+}
+
+.time {
+    animation: pulseTime 2s infinite ease-in-out;
+}
+
+/* Animasi Muncul List Riwayat */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.history-item {
+    opacity: 0;
+    /* sembunyikan awalnya */
+    animation: slideInRight 0.4s ease-out forwards;
+}
+
+/* Memberikan delay berurutan untuk setiap item riwayat */
+.history-item:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.history-item:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.history-item:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.history-item:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.history-item:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+
+/* =========================================
+   RESPONSIVE DESIGN (Media Queries)
+   ========================================= */
+
+/* Tablet & Mobile Landscape */
+@media screen and (max-width: 768px) {
+    .absensi-card {
+        padding: 25px;
+        max-width: 90%;
+    }
+
+    .time {
+        font-size: 40px;
+    }
+
+    .button-group {
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+
+    .schedule-name {
+        font-size: 16px;
+    }
+}
+
+/* Mobile Portrait */
+@media screen and (max-width: 480px) {
+    .absensi-container {
+        padding: 10px;
+        min-height: auto;
+        margin-top: 10px;
+    }
+
+    .absensi-card {
+        padding: 20px 15px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        /* Shadow lebih halus untuk mobile */
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 12px;
+    }
+
+    .time {
+        font-size: 32px;
+        margin-top: 2px;
+    }
+
+    .date {
+        font-size: 14px;
+    }
+
+    /* Di layar mentok HP (kecil banget), tombol absen dibikin atas-bawah susunannya (bila diperlukan) 
+       Tapi by default flex row gap 10px masih cukup di 480px.
+       Kita rubah jadi kolom jika di bawah 360px.
+    */
+
+    .message {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .mini-history h4 {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    .history-item {
+        padding: 8px;
+        align-items: flex-start;
+    }
+
+    .history-info {
+        gap: 2px;
+    }
+
+    .history-date {
+        font-size: 11px;
+    }
+
+    .history-time {
+        font-size: 12px;
+    }
+
+    .badge {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+}
+
+/* Extra Small Mobile Screen (Spesifik untuk layar super kecil seperti iPhone SE) */
+@media screen and (max-width: 360px) {
+    .button-group {
+        flex-direction: column;
+        /* Tombol berbaris ke bawah */
+        gap: 8px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

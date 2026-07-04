@@ -14,7 +14,7 @@ const DokumenPribadi = ({ idUser }) => {
     if (!idUser) return;
     try {
       const res = await axios.get(
-        `https://api1.ptbss.id/api/dokumen/user/${idUser}`
+        `http://localhost:3000/api/dokumen/user/${idUser}`
       );
       setListDokumen(res.data);
     } catch (err) {
@@ -44,7 +44,7 @@ const DokumenPribadi = ({ idUser }) => {
     formData.append('nama_dokumen', jenis);
 
     try {
-      await axios.post('https://api1.ptbss.id/api/dokumen/upload', formData);
+      await axios.post('http://localhost:3000/api/dokumen/upload', formData);
       Swal.fire('Berhasil!', 'Berhasil diunggah!', 'success');
       setFile(null);
       setJenis('');
@@ -113,6 +113,7 @@ const DokumenPribadi = ({ idUser }) => {
                   <td className="p-2 border">{doc.nama_dokumen}</td>
                   <td className="p-2 border text-blue-600">
                     <a
+                      // href={`http://localhost:3000${doc.file_path}`}
                       href={`http://localhost:3000${doc.file_path}`}
                       target="_blank"
                       rel="noreferrer"

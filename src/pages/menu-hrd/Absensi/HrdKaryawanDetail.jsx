@@ -39,21 +39,21 @@ const HrdKaryawanDetail = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
 
- const fetchDetail = async () => {
-  try {
-    const [riwayatRes, dataPribadiRes] = await Promise.all([
-      api.get(`/absensi/hrd/riwayat/${id_user}`),
-      api.get(`/api/data-pribadi/${id_user}`),
-    ]);
+  const fetchDetail = async () => {
+    try {
+      const [riwayatRes, dataPribadiRes] = await Promise.all([
+        api.get(`/absensi/hrd/riwayat/${id_user}`),
+        api.get(`/api/data-pribadi/${id_user}`),
+      ]);
 
-    setRiwayat(riwayatRes.data);
-    setDataPribadi(dataPribadiRes.data);
-  } catch (err) {
-    console.error('Gagal ambil data:', err);
-  } finally {
-    setLoading(false);
-  }
-};
+      setRiwayat(riwayatRes.data);
+      setDataPribadi(dataPribadiRes.data);
+    } catch (err) {
+      console.error('Gagal ambil data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchDetail();
@@ -153,76 +153,82 @@ const HrdKaryawanDetail = () => {
               ))}
             </select>
             {dataPribadi && (
-  <div
-    style={{
-      background: '#fff',
-      padding: '20px',
-      marginBottom: '20px',
-      borderRadius: '12px',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-    }}
-  >
-    <h3 style={{ marginBottom: '15px' }}>
-      Data Karyawan
-    </h3>
+              <div
+                style={{
+                  background: '#fff',
+                  padding: '20px',
+                  marginBottom: '20px',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+                }}
+              >
+                <h3 style={{ marginBottom: '15px' }}>Data Karyawan</h3>
 
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: '10px',
-      }}
-    >
-      <div>
-        <strong>Nama:</strong><br />
-        {dataPribadi.nama_lengkap}
-      </div>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '10px',
+                  }}
+                >
+                  <div>
+                    <strong>Nama:</strong>
+                    <br />
+                    {dataPribadi.nama_lengkap}
+                  </div>
 
-      <div>
-        <strong>NIK:</strong><br />
-        {dataPribadi.nik}
-      </div>
+                  <div>
+                    <strong>NIK:</strong>
+                    <br />
+                    {dataPribadi.nik}
+                  </div>
 
-      <div>
-        <strong>Jabatan:</strong><br />
-        {dataPribadi.jabatan}
-      </div>
+                  <div>
+                    <strong>Jabatan:</strong>
+                    <br />
+                    {dataPribadi.jabatan}
+                  </div>
 
-      <div>
-        <strong>Divisi:</strong><br />
-        {dataPribadi.divisi}
-      </div>
+                  <div>
+                    <strong>Divisi:</strong>
+                    <br />
+                    {dataPribadi.divisi}
+                  </div>
 
-      <div>
-        <strong>Tanggal Masuk:</strong><br />
-        {dataPribadi.tanggal_masuk
-          ? new Date(
-              dataPribadi.tanggal_masuk
-            ).toLocaleDateString('id-ID')
-          : '-'}
-      </div>
+                  <div>
+                    <strong>Tanggal Masuk:</strong>
+                    <br />
+                    {dataPribadi.tanggal_masuk
+                      ? new Date(dataPribadi.tanggal_masuk).toLocaleDateString(
+                          'id-ID'
+                        )
+                      : '-'}
+                  </div>
 
-      <div>
-        <strong>Kontrak Berakhir:</strong><br />
-        {dataPribadi.tanggal_kontrak_berakhir
-          ? new Date(
-              dataPribadi.tanggal_kontrak_berakhir
-            ).toLocaleDateString('id-ID')
-          : '-'}
-      </div>
+                  <div>
+                    <strong>Kontrak Berakhir:</strong>
+                    <br />
+                    {dataPribadi.tanggal_kontrak_berakhir
+                      ? new Date(
+                          dataPribadi.tanggal_kontrak_berakhir
+                        ).toLocaleDateString('id-ID')
+                      : '-'}
+                  </div>
 
-      <div>
-        <strong>Atasan Langsung:</strong><br />
-        {dataPribadi.atasan_langsung || '-'}
-      </div>
+                  <div>
+                    <strong>Atasan Langsung:</strong>
+                    <br />
+                    {dataPribadi.atasan_langsung || '-'}
+                  </div>
 
-      <div>
-        <strong>Lokasi Kerja:</strong><br />
-        {dataPribadi.lokasi_kerja || '-'}
-      </div>
-    </div>
-  </div>
-)}
+                  <div>
+                    <strong>Lokasi Kerja:</strong>
+                    <br />
+                    {dataPribadi.lokasi_kerja || '-'}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <button

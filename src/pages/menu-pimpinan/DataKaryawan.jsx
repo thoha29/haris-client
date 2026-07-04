@@ -14,7 +14,7 @@ const DataKaryawan = () => {
   });
   const [editId, setEditId] = useState(null);
 
-  const API_URL = 'https://api1.ptbss.id/api/karyawan';
+  const API_URL = 'http://localhost:3000/api/karyawan';
 
   useEffect(() => {
     fetchKaryawan();
