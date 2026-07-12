@@ -22,6 +22,7 @@ import {
   HrdKaryawanDetail,
   HrdRiwayatCuti,
   HrdCutiRiwayatDetail,
+  ProsesAbsensi,
 } from '../pages/menu-hrd';
 
 // Named Imports dari Folder menu-keuangan
@@ -96,6 +97,7 @@ function MainContent({ isSidebarOpen }) {
         <Route path="HrdMonitoring" element={<HrdMonitoring />} />
         <Route path="hrd/riwayat/:id_user" element={<HrdKaryawanDetail />} />
         <Route path="HrdRiwayatCuti" element={<HrdRiwayatCuti />} />
+        <Route path="Proses-Absensi" element={<ProsesAbsensi />} />
 
         <Route
           path="hrd/cuti/riwayat/:id_user"

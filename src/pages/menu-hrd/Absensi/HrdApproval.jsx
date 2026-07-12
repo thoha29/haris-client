@@ -16,10 +16,7 @@ const HrdApproval = () => {
       setListData(res.data);
     } catch (err) {
       console.error(err);
-      setError(
-        err.response?.data?.error ||
-          'Gagal mengambil data monitoring.'
-      );
+      setError(err.response?.data?.error || 'Gagal mengambil data monitoring.');
     } finally {
       setLoading(false);
     }
@@ -45,11 +42,7 @@ const HrdApproval = () => {
       <div className="header">
         <h2>Monitoring Approval Absensi</h2>
 
-        <button
-          onClick={fetchData}
-          className="btn-refresh"
-          disabled={loading}
-        >
+        <button onClick={fetchData} className="btn-refresh" disabled={loading}>
           {loading ? 'Memuat...' : 'Refresh Data'}
         </button>
       </div>

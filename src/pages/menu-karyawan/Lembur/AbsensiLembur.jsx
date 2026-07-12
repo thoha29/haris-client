@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import './Lembur.css';
+import api from '../../../config/api';
 
 const AbsensiLembur = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -9,10 +9,10 @@ const AbsensiLembur = () => {
   const [messageType, setMessageType] = useState('');
   const [riwayatSingkat, setRiwayatSingkat] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [jadwalAktif, setJadwalAktif] = useState(null);
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
   const [hasCheckedOutToday, setHasCheckedOutToday] = useState(false);
   const [lokasi, setLokasi] = useState(null);
+  const [jenisLembur, setJenisLembur] = useState('');
 
   const userId = localStorage.getItem('userId');
   const token = localStorage.getItem('access_token');
@@ -58,44 +58,30 @@ const AbsensiLembur = () => {
     });
   };
 
-  // FIX: Mengembalikan ke /api/jadwal karena di app.js backend menggunakan app.use('/api/jadwal', ...)
-  const fetchMySchedule = useCallback(async () => {
-    if (!userId || role === 'user' || role === 'hrd') return;
-    try {
-      const today = formatDate(new Date());
-      const res = await axios.get(
-        `http://localhost:3000/api/jadwal/check/${userId}?tanggal=${today}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setJadwalAktif(res.data);
-    } catch (err) {
-      setJadwalAktif(null);
-    }
-  }, [userId, token, role]);
-
-  // FIX: Hapus /api/absensi menjadi /absensi
   const fetchTodayStatus = useCallback(async () => {
     if (!userId) return;
+
     try {
-      const res = await axios.get(
-        `http://localhost:3000/absensi-lembur/riwayat/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.get(`/absensi-lembur/riwayat/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setRiwayatSingkat(res.data.slice(0, 5));
 
-      const today = formatDate(new Date());
-      const todayData = res.data.find(
-        (item) => formatDate(item.tanggal) === today
-      );
+      // 🔥 cari lembur yang masih aktif (BELUM checkout)
+      const activeLembur = res.data.find((item) => !item.jam_keluar);
 
-      if (todayData) {
-        setHasCheckedInToday(!!todayData.jam_masuk);
-        setHasCheckedOutToday(!!todayData.jam_keluar);
+      if (activeLembur) {
+        // ✅ sudah checkin (walaupun beda hari)
+        setHasCheckedInToday(true);
+        setHasCheckedOutToday(false);
+
+        // lock jenis lembur
+        if (activeLembur.id_skema !== undefined) {
+          setJenisLembur(String(activeLembur.id_skema));
+        }
       } else {
+        // ✅ tidak ada lembur aktif
         setHasCheckedInToday(false);
         setHasCheckedOutToday(false);
       }
@@ -106,8 +92,7 @@ const AbsensiLembur = () => {
 
   useEffect(() => {
     fetchTodayStatus();
-    fetchMySchedule();
-  }, [fetchTodayStatus, fetchMySchedule]);
+  }, [fetchTodayStatus]);
 
   const handleAbsen = async (type) => {
     if (!userId) {
@@ -115,40 +100,42 @@ const AbsensiLembur = () => {
       return;
     }
 
+    if (!jenisLembur && type === 'in') {
+      return Swal.fire(
+        'Peringatan',
+        'Pilih jenis waktu lembur terlebih dahulu!',
+        'warning'
+      );
+    }
+
     setLoading(true);
 
     try {
-      // Ambil GPS
       const locationData = await getLocation();
-
       setLokasi(locationData);
 
-      // Payload lengkap
       const payload = {
         id_user: userId,
         role: role,
-        id_skema: jadwalAktif ? jadwalAktif.id_skema : null,
+        id_skema: jenisLembur, // ⬅️ selalu dikirim (IN & OUT)
 
         lokasi_absensi: 'GPS Aktif',
         latitude: locationData.latitude,
         longitude: locationData.longitude,
 
-        // ⬇️ Kondisional tanggal
         ...(type === 'in'
           ? { tanggal: formatDate(currentTime) }
           : { tanggal_keluar: formatDate(currentTime) }),
 
-        // ⬇️ Kondisional jam
         ...(type === 'in'
           ? { jam_masuk: formatTime(currentTime) }
           : { jam_keluar: formatTime(currentTime) }),
       };
 
-      const url = `http://localhost:3000/absensi-lembur/${
-        type === 'in' ? 'checkin' : 'checkout'
-      }`;
+      const url =
+        type === 'in' ? '/absensi-lembur/checkin' : '/absensi-lembur/checkout';
 
-      const response = await axios({
+      const response = await api({
         method: type === 'in' ? 'post' : 'put',
         url,
         data: payload,
@@ -174,39 +161,29 @@ const AbsensiLembur = () => {
     }
   };
 
+  const getJenisBadge = (id) => {
+    if (id === 0 || id === '0') return 'badge bg-success'; // hari kerja
+    if (id === 1 || id === '1') return 'badge bg-primary'; // hari libur
+    return 'badge bg-secondary';
+  };
+
+  const getJenisLabel = (id) => {
+    if (id === 0 || id === '0') return 'Hari Kerja';
+    if (id === 1 || id === '1') return 'Hari Libur';
+    return '-';
+  };
+
   return (
     <div className="absensi-container">
+      {' '}
       <div className="absensi-card">
+        {' '}
         <div className="header">
-          <h1>Halo, {username}!</h1>
-          <p className="subtitle">PT. Banggai Sentral Sulawesi</p>
-          <span className="role-indicator">Akses: {role.toUpperCase()}</span>
+          {' '}
+          <h1>Halo, {username}!</h1>{' '}
+          <p className="subtitle">PT. Banggai Sentral Sulawesi</p>{' '}
+          <span className="role-indicator">Akses: {role.toUpperCase()}</span>{' '}
         </div>
-
-        {/* {role !== 'user' && role !== 'hrd' && (
-          <div className={`schedule-card ${!jadwalAktif ? 'warning' : ''}`}>
-            {jadwalAktif ? (
-              <div className="schedule-content">
-                <div className="schedule-header">
-                  <span className="schedule-label">Shift Hari Ini</span>
-                </div>
-                <h3 className="schedule-name">{jadwalAktif.nama_skema}</h3>
-                <div className="schedule-time-box">
-                  <span className="schedule-time">
-                    {jadwalAktif.jam_masuk.substring(0, 5)}{' '}
-                    <span className="time-divider">-</span>{' '}
-                    {jadwalAktif.jam_keluar.substring(0, 5)}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="schedule-empty">
-                <span className="schedule-error">Jadwal Belum Diatur</span>
-              </div>
-            )}
-          </div>
-        )} */}
-
         <div className="clock-display">
           <div className="date">
             {currentTime.toLocaleDateString('id-ID', {
@@ -217,28 +194,36 @@ const AbsensiLembur = () => {
             })}
           </div>
           <div className="time">{formatTime(currentTime)}</div>
+
           {lokasi && (
-            <div
-              style={{
-                marginTop: '10px',
-                fontSize: '13px',
-                color: '#666',
-              }}
-            >
-              📍 {lokasi.latitude.toFixed(6)},{lokasi.longitude.toFixed(6)}
+            <div className="lokasi-text">
+              📍 {lokasi.latitude.toFixed(6)}, {lokasi.longitude.toFixed(6)}
             </div>
           )}
-        </div>
 
+          <div className="mt-3">
+            <label className="form-label">Jenis Waktu Lembur</label>
+            <select
+              value={jenisLembur}
+              onChange={(e) => setJenisLembur(e.target.value)}
+              className="form-select"
+              disabled={hasCheckedInToday} // ⬅️ kunci setelah checkin
+            >
+              <option value="">-- Pilih Jenis Lembur --</option>
+              <option value="0">Lembur Hari Kerja</option>
+              <option value="1">Lembur Hari Libur</option>
+            </select>
+          </div>
+        </div>
         <div className="button-group">
           <button
             disabled={loading || hasCheckedInToday}
             onClick={() => handleAbsen('in')}
-            className="btn btn-checkin"
+            className="btn btn-success"
           >
             📥{' '}
             {loading
-              ? '...'
+              ? 'Memproses...'
               : hasCheckedInToday
               ? 'Sudah Check In'
               : 'Absen Lembur Masuk'}
@@ -247,19 +232,17 @@ const AbsensiLembur = () => {
           <button
             disabled={loading || !hasCheckedInToday || hasCheckedOutToday}
             onClick={() => handleAbsen('out')}
-            className="btn btn-checkout"
+            className="btn btn-danger"
           >
             📤{' '}
             {loading
-              ? '...'
+              ? 'Memproses...'
               : hasCheckedOutToday
               ? 'Sudah Check Out'
               : 'Absen Lembur Keluar'}
           </button>
         </div>
-
         {message && <div className={`message ${messageType}`}>{message}</div>}
-
         <div className="mini-history">
           <h4>Aktivitas Terakhir</h4>
           <div className="history-list">
@@ -267,36 +250,36 @@ const AbsensiLembur = () => {
               <div key={i} className="history-item">
                 <div className="history-info">
                   <span className="history-date">
-                    Tanggal masuk {formatDate(item.tanggal)} - Tanggal keluar{' '}
-                    {formatDate(item.tanggal_keluar)}
+                    {formatDate(item.tanggal)} -{' '}
+                    {item.tanggal_keluar
+                      ? formatDate(item.tanggal_keluar)
+                      : 'BELUM PULANG'}
                   </span>
                   <span className="history-time">
                     {item.jam_masuk} - {item.jam_keluar || '--:--'}
                   </span>
                 </div>
-                <div className="history-stats">
+
+                <div className="history-stats d-flex gap-2">
+                  {/* jenis lembur */}
+                  <span className={getJenisBadge(item.id_skema)}>
+                    {getJenisLabel(item.id_skema)}
+                  </span>
+
+                  {/* status */}
                   <span
                     className={`badge ${
                       item.status === 'Alpha'
-                        ? 'alpha'
-                        : item.is_approved || 'pending'
+                        ? 'bg-danger'
+                        : item.is_approved === 'approved'
+                        ? 'bg-success'
+                        : 'bg-warning text-dark'
                     }`}
                   >
                     {item.status === 'Alpha'
                       ? 'ALPHA'
                       : (item.is_approved || 'pending').toUpperCase()}
                   </span>
-                  {item.is_approved !== 'pending' && (
-                    <small className="timestamp-info">
-                      Diproses:{' '}
-                      {new Date(item.updated_at).toLocaleString('id-ID', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        day: '2-digit',
-                        month: 'short',
-                      })}
-                    </small>
-                  )}
                 </div>
               </div>
             ))}

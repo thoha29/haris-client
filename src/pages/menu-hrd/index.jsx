@@ -9,6 +9,7 @@ import TambahDataPribadi from './Karyawan/TambahDataPribadi';
 import HrdApproval from './Absensi/HrdApproval';
 import HrdMonitoring from './Absensi/HrdMonitoring';
 import HrdKaryawanDetail from './Absensi/HrdKaryawanDetail';
+import ProsesAbsensi from './Absensi/ProsesAbsensi';
 
 //Cuti
 import HrdApprovalCuti from './Cuti/HrdApprovalCuti';
@@ -28,4 +29,5 @@ export {
   HrdKaryawanDetail,
   HrdRiwayatCuti,
   HrdCutiRiwayatDetail,
+  ProsesAbsensi,
 };

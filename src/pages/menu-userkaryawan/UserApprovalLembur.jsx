@@ -101,6 +101,7 @@ const UserApprovalLembur = () => {
               <th>Tanggal</th>
               <th>Jam Kerja</th>
               <th>Keterangan</th>
+              <th>Jenis Lembur</th>
               <th>Status Atasan</th>
               <th>Tindakan</th>
             </tr>
@@ -120,6 +121,15 @@ const UserApprovalLembur = () => {
                     <small className="txt-late">T: {item.keterlambatan}m</small>
                     <br />
                     <small className="txt-overtime">L: {item.lembur} Jam</small>
+                  </td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        item.id_skema === 0 ? 'bg-success' : 'bg-primary'
+                      }`}
+                    >
+                      {(item.id_skema = 0 ? 'HARI KERJA' : 'HARI LIBUR')}
+                    </span>
                   </td>
                   <td>
                     <span className={`badge-status ${item.status_user}`}>

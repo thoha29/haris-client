@@ -267,6 +267,11 @@ function SideBar({ isOpen }) {
                   </NavLink>
                 </li>
                 <li>
+                  <NavLink to="Proses-Absensi">
+                    <span>Proses Absensi</span>
+                  </NavLink>
+                </li>
+                <li>
                   <NavLink to="hrdmonitoring">
                     <span>Riwayat & Monitoring</span>
                   </NavLink>
