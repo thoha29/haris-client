@@ -27,6 +27,7 @@ import RiwayatPengajuan from './Cuti/RiwayatPengajuan';
 
 //gaji
 import SlipGaji from './Penggajian/SlipGaji';
+import ListGaji from './Penggajian/ListGaji';
 
 export {
   Absensi,
@@ -45,4 +46,5 @@ export {
   JamKerjaLembur,
   Lembur,
   RiwayatAbsensiLembur,
+  ListGaji,
 };

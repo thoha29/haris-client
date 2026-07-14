@@ -128,7 +128,7 @@ const UserApprovalLembur = () => {
                         item.id_skema === 0 ? 'bg-success' : 'bg-primary'
                       }`}
                     >
-                      {(item.id_skema = 0 ? 'HARI KERJA' : 'HARI LIBUR')}
+                      {item.id_skema === 0 ? 'HARI KERJA' : 'HARI LIBUR'}
                     </span>
                   </td>
                   <td>

@@ -16,6 +16,7 @@ import HrdApprovalCuti from './Cuti/HrdApprovalCuti';
 import HrdRiwayatCuti from './Cuti/HrdCutiHistory';
 import HrdCutiRiwayatDetail from './Cuti/HrdCutiRiwayatDetail';
 
+import DaftarGaji from './DaftarGaji/DaftarGaji';
 //Skema Manager
 // Moved to menu-userkaryawan
 
@@ -30,4 +31,5 @@ export {
   HrdRiwayatCuti,
   HrdCutiRiwayatDetail,
   ProsesAbsensi,
+  DaftarGaji,
 };

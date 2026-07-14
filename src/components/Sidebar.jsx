@@ -151,8 +151,8 @@ function SideBar({ isOpen }) {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/histori-gaji">
-                    <span>Next Section</span>
+                  <NavLink to="listGaji">
+                    <span>Gaji</span>
                   </NavLink>
                 </li>
               </ul>
@@ -267,11 +267,6 @@ function SideBar({ isOpen }) {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="Proses-Absensi">
-                    <span>Proses Absensi</span>
-                  </NavLink>
-                </li>
-                <li>
                   <NavLink to="hrdmonitoring">
                     <span>Riwayat & Monitoring</span>
                   </NavLink>
@@ -308,6 +303,28 @@ function SideBar({ isOpen }) {
                   </NavLink>
                 </li>
               </ul>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="Proses-Absensi"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? '' : ' collapsed')
+                }
+              >
+                <i className="bi bi-calculator"></i>
+                <span>Proses Data Gaji</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="Daftar-Gaji"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? '' : ' collapsed')
+                }
+              >
+                <i className="bi bi-cash-stack"></i>
+                <span>Daftar Gaji</span>
+              </NavLink>
             </li>
           </>
         )}

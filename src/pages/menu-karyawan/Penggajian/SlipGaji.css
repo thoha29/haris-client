@@ -54,3 +54,9 @@
     cursor: pointer;
     font-size: 12px;
 }
+
+/* 🔥 Paksa semua header ke tengah */
+.styled-table thead th {
+    text-align: center !important;
+    vertical-align: middle !important;
+  }

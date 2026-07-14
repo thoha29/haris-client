@@ -6,7 +6,8 @@
   height: 70px;
   padding: 0 1.5rem;
 
-  background-color: var(--bg-card);
+  /* background-color: var(--bg-card); */
+  background-color: #f8faff;
   border-bottom: 1px solid var(--border-color);
 
   position: fixed;

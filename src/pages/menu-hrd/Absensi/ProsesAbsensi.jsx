@@ -1,35 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import api from '../../../config/api';
 import './HrdApproval.css';
 
 const ProsesAbsensi = () => {
-  const [listUser, setListUser] = useState([]);
-  const [idUser, setIdUser] = useState('');
+  // const [listUser, setListUser] = useState([]);
+  // const [idUser, setIdUser] = useState('');
   const [tanggalAwal, setTanggalAwal] = useState('');
   const [tanggalAkhir, setTanggalAkhir] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Ambil data karyawan untuk dropdown
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get('/api/jadwal/list');
-        setListUser(res.data);
-      } catch (err) {
-        console.error(err);
-        Swal.fire('Error', 'Gagal mengambil data karyawan', 'error');
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const res = await api.get('/api/jadwal/list');
+  //       setListUser(res.data);
+  //     } catch (err) {
+  //       console.error(err);
+  //       Swal.fire('Error', 'Gagal mengambil data karyawan', 'error');
+  //     }
+  //   };
 
-    fetchUser();
-  }, []);
+  //   fetchUser();
+  // }, []);
 
   // Handle submit proses
   const handleProses = async (e) => {
     e.preventDefault();
 
-    if (!idUser || !tanggalAwal || !tanggalAkhir) {
+    if (!tanggalAwal || !tanggalAkhir) {
       return Swal.fire('Warning', 'Semua field wajib diisi', 'warning');
     }
 
@@ -47,7 +47,6 @@ const ProsesAbsensi = () => {
       const res = await api.post('/absensi/proses-absensi', {
         tanggal: tanggalAwal,
         tanggal_keluar: tanggalAkhir,
-        id_user: idUser,
       });
 
       Swal.fire({
@@ -57,7 +56,6 @@ const ProsesAbsensi = () => {
       });
 
       // reset form (optional)
-      setIdUser('');
       setTanggalAwal('');
       setTanggalAkhir('');
     } catch (err) {
@@ -75,11 +73,11 @@ const ProsesAbsensi = () => {
   return (
     <div className="hrd-approval-container">
       <div className="header">
-        <h2>Proses Data Absensi</h2>
+        <h2>Proses Data Gaji</h2>
       </div>
 
       <form className="form-proses" onSubmit={handleProses}>
-        {/* Dropdown Karyawan */}
+        {/* Dropdown Karyawan
         <div className="form-group">
           <label>Pilih Karyawan</label>
           <select value={idUser} onChange={(e) => setIdUser(e.target.value)}>
@@ -90,7 +88,7 @@ const ProsesAbsensi = () => {
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
 
         {/* Tanggal Awal */}
         <div className="form-group">
@@ -118,7 +116,7 @@ const ProsesAbsensi = () => {
           className="btn btn-success w-100"
           disabled={loading}
         >
-          {loading ? 'Memproses...' : 'Proses Absensi'}
+          {loading ? 'Memproses...' : 'Proses Data'}
         </button>
       </form>
     </div>
