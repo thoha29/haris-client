@@ -1,51 +1,50 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import api from "../../config/api";
-import logo from "../../images/logo.png";
-import "./login.css";
+import api from '../../config/api';
+import logo from '../../images/logo.png';
+import './login.css';
 
 export default function Login({ onLogin }) {
   const navigate = useNavigate();
 
   // State tetap menggunakan nama username sesuai keinginanmu
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
       // Di sini kuncinya: kita kirim variabel 'username' ke field 'email' di backend
-      const res = await api.post("/api/auth/login", {
+      const res = await api.post('/api/auth/login', {
         username: username, // Memetakan username (input) ke email (backend)
         password: password,
       });
 
       // Simpan data login ke localStorage
-      localStorage.setItem("access_token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("userId", res.data.id_user);
-      localStorage.setItem("username", username);
+      localStorage.setItem('access_token', res.data.token);
+      localStorage.setItem('role', res.data.role);
+      localStorage.setItem('userId', res.data.id_user);
+      localStorage.setItem('username', username);
       // Arahkan halaman berdasarkan role dari response backend
       const userRole = res.data.role;
-      
-      if (userRole === "hrd") {
-        navigate("/dashboard-hrd");
-      } else if (userRole === "karyawan") {
-        navigate("/dashboard-karyawan");
-      } else if (userRole === "pimpinan") {
-        navigate("/dashboard-pimpinan");
+
+      if (userRole === 'hrd') {
+        navigate('/dashboard-hrd');
+      } else if (userRole === 'karyawan') {
+        navigate('/dashboard-karyawan');
+      } else if (userRole === 'pimpinan') {
+        navigate('/datakaryawan');
       } else {
-        navigate("/dashboard-user");
+        navigate('/dashboard-user');
       }
 
       // Jalankan fungsi onLogin jika dilempar dari App.js
       if (onLogin) onLogin();
-
     } catch (err) {
       // Mengambil pesan error dari backend jika ada (misal: "Email tidak terdaftar")
-      const errorMsg = err.response?.data?.message || "Login gagal";
+      const errorMsg = err.response?.data?.message || 'Login gagal';
       Swal.fire('Login Gagal', errorMsg, 'error');
     }
   };
@@ -57,9 +56,7 @@ export default function Login({ onLogin }) {
           <img src={logo} alt="Logo" />
         </div>
 
-        <h4 className="login-title">
-          PT. BANGGAI SENTRAL SULAWESI
-        </h4>
+        <h4 className="login-title">PT. BANGGAI SENTRAL SULAWESI</h4>
 
         <form onSubmit={handleLogin}>
           <input
@@ -67,7 +64,7 @@ export default function Login({ onLogin }) {
             className="login-input"
             placeholder="Username" // Label tetap Username
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
 
@@ -76,7 +73,7 @@ export default function Login({ onLogin }) {
             className="login-input"
             placeholder="Password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
 

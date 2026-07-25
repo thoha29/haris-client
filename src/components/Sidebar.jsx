@@ -145,11 +145,11 @@ function SideBar({ isOpen }) {
                 className="nav-content collapse"
                 data-bs-parent="#sidebar-nav"
               >
-                <li>
+                {/* <li>
                   <NavLink to="SlipGaji">
                     <span>Slip Gaji</span>
                   </NavLink>
-                </li>
+                </li> */}
                 <li>
                   <NavLink to="listGaji">
                     <span>Gaji</span>
@@ -174,7 +174,7 @@ function SideBar({ isOpen }) {
                 <span>Tambah User Karyawan</span>
               </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <NavLink
                 to="ApprovalGaji"
                 className={({ isActive }) =>
@@ -184,7 +184,7 @@ function SideBar({ isOpen }) {
                 <i className="bi bi-cash-coin"></i>
                 <span>Approval Gaji</span>
               </NavLink>
-            </li>
+            </li> */}
           </>
         )}
         {/* ==================== MENU HRD ==================== */}
@@ -245,7 +245,7 @@ function SideBar({ isOpen }) {
 
             {/* Group Approval Absensi */}
             <li className="nav-item">
-              <a
+              {/* <a
                 href="/"
                 className="nav-link collapsed"
                 data-bs-toggle="collapse"
@@ -255,7 +255,7 @@ function SideBar({ isOpen }) {
                 <i className="bi bi-fingerprint"></i>
                 <span>Approval Absensi</span>
                 <i className="bi bi-chevron-down ms-auto"></i>
-              </a>
+              </a> */}
               <ul
                 id="hrd-absensi-nav"
                 className="nav-content collapse"
