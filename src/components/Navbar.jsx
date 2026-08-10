@@ -57,6 +57,13 @@ export default function Navbar({ onLogout, onToggleSidebar }) {
 
             <hr />
 
+            <Link to="Profile?tab=change-password" className="dropdown-link" onClick={handleLinkClick}>
+              <i className="bi bi-key"></i>
+              <span>Ganti Password</span>
+            </Link>
+
+            <hr />
+
             {/* Logout */}
             <button className="dropdown-link logout" onClick={onLogout}>
               <i className="bi bi-box-arrow-right"></i>

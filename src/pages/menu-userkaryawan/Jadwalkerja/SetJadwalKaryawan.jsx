@@ -1,16 +1,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import {
+  TargetModeSelector,
+  SingleUserSelector,
+  MultipleUserSelector,
+  AllUsersBanner,
+  BulkActionPanel,
+  DailyWorkersTable,
+} from './components';
+import {
+  getKaryawanList,
+  getSkemaList,
+  getDailyWorkers,
+  getJadwalDetail,
+  assignJadwal,
+  assignJadwalBulk,
+  deleteJadwal,
+  deleteJadwalBulk,
+} from './services/jadwalService';
 import './SetJadwalKaryawan.css';
 
 const SetJadwalKaryawan = () => {
   const [activeTab, setActiveTab] = useState('kalender');
+  const [targetMode, setTargetMode] = useState('single'); // 'single', 'multiple', 'all'
   const [karyawanList, setKaryawanList] = useState([]);
   const [daftarSkema, setDaftarSkema] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [userSearchTerm, setUserSearchTerm] = useState('');
   const [selectedSkema, setSelectedSkema] = useState('');
   const [events, setEvents] = useState([]);
   const [dailyWorkers, setDailyWorkers] = useState([]);
@@ -22,8 +42,8 @@ const SetJadwalKaryawan = () => {
   const initData = useCallback(async () => {
     try {
       const [resKaryawan, resSkema] = await Promise.all([
-        axios.get('http://localhost:3000/api/jadwal/list'),
-        axios.get('http://localhost:3000/api/skema'),
+        getKaryawanList(),
+        getSkemaList(),
       ]);
       setKaryawanList(resKaryawan.data);
       setDaftarSkema(resSkema.data);
@@ -34,9 +54,7 @@ const SetJadwalKaryawan = () => {
 
   const fetchDailyWorkers = useCallback(async (date) => {
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/jadwal/daily?tanggal=${date}`
-      );
+      const res = await getDailyWorkers(date);
       setDailyWorkers(res.data);
       setSelectedDate(date);
     } catch (err) {
@@ -44,39 +62,137 @@ const SetJadwalKaryawan = () => {
     }
   }, []);
 
-  const fetchUserEvents = useCallback(async (userId) => {
-    if (!userId) return;
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/api/jadwal/detail/${userId}`
-      );
-      const formattedEvents = res.data.map((item) => ({
-        id: `${item.id_user}-${item.tanggal}`,
-        title: item.nama_skema,
-        start: item.tanggal,
-        backgroundColor: '#10b981',
-        borderColor: '#10b981',
-        allDay: true,
-        extendedProps: {
-          id_user: item.id_user,
-          tanggal: item.tanggal,
-        },
-      }));
-      setEvents(formattedEvents);
-    } catch (err) {
-      setEvents([]);
+  const fetchUserEvents = useCallback(async () => {
+    if (targetMode === 'single') {
+      if (!selectedUser) {
+        setEvents([]);
+        return;
+      }
+      try {
+        const res = await getJadwalDetail(selectedUser);
+        const formattedEvents = res.data.map((item) => ({
+          id: `${item.id_user}-${item.tanggal}-${item.id_skema}`,
+          title: item.nama_skema,
+          start: item.tanggal,
+          backgroundColor: '#10b981',
+          borderColor: '#10b981',
+          allDay: true,
+          extendedProps: {
+            id_user: item.id_user,
+            tanggal: item.tanggal,
+          },
+        }));
+        setEvents(formattedEvents);
+      } catch (err) {
+        setEvents([]);
+      }
+    } else if (targetMode === 'multiple') {
+      if (!selectedUsers || selectedUsers.length === 0) {
+        setEvents([]);
+        return;
+      }
+      try {
+        const resArray = await Promise.all(
+          selectedUsers.map((uid) =>
+            getJadwalDetail(uid).catch(() => ({ data: [] }))
+          )
+        );
+        const allEvents = resArray.flatMap((res, idx) => {
+          const uid = selectedUsers[idx];
+          const uObj = karyawanList.find(
+            (k) => String(k.id_user) === String(uid)
+          );
+          const uName = uObj ? uObj.username : `User ${uid}`;
+          return (res.data || []).map((item) => ({
+            id: `${item.id_user}-${item.tanggal}-${item.id_skema}`,
+            title: `${uName}: ${item.nama_skema}`,
+            start: item.tanggal,
+            backgroundColor: '#3b82f6',
+            borderColor: '#2563eb',
+            allDay: true,
+            extendedProps: {
+              id_user: item.id_user,
+              tanggal: item.tanggal,
+            },
+          }));
+        });
+        setEvents(allEvents);
+      } catch (err) {
+        setEvents([]);
+      }
+    } else if (targetMode === 'all') {
+      if (!karyawanList || karyawanList.length === 0) {
+        setEvents([]);
+        return;
+      }
+      try {
+        const resArray = await Promise.all(
+          karyawanList.map((k) =>
+            getJadwalDetail(k.id_user).catch(() => ({ data: [] }))
+          )
+        );
+        const allEvents = resArray.flatMap((res, idx) => {
+          const uObj = karyawanList[idx];
+          const uName = uObj ? uObj.username : 'Karyawan';
+          return (res.data || []).map((item) => ({
+            id: `${item.id_user}-${item.tanggal}-${item.id_skema}`,
+            title: `${uName}: ${item.nama_skema}`,
+            start: item.tanggal,
+            backgroundColor: '#8b5cf6',
+            borderColor: '#7c3aed',
+            allDay: true,
+            extendedProps: {
+              id_user: item.id_user,
+              tanggal: item.tanggal,
+            },
+          }));
+        });
+        setEvents(allEvents);
+      } catch (err) {
+        setEvents([]);
+      }
     }
-  }, []);
+  }, [targetMode, selectedUser, selectedUsers, karyawanList]);
 
   useEffect(() => {
     initData();
     fetchDailyWorkers(selectedDate);
   }, [initData, fetchDailyWorkers, selectedDate]);
 
+  useEffect(() => {
+    fetchUserEvents();
+  }, [fetchUserEvents]);
+
+  const handleToggleUser = (id) => {
+    if (selectedUsers.includes(id)) {
+      setSelectedUsers(selectedUsers.filter((uId) => uId !== id));
+    } else {
+      setSelectedUsers([...selectedUsers, id]);
+    }
+  };
+
   const handleDateClick = async (arg) => {
-    if (!selectedUser || !selectedSkema) {
+    if (targetMode === 'single' && !selectedUser) {
       fetchDailyWorkers(arg.dateStr);
       setActiveTab('daftar');
+      return;
+    }
+
+    if (targetMode === 'multiple' && selectedUsers.length === 0) {
+      Swal.fire(
+        'Peringatan',
+        'Pilih minimal 1 Karyawan terlebih dahulu.',
+        'warning'
+      );
+      return;
+    }
+
+    if (!selectedSkema) {
+      Swal.fire(
+        'Peringatan',
+        'Pilih Shift / Skema terlebih dahulu!',
+        'warning'
+      );
       return;
     }
 
@@ -84,36 +200,69 @@ const SetJadwalKaryawan = () => {
       (s) => String(s.id_skema) === String(selectedSkema)
     );
 
+    let targetText = '';
+    if (targetMode === 'all') {
+      targetText = 'SELURUH Karyawan (Role Karyawan)';
+    } else if (targetMode === 'multiple') {
+      targetText = `${selectedUsers.length} Karyawan terpilih`;
+    } else {
+      const uObj = karyawanList.find(
+        (k) => String(k.id_user) === String(selectedUser)
+      );
+      targetText = uObj ? uObj.username : `User #${selectedUser}`;
+    }
+
     const result = await Swal.fire({
-      title: 'Konfirmasi',
-      text: `Set shift ${skemaTerpilih?.nama_skema} pada ${arg.dateStr}?`,
+      title: 'Konfirmasi Penugasan Shift',
+      text: `Set shift ${skemaTerpilih?.nama_skema} pada ${arg.dateStr} untuk ${targetText}?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
+      confirmButtonColor: '#10b981',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya',
+      confirmButtonText: 'Ya, Set Shift',
       cancelButtonText: 'Batal',
     });
 
     if (result.isConfirmed) {
       try {
-        await axios.post('http://localhost:3000/api/jadwal/assign', {
-          id_user: selectedUser,
-          id_skema: selectedSkema,
+        let payload = {
+          id_skema: Number(selectedSkema),
           tanggal: arg.dateStr,
-        });
-        fetchUserEvents(selectedUser);
+        };
+
+        if (targetMode === 'all') {
+          payload.target_all = true;
+        } else if (targetMode === 'multiple') {
+          payload.id_users = selectedUsers.map(Number);
+        } else {
+          payload.id_user = Number(selectedUser);
+        }
+
+        await assignJadwal(payload);
+        fetchUserEvents();
         fetchDailyWorkers(arg.dateStr);
-        Swal.fire('Berhasil!', 'Shift dijadwalkan', 'success');
+        Swal.fire('Berhasil!', 'Shift berhasil dijadwalkan', 'success');
       } catch (err) {
-        Swal.fire('Error', 'Gagal update', 'error');
+        Swal.fire(
+          'Error',
+          err.response?.data?.error || 'Gagal update shift',
+          'error'
+        );
       }
     }
   };
 
   const handleDateSelect = (selectionInfo) => {
-    if (!selectedUser) {
+    if (targetMode === 'single' && !selectedUser) {
       Swal.fire('Peringatan', 'Pilih Karyawan terlebih dahulu.', 'warning');
+      return;
+    }
+    if (targetMode === 'multiple' && selectedUsers.length === 0) {
+      Swal.fire(
+        'Peringatan',
+        'Pilih minimal 1 Karyawan terlebih dahulu.',
+        'warning'
+      );
       return;
     }
 
@@ -121,7 +270,6 @@ const SetJadwalKaryawan = () => {
     let end = new Date(selectionInfo.endStr);
     let dateArray = [];
 
-    // FullCalendar endStr is exclusive, so we loop until start < end
     while (start < end) {
       let year = start.getFullYear();
       let month = String(start.getMonth() + 1).padStart(2, '0');
@@ -147,13 +295,38 @@ const SetJadwalKaryawan = () => {
       );
       return;
     }
+    if (targetMode === 'single' && !selectedUser) {
+      Swal.fire('Peringatan', 'Pilih Karyawan terlebih dahulu!', 'warning');
+      return;
+    }
+    if (targetMode === 'multiple' && selectedUsers.length === 0) {
+      Swal.fire(
+        'Peringatan',
+        'Pilih minimal 1 Karyawan terlebih dahulu!',
+        'warning'
+      );
+      return;
+    }
+
     const skemaTerpilih = daftarSkema.find(
       (s) => String(s.id_skema) === String(selectedSkema)
     );
 
+    let targetText = '';
+    if (targetMode === 'all') {
+      targetText = 'SELURUH Karyawan (Role Karyawan)';
+    } else if (targetMode === 'multiple') {
+      targetText = `${selectedUsers.length} Karyawan terpilih`;
+    } else {
+      const uObj = karyawanList.find(
+        (k) => String(k.id_user) === String(selectedUser)
+      );
+      targetText = uObj ? uObj.username : `User #${selectedUser}`;
+    }
+
     const result = await Swal.fire({
-      title: 'Plot Massal',
-      text: `Plot shift ${skemaTerpilih?.nama_skema} untuk ${selectedDates.length} hari?`,
+      title: 'Plot Massal Shift',
+      text: `Plot shift ${skemaTerpilih?.nama_skema} untuk ${selectedDates.length} hari (${selectedDates[0]} s/d ${selectedDates[selectedDates.length - 1]}) pada ${targetText}?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Ya, Plot!',
@@ -162,20 +335,29 @@ const SetJadwalKaryawan = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.post('http://localhost:3000/api/jadwal/assign-bulk', {
-          id_user: selectedUser,
-          id_skema: selectedSkema,
+        let payload = {
+          id_skema: Number(selectedSkema),
           tanggalArray: selectedDates,
-        });
-        fetchUserEvents(selectedUser);
+        };
+
+        if (targetMode === 'all') {
+          payload.target_all = true;
+        } else if (targetMode === 'multiple') {
+          payload.id_users = selectedUsers.map(Number);
+        } else {
+          payload.id_user = Number(selectedUser);
+        }
+
+        await assignJadwalBulk(payload);
+        fetchUserEvents();
         fetchDailyWorkers(selectedDates[0]);
-        Swal.fire('Berhasil!', 'Berhasil plot jadwal!', 'success');
+        Swal.fire('Berhasil!', 'Berhasil plot jadwal massal!', 'success');
         setSelectedDates([]);
       } catch (err) {
         Swal.fire(
           'Gagal',
           'Gagal plotting massal: ' +
-            (err.response?.data?.error || err.message),
+          (err.response?.data?.error || err.message),
           'error'
         );
       }
@@ -183,9 +365,21 @@ const SetJadwalKaryawan = () => {
   };
 
   const handleBulkDelete = async () => {
+    let targetText = '';
+    if (targetMode === 'all') {
+      targetText = 'SELURUH Karyawan';
+    } else if (targetMode === 'multiple') {
+      targetText = `${selectedUsers.length} Karyawan terpilih`;
+    } else {
+      const uObj = karyawanList.find(
+        (k) => String(k.id_user) === String(selectedUser)
+      );
+      targetText = uObj ? uObj.username : `User #${selectedUser}`;
+    }
+
     const result = await Swal.fire({
-      title: 'Hapus Massal',
-      text: `Hapus jadwal shift untuk ${selectedDates.length} hari terpilih?`,
+      title: 'Hapus Massal Shift',
+      text: `Hapus jadwal shift untuk ${selectedDates.length} hari terpilih (${selectedDates[0]} s/d ${selectedDates[selectedDates.length - 1]}) pada ${targetText}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -195,13 +389,20 @@ const SetJadwalKaryawan = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3000/api/jadwal/delete-bulk`, {
-          data: {
-            id_user: selectedUser,
-            tanggalArray: selectedDates,
-          },
-        });
-        fetchUserEvents(selectedUser);
+        let payload = {
+          tanggalArray: selectedDates,
+        };
+
+        if (targetMode === 'all') {
+          payload.target_all = true;
+        } else if (targetMode === 'multiple') {
+          payload.id_users = selectedUsers.map(Number);
+        } else {
+          payload.id_user = Number(selectedUser);
+        }
+
+        await deleteJadwalBulk(payload);
+        fetchUserEvents();
         fetchDailyWorkers(selectedDates[0]);
         Swal.fire('Dihapus!', 'Shift berhasil dihapus!', 'success');
         setSelectedDates([]);
@@ -219,7 +420,6 @@ const SetJadwalKaryawan = () => {
     const { id_user, tanggal } = clickInfo.event.extendedProps;
     const skemaName = clickInfo.event.title;
 
-    // Extract localized YYYY-MM-DD to prevent timezone shifting (UTC Z to local time)
     const d = new Date(tanggal);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -227,7 +427,7 @@ const SetJadwalKaryawan = () => {
     const correctDate = `${year}-${month}-${day}`;
 
     const result = await Swal.fire({
-      title: 'Konfirmasi',
+      title: 'Konfirmasi Hapus Shift',
       text: `Yakin ingin menghapus shift ${skemaName} pada tanggal ${correctDate}?`,
       icon: 'warning',
       showCancelButton: true,
@@ -238,20 +438,18 @@ const SetJadwalKaryawan = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3000/api/jadwal/delete`, {
-          data: {
-            id_user: id_user,
-            tanggal: correctDate,
-          },
+        await deleteJadwal({
+          id_user: id_user,
+          tanggal: correctDate,
         });
-        fetchUserEvents(selectedUser);
+        fetchUserEvents();
         fetchDailyWorkers(selectedDate);
         Swal.fire('Dihapus!', 'Shift berhasil dihapus!', 'success');
       } catch (err) {
         Swal.fire(
           'Gagal',
           'Gagal menghapus shift: ' +
-            (err.response?.data?.error || err.message),
+          (err.response?.data?.error || err.message),
           'error'
         );
       }
@@ -284,26 +482,13 @@ const SetJadwalKaryawan = () => {
         {/* Tab Atur Jadwal */}
         <div style={{ display: activeTab === 'kalender' ? 'block' : 'none' }}>
           <div className="filter-card">
+            <TargetModeSelector
+              targetMode={targetMode}
+              setTargetMode={setTargetMode}
+            />
+
             <div className="input-group">
-              <label>Karyawan</label>
-              <select
-                value={selectedUser}
-                onChange={(e) => {
-                  setSelectedUser(e.target.value);
-                  fetchUserEvents(e.target.value);
-                }}
-                className="select-elite"
-              >
-                <option value="">-- Pilih Karyawan --</option>
-                {karyawanList.map((k) => (
-                  <option key={k.id_user} value={k.id_user}>
-                    {k.username}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="input-group">
-              <label>Shift / Skema</label>
+              <label className="filter-label">Shift / Skema</label>
               <select
                 value={selectedSkema}
                 onChange={(e) => setSelectedSkema(e.target.value)}
@@ -320,7 +505,31 @@ const SetJadwalKaryawan = () => {
             </div>
           </div>
 
-          <div className="calendar-card animate-fade-in">
+          {/* Area Pemilihan Target Dynamic */}
+          {targetMode === 'single' && (
+            <SingleUserSelector
+              selectedUser={selectedUser}
+              setSelectedUser={setSelectedUser}
+              karyawanList={karyawanList}
+            />
+          )}
+
+          {targetMode === 'multiple' && (
+            <MultipleUserSelector
+              karyawanList={karyawanList}
+              selectedUsers={selectedUsers}
+              setSelectedUsers={setSelectedUsers}
+              handleToggleUser={handleToggleUser}
+              userSearchTerm={userSearchTerm}
+              setUserSearchTerm={setUserSearchTerm}
+            />
+          )}
+
+          {targetMode === 'all' && (
+            <AllUsersBanner totalKaryawan={karyawanList.length} />
+          )}
+
+          <div className="calendar-card animate-fade-in" style={{ marginTop: '20px' }}>
             <FullCalendar
               plugins={[dayGridPlugin, interactionPlugin]}
               initialView="dayGridMonth"
@@ -340,86 +549,21 @@ const SetJadwalKaryawan = () => {
             />
           </div>
 
-          {selectedDates.length > 1 && (
-            <div className="bulk-action-panel animate-fade-in">
-              <p>
-                <strong>{selectedDates.length} Hari Terpilih</strong> (
-                {selectedDates[0]} s/d {selectedDates[selectedDates.length - 1]}
-                )
-              </p>
-              <div className="btn-group-bulk">
-                <button onClick={handleBulkAssign} className="btn-bulk-assign">
-                  ✅ Plot Shift Terpilih
-                </button>
-                <button onClick={handleBulkDelete} className="btn-bulk-delete">
-                  🗑️ Hapus Shift Terpilih
-                </button>
-                <button
-                  onClick={() => setSelectedDates([])}
-                  className="btn-bulk-cancel"
-                >
-                  Batal
-                </button>
-              </div>
-            </div>
-          )}
+          <BulkActionPanel
+            selectedDates={selectedDates}
+            handleBulkAssign={handleBulkAssign}
+            handleBulkDelete={handleBulkDelete}
+            onCancel={() => setSelectedDates([])}
+          />
         </div>
 
         {/* Tab Daftar Kerja (Table Version) */}
-        <div
-          style={{ display: activeTab === 'daftar' ? 'block' : 'none' }}
-          className="animate-fade-in"
-        >
-          <div className="table-controls">
-            <div className="input-group">
-              <label>Pilih Tanggal Monitoring</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => fetchDailyWorkers(e.target.value)}
-                className="date-input-elite"
-              />
-            </div>
-          </div>
-
-          <div className="table-wrapper">
-            <table className="daily-table">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Nama Karyawan</th>
-                  <th>Nama Shift</th>
-                  <th>Jam Masuk</th>
-                  <th>Jam Keluar</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dailyWorkers.length > 0 ? (
-                  dailyWorkers.map((w, idx) => (
-                    <tr key={idx}>
-                      <td>{idx + 1}</td>
-                      <td className="font-bold">{w.username}</td>
-                      <td>
-                        <span className="badge-shift">{w.nama_skema}</span>
-                      </td>
-                      <td>{w.jam_masuk.substring(0, 5)}</td>
-                      <td>{w.jam_keluar.substring(0, 5)}</td>
-                      <td>
-                        <span className="status-pill active">Terjadwal</span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="text-center no-data">
-                      Tidak ada karyawan yang dijadwalkan pada tanggal ini.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+        <div style={{ display: activeTab === 'daftar' ? 'block' : 'none' }}>
+          <DailyWorkersTable
+            selectedDate={selectedDate}
+            fetchDailyWorkers={fetchDailyWorkers}
+            dailyWorkers={dailyWorkers}
+          />
         </div>
       </div>
     </div>

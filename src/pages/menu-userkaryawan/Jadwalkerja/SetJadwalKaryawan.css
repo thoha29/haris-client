@@ -392,3 +392,214 @@
         transform: translateY(0);
     }
 }
+
+/* Mode Selection UI */
+.target-mode-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.target-mode-buttons {
+    display: flex;
+    gap: 8px;
+    background: #e2e8f0;
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.mode-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.mode-btn.active {
+    background: #ffffff;
+    color: var(--primary-dark);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    font-weight: 700;
+}
+
+/* Dynamic Target Selection Card */
+.target-selection-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+.multi-user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.font-title {
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.badge-counter {
+    margin-left: 10px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.multi-user-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-select-action {
+    padding: 6px 14px;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-select-action:hover {
+    background: #059669;
+}
+
+.btn-select-action.outline {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-select-action.outline:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.search-box-wrapper {
+    margin-bottom: 12px;
+}
+
+.search-input-elite {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: 0.2s;
+}
+
+.search-input-elite:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.multi-user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.user-chip:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.user-chip.selected {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+.chip-checkbox {
+    cursor: pointer;
+    accent-color: #2563eb;
+    width: 16px;
+    height: 16px;
+}
+
+.chip-name {
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Banner All Karyawan */
+.all-banner {
+    background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%);
+    border: 1px solid #ddd6fe;
+}
+
+.all-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.all-banner-icon {
+    font-size: 2rem;
+}
+
+.all-banner-content strong {
+    color: #6b21a8;
+    font-size: 1.05rem;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.all-banner-content p {
+    margin: 0;
+    color: #5b21b6;
+    font-size: 0.9rem;
+}
