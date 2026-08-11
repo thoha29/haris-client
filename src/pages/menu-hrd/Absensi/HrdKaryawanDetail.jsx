@@ -96,14 +96,30 @@ const HrdKaryawanDetail = () => {
     }
   };
 
-  const handleDownloadExcel = () => {
-    // Tips: Kamu bisa mengirim parameter bulan & tahun ke backend jika backend mendukung filter download
-    window.open(
-      `/absensi/hrd/download-excel/${id_user}?month=${
-        parseInt(selectedMonth) + 1
-      }&year=${selectedYear}`,
-      '_blank'
-    );
+  const handleDownloadExcel = async () => {
+    try {
+      const res = await api.get(
+        `/absensi/hrd/download-excel/${id_user}?month=${
+          parseInt(selectedMonth) + 1
+        }&year=${selectedYear}`,
+        {
+          responseType: 'blob',
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `Absensi_User_${id_user}_${parseInt(selectedMonth) + 1}_${selectedYear}.xlsx`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Gagal mengunduh file Excel absensi:', err);
+    }
   };
 
   return (

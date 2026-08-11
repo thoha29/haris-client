@@ -25,9 +25,22 @@ const HrdCutiRiwayatDetail = () => {
     fetchCuti();
   }, [id_user]);
 
-  const handleExportExcel = () => {
-    // Memanggil rute export excel yang sudah dibuat di backend
-    window.open(`/cuti/laporan/excel/${id_user}`, '_blank');
+  const handleExportExcel = async () => {
+    try {
+      const res = await api.get(`/cuti/laporan/excel/${id_user}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Riwayat_Cuti_User_${id_user}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Gagal mengunduh file Excel:', err);
+    }
   };
 
   return (
