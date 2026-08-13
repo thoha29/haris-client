@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Swal from 'sweetalert2';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -39,6 +39,33 @@ const SetJadwalKaryawan = () => {
     new Date().toISOString().split('T')[0]
   );
   const [selectedDates, setSelectedDates] = useState([]);
+
+  // Filter Target Penugasan States
+  const [filterTipeKerja, setFilterTipeKerja] = useState('');
+  const [filterLokasiKerja, setFilterLokasiKerja] = useState('');
+
+  const lokasiOptions = useMemo(() => {
+    const locations = Array.from(
+      new Set(
+        (karyawanList || [])
+          .map((k) => k.lokasi_kerja)
+          .filter((loc) => loc && loc.trim() !== '')
+      )
+    );
+    return locations.map((loc) => ({ value: loc, label: loc }));
+  }, [karyawanList]);
+
+  const filteredKaryawanList = useMemo(() => {
+    return (karyawanList || []).filter((k) => {
+      const matchTipe = filterTipeKerja
+        ? (k.tipe_kerja || 'non-shift') === filterTipeKerja
+        : true;
+      const matchLokasi = filterLokasiKerja
+        ? k.lokasi_kerja === filterLokasiKerja
+        : true;
+      return matchTipe && matchLokasi;
+    });
+  }, [karyawanList, filterTipeKerja, filterLokasiKerja]);
 
   const initData = useCallback(async () => {
     try {
@@ -502,6 +529,32 @@ const SetJadwalKaryawan = () => {
                 isClearable={true}
               />
             </div>
+
+            <div className="input-group">
+              <label className="filter-label">Filter Tipe Kerja Target</label>
+              <SelectSearch
+                options={[
+                  { value: '', label: 'Semua Tipe Kerja' },
+                  { value: 'non-shift', label: 'Non-Shift' },
+                  { value: 'shift', label: 'Shift' },
+                ]}
+                value={filterTipeKerja}
+                onChange={(e) => setFilterTipeKerja(e.value)}
+                placeholder="Semua Tipe Kerja"
+                isClearable={true}
+              />
+            </div>
+
+            <div className="input-group">
+              <label className="filter-label">Filter Lokasi Kerja Target</label>
+              <SelectSearch
+                options={[{ value: '', label: 'Semua Lokasi Kerja' }, ...lokasiOptions]}
+                value={filterLokasiKerja}
+                onChange={(e) => setFilterLokasiKerja(e.value)}
+                placeholder="Semua Lokasi Kerja"
+                isClearable={true}
+              />
+            </div>
           </div>
 
           {/* Area Pemilihan Target Dynamic */}
@@ -509,13 +562,13 @@ const SetJadwalKaryawan = () => {
             <SingleUserSelector
               selectedUser={selectedUser}
               setSelectedUser={setSelectedUser}
-              karyawanList={karyawanList}
+              karyawanList={filteredKaryawanList}
             />
           )}
 
           {targetMode === 'multiple' && (
             <MultipleUserSelector
-              karyawanList={karyawanList}
+              karyawanList={filteredKaryawanList}
               selectedUsers={selectedUsers}
               setSelectedUsers={setSelectedUsers}
               handleToggleUser={handleToggleUser}
@@ -525,7 +578,7 @@ const SetJadwalKaryawan = () => {
           )}
 
           {targetMode === 'all' && (
-            <AllUsersBanner totalKaryawan={karyawanList.length} />
+            <AllUsersBanner totalKaryawan={filteredKaryawanList.length} />
           )}
 
           <div className="calendar-card animate-fade-in" style={{ marginTop: '20px' }}>

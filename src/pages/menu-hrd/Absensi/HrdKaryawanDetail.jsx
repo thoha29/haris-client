@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import './HrdKaryawanDetail.css';
 import api from '../../../config/api';
 import SelectSearch from '../../../components/SelectSearch';
+import Pagination from '../../../components/Pagination';
 
 const HrdKaryawanDetail = () => {
   const { id_user } = useParams();
@@ -61,6 +62,10 @@ const HrdKaryawanDetail = () => {
     // eslint-disable-next-line
   }, [id_user]);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   // --- Logic Filter Data ---
   const filteredRiwayat = useMemo(() => {
     return riwayat.filter((item) => {
@@ -71,6 +76,17 @@ const HrdKaryawanDetail = () => {
       );
     });
   }, [riwayat, selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedMonth, selectedYear]);
+
+  const paginatedRiwayat = useMemo(() => {
+    if (pageSize === 'Semua') return filteredRiwayat;
+    const size = Number(pageSize);
+    const start = (currentPage - 1) * size;
+    return filteredRiwayat.slice(start, start + size);
+  }, [filteredRiwayat, currentPage, pageSize]);
 
   const handleEditClick = (item) => {
     setEditData({ ...item });
@@ -268,8 +284,8 @@ const HrdKaryawanDetail = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredRiwayat.length > 0 ? (
-                filteredRiwayat.map((item, index) => (
+              {paginatedRiwayat.length > 0 ? (
+                paginatedRiwayat.map((item, index) => (
                   <tr key={index}>
                     <td>
                       {new Date(item.tanggal).toLocaleDateString('id-ID', {
@@ -354,6 +370,16 @@ const HrdKaryawanDetail = () => {
               )}
             </tbody>
           </table>
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredRiwayat.length}
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+          />
         </div>
       )}
 

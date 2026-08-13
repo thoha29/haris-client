@@ -3,10 +3,22 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import './ApprovalGaji.css';
 import SelectSearch from '../../components/SelectSearch';
+import Pagination from '../../components/Pagination';
 
 const ApprovalGaji = () => {
   const [riwayat, setRiwayat] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const paginatedRiwayat = React.useMemo(() => {
+    if (pageSize === 'Semua') return riwayat;
+    const size = Number(pageSize);
+    const start = (currentPage - 1) * size;
+    return riwayat.slice(start, start + size);
+  }, [riwayat, currentPage, pageSize]);
 
   const namaBulan = [
     'Januari',
@@ -93,85 +105,98 @@ const ApprovalGaji = () => {
           <p>Sedang memuat data gaji...</p>
         </div>
       ) : (
-        <div className="table-container">
-          <table className="styled-table">
-            <thead>
-              <tr>
-                <th>Nama Karyawan</th>
-                <th>Periode/Tahun</th>
-                <th>Gaji Bersih</th>
-                <th>Status Bayar</th>
-                <th>Aksi Ubah Status</th>
-                <th>Aksi Hapus</th>
-              </tr>
-            </thead>
-            <tbody>
-              {riwayat.length > 0 ? (
-                riwayat.map((h) => (
-                  <tr key={h.id_slip}>
-                    <td>
-                      <strong>{h.nama_lengkap || h.username}</strong>
-                    </td>
-                    <td>
-                      {namaBulan[h.bulan - 1]} {h.tahun}
-                    </td>
-                    <td className="td-net">
-                      <strong>
-                        Rp {Number(h.gaji_bersih).toLocaleString('id-ID')}
-                      </strong>
-                    </td>
-                    <td>
-                      <span
-                        className={`status-badge ${
-                          h.status_bayar === 'paid'
-                            ? 'status-paid'
-                            : 'status-pending'
-                        }`}
-                      >
-                        {h.status_bayar.toUpperCase()}
-                      </span>
-                    </td>
-                    <td style={{ minWidth: '130px' }}>
-                      <SelectSearch
-                        options={[
-                          { value: 'pending', label: 'Pending' },
-                          { value: 'paid', label: 'Paid' },
-                        ]}
-                        value={h.status_bayar}
-                        onChange={(e) => handleUpdateStatus(h.id_slip, e.value)}
-                      />
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => handleDelete(h.id_slip)}
-                        style={{
-                          backgroundColor: '#e74c3c',
-                          color: 'white',
-                          border: 'none',
-                          padding: '8px 12px',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        Hapus
-                      </button>
+        <>
+          <div className="table-container">
+            <table className="styled-table">
+              <thead>
+                <tr>
+                  <th>Nama Karyawan</th>
+                  <th>Periode/Tahun</th>
+                  <th>Gaji Bersih</th>
+                  <th>Status Bayar</th>
+                  <th>Aksi Ubah Status</th>
+                  <th>Aksi Hapus</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedRiwayat.length > 0 ? (
+                  paginatedRiwayat.map((h) => (
+                    <tr key={h.id_slip}>
+                      <td>
+                        <strong>{h.nama_lengkap || h.username}</strong>
+                      </td>
+                      <td>
+                        {namaBulan[h.bulan - 1]} {h.tahun}
+                      </td>
+                      <td className="td-net">
+                        <strong>
+                          Rp {Number(h.gaji_bersih).toLocaleString('id-ID')}
+                        </strong>
+                      </td>
+                      <td>
+                        <span
+                          className={`status-badge ${
+                            h.status_bayar === 'paid'
+                              ? 'status-paid'
+                              : 'status-pending'
+                          }`}
+                        >
+                          {h.status_bayar.toUpperCase()}
+                        </span>
+                      </td>
+                      <td style={{ minWidth: '130px' }}>
+                        <SelectSearch
+                          options={[
+                            { value: 'pending', label: 'Pending' },
+                            { value: 'paid', label: 'Paid' },
+                          ]}
+                          value={h.status_bayar}
+                          onChange={(e) => handleUpdateStatus(h.id_slip, e.value)}
+                        />
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => handleDelete(h.id_slip)}
+                          style={{
+                            backgroundColor: '#e74c3c',
+                            color: 'white',
+                            border: 'none',
+                            padding: '8px 12px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          Hapus
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      style={{ textAlign: 'center', padding: '20px' }}
+                    >
+                      Belum ada data gaji tersedia.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="6"
-                    style={{ textAlign: 'center', padding: '20px' }}
-                  >
-                    Belum ada data gaji tersedia.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalItems={riwayat.length}
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+          />
+        </>
       )}
     </div>
   );

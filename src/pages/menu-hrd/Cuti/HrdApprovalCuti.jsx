@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import './HrdApprovalCuti.css';
 import api from '../../../config/api';
 import SelectSearch from '../../../components/SelectSearch';
+import Pagination from '../../../components/Pagination';
 
 const HrdApprovalCuti = () => {
   const [listPengajuan, setListPengajuan] = useState([]);
@@ -37,6 +38,10 @@ const HrdApprovalCuti = () => {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   };
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const filteredData = useMemo(() => {
     return listPengajuan.filter((item) => {
       const matchName = item.nama_karyawan
@@ -52,6 +57,17 @@ const HrdApprovalCuti = () => {
       return matchName && matchMonth && matchType;
     });
   }, [listPengajuan, searchTerm, selectedMonth, selectedType]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedMonth, selectedType]);
+
+  const paginatedData = useMemo(() => {
+    if (pageSize === 'Semua') return filteredData;
+    const size = Number(pageSize);
+    const start = (currentPage - 1) * size;
+    return filteredData.slice(start, start + size);
+  }, [filteredData, currentPage, pageSize]);
 
   // Handle Action Final oleh HRD
   const handleAction = async (id_cuti, statusBaru) => {
@@ -165,8 +181,8 @@ const HrdApprovalCuti = () => {
                     Memuat data verifikasi...
                   </td>
                 </tr>
-              ) : filteredData.length > 0 ? (
-                filteredData.map((item) => (
+              ) : paginatedData.length > 0 ? (
+                paginatedData.map((item) => (
                   <tr key={item.id_cuti}>
                     <td className="emp-name">{item.nama_karyawan}</td>
                     <td>
@@ -235,6 +251,17 @@ const HrdApprovalCuti = () => {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredData.length}
+          pageSize={pageSize}
+          onPageChange={(page) => setCurrentPage(page)}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+        />
       </div>
     </div>
   );

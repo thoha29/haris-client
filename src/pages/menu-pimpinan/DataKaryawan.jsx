@@ -3,11 +3,16 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import './DataKaryawan.css';
 import SelectSearch from '../../components/SelectSearch';
+import Pagination from '../../components/Pagination';
 
 const DataKaryawan = () => {
   const [karyawanList, setKaryawanList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -32,10 +37,6 @@ const DataKaryawan = () => {
       setLoading(false);
     }
   };
-
-  const filteredKaryawan = karyawanList.filter((k) =>
-    k.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -95,6 +96,23 @@ const DataKaryawan = () => {
     setEditId(null);
     setFormData({ username: '', password: '', role: 'karyawan' });
   };
+
+  const filteredKaryawan = React.useMemo(() => {
+    return karyawanList.filter((k) =>
+      (k.username || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [karyawanList, searchTerm]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  const paginatedKaryawan = React.useMemo(() => {
+    if (pageSize === 'Semua') return filteredKaryawan;
+    const size = Number(pageSize);
+    const start = (currentPage - 1) * size;
+    return filteredKaryawan.slice(start, start + size);
+  }, [filteredKaryawan, currentPage, pageSize]);
 
   return (
     <div className="data-karyawan-container">
@@ -197,8 +215,8 @@ const DataKaryawan = () => {
                       Memuat data...
                     </td>
                   </tr>
-                ) : filteredKaryawan.length > 0 ? (
-                  filteredKaryawan.map((k) => (
+                ) : paginatedKaryawan.length > 0 ? (
+                  paginatedKaryawan.map((k) => (
                     <tr key={k.id_user}>
                       <td>{k.id_user}</td>
                       <td>{k.username}</td>
@@ -236,6 +254,17 @@ const DataKaryawan = () => {
               </tbody>
             </table>
           </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredKaryawan.length}
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+          />
         </div>
       </div>
     </div>

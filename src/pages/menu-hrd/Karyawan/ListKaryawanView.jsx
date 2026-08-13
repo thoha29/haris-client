@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Swal from 'sweetalert2';
 import api from '../../../config/api';
 import SelectSearch from '../../../components/SelectSearch';
+import Pagination from '../../../components/Pagination';
 import './ListKaryawanView.css';
 
 const ListKaryawanView = () => {
@@ -59,6 +60,10 @@ const ListKaryawanView = () => {
     };
   };
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   // Filter data berdasarkan search & tipe kerja
   const filteredData = useMemo(() => {
     return listKaryawan.filter((item) => {
@@ -76,6 +81,17 @@ const ListKaryawanView = () => {
       return matchSearch && matchTipe;
     });
   }, [listKaryawan, searchTerm, filterTipeKerja]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterTipeKerja]);
+
+  const paginatedData = useMemo(() => {
+    if (pageSize === 'Semua') return filteredData;
+    const size = Number(pageSize);
+    const start = (currentPage - 1) * size;
+    return filteredData.slice(start, start + size);
+  }, [filteredData, currentPage, pageSize]);
 
   // Export excel seluruh karyawan
   const handleExportAll = async () => {
@@ -207,12 +223,13 @@ const ListKaryawanView = () => {
                     Memuat data karyawan dari `v_listKaryawan`...
                   </td>
                 </tr>
-              ) : filteredData.length > 0 ? (
-                filteredData.map((item, idx) => {
+              ) : paginatedData.length > 0 ? (
+                paginatedData.map((item, idx) => {
                   const sisa = hitungSisaKontrak(item.tanggal_kontrak_berakhir);
+                  const displayIndex = pageSize === 'Semua' ? idx + 1 : (currentPage - 1) * Number(pageSize) + idx + 1;
                   return (
                     <tr key={item.id_data_pribadi || idx}>
-                      <td>{idx + 1}</td>
+                      <td>{displayIndex}</td>
                       <td>
                         <div className="fw-bold">{item.nama_lengkap || item.username || '-'}</div>
                         <small className="text-muted">
@@ -258,6 +275,17 @@ const ListKaryawanView = () => {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredData.length}
+          pageSize={pageSize}
+          onPageChange={(page) => setCurrentPage(page)}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
       {/* Modal Detail Karyawan */}

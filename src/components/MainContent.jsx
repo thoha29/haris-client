@@ -9,6 +9,7 @@ import { SkemaManager, SetJadwalKaryawan } from '../pages/menu-userkaryawan';
 import Skemagaji from '../pages/menu-keuangan/Gaji/Skemagaji';
 import ApprovalGaji from '../pages/menu-pimpinan/ApprovalGaji';
 import UserApprovalLembur from '../pages/menu-userkaryawan/UserApprovalLembur';
+import UserApprovalRiwayat from '../pages/menu-userkaryawan/UserApprovalRiwayat';
 import './MainContent.css';
 
 // Named Imports dari Folder menu-hrd
@@ -117,10 +118,8 @@ function MainContent({ isSidebarOpen }) {
         {/* Menu Approval Tahap 1 (Atasan/User) */}
         <Route path="UserApproval" element={<UserApproval />} />
         <Route path="UserApprovalCuti" element={<UserApprovalCuti />} />
-        <Route
-          path="UserApprovalLembur"
-          element={<UserApprovalLembur />}
-        ></Route>
+        <Route path="UserApprovalLembur" element={<UserApprovalLembur />} />
+        <Route path="UserApprovalRiwayat" element={<UserApprovalRiwayat />} />
 
         {/* Menu Keuangan */}
         <Route path="Dashboard-Keuangan" element={<DashboardKeuangan />} />

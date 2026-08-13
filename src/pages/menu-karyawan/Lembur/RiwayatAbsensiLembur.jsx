@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import './RiwayatAbsensiLembur.css';
 import SelectSearch from '../../../components/SelectSearch';
+import Pagination from '../../../components/Pagination';
 
 const RiwayatAbsensiLembur = () => {
   const [riwayat, setRiwayat] = useState([]);
@@ -11,6 +12,10 @@ const RiwayatAbsensiLembur = () => {
   // State untuk Filter
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()); // Default bulan sekarang
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default tahun sekarang
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const months = [
     'Januari',
@@ -82,6 +87,17 @@ const RiwayatAbsensiLembur = () => {
     });
   }, [riwayat, selectedMonth, selectedYear]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedMonth, selectedYear]);
+
+  const paginatedRiwayat = useMemo(() => {
+    if (pageSize === 'Semua') return filteredRiwayat;
+    const size = Number(pageSize);
+    const start = (currentPage - 1) * size;
+    return filteredRiwayat.slice(start, start + size);
+  }, [filteredRiwayat, currentPage, pageSize]);
+
   if (loading) return <div className="loading">Memuat Riwayat...</div>;
 
   return (
@@ -140,8 +156,8 @@ const RiwayatAbsensiLembur = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredRiwayat.length > 0 ? (
-                filteredRiwayat.map((item, i) => (
+              {paginatedRiwayat.length > 0 ? (
+                paginatedRiwayat.map((item, i) => (
                   <tr key={i}>
                     <td>
                       {new Date(item.tanggal).toLocaleDateString('id-ID', {
@@ -210,6 +226,17 @@ const RiwayatAbsensiLembur = () => {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredRiwayat.length}
+          pageSize={pageSize}
+          onPageChange={(page) => setCurrentPage(page)}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+        />
 
         <button
           onClick={() => window.history.back()}

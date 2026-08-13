@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Swal from 'sweetalert2';
 import api from '../../../config/api';
 import SelectSearch from '../../../components/SelectSearch';
+import Pagination from '../../../components/Pagination';
 import './HrdRiwayatPengajuanCuti.css';
 
 const HrdRiwayatPengajuanCuti = () => {
@@ -53,6 +54,10 @@ const HrdRiwayatPengajuanCuti = () => {
     }
   };
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const filteredData = useMemo(() => {
     return listCuti.filter((item) => {
       const matchName = (item.nama_karyawan || '')
@@ -68,6 +73,17 @@ const HrdRiwayatPengajuanCuti = () => {
       return matchName && matchType && matchStatus;
     });
   }, [listCuti, searchTerm, selectedType, selectedStatus]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedType, selectedStatus]);
+
+  const paginatedData = useMemo(() => {
+    if (pageSize === 'Semua') return filteredData;
+    const size = Number(pageSize);
+    const start = (currentPage - 1) * size;
+    return filteredData.slice(start, start + size);
+  }, [filteredData, currentPage, pageSize]);
 
   // Handle perubahan status ke 'pending', 'approved', atau 'rejected'
   const handleUpdateStatus = async (id_cuti, statusBaru) => {
@@ -198,12 +214,13 @@ const HrdRiwayatPengajuanCuti = () => {
                     Memuat seluruh data pengajuan cuti...
                   </td>
                 </tr>
-              ) : filteredData.length > 0 ? (
-                filteredData.map((item, idx) => {
+              ) : paginatedData.length > 0 ? (
+                paginatedData.map((item, idx) => {
                   const currentStatus = (item.status || 'pending').toLowerCase();
+                  const displayIndex = pageSize === 'Semua' ? idx + 1 : (currentPage - 1) * Number(pageSize) + idx + 1;
                   return (
                     <tr key={item.id_cuti || idx}>
-                      <td>{idx + 1}</td>
+                      <td>{displayIndex}</td>
                       <td className="emp-name">{item.nama_karyawan || item.id_user}</td>
                       <td>
                         <span className="badge-tipe-cuti">{item.tipe}</span>
@@ -259,6 +276,17 @@ const HrdRiwayatPengajuanCuti = () => {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredData.length}
+          pageSize={pageSize}
+          onPageChange={(page) => setCurrentPage(page)}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+        />
       </div>
     </div>
   );

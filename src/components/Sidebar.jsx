@@ -496,6 +496,11 @@ function SideBar({ isOpen }) {
                     <span>Approve Cuti & Izin</span>
                   </NavLink>
                 </li>
+                <li>
+                  <NavLink to="UserApprovalRiwayat">
+                    <span>Riwayat Approval</span>
+                  </NavLink>
+                </li>
               </ul>
             </li>
 

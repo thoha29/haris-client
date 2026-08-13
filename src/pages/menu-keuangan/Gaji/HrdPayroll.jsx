@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import './HrdPayroll.css';
 import SelectSearch from '../../../components/SelectSearch';
+import Pagination from '../../../components/Pagination';
 
 const HrdPayroll = () => {
   const navigate = useNavigate();
@@ -12,6 +13,17 @@ const HrdPayroll = () => {
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [previewGaji, setPreviewGaji] = useState(null);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const paginatedKaryawan = React.useMemo(() => {
+    if (pageSize === 'Semua') return karyawan;
+    const size = Number(pageSize);
+    const start = (currentPage - 1) * size;
+    return karyawan.slice(start, start + size);
+  }, [karyawan, currentPage, pageSize]);
 
   const [formData, setFormData] = useState({
     gaji_pokok: '',
@@ -421,31 +433,44 @@ const HrdPayroll = () => {
           </form>
         </div>
       ) : (
-        <div className="payroll-grid">
-          {karyawan.map((user) => (
-            <div key={user.id_user} className="payroll-card">
-              <div className="payroll-card-body">
-                <div className="payroll-info">
-                  <h3>{user.username}</h3>
-                  <span className="badge-role">{user.role}</span>
+        <div>
+          <div className="payroll-grid">
+            {paginatedKaryawan.map((user) => (
+              <div key={user.id_user} className="payroll-card">
+                <div className="payroll-card-body">
+                  <div className="payroll-info">
+                    <h3>{user.username}</h3>
+                    <span className="badge-role">{user.role}</span>
+                  </div>
+                </div>
+                <div className="payroll-card-footer">
+                  <button
+                    className="btn-input-blue"
+                    onClick={() => setSelectedUser(user)}
+                  >
+                    Proses
+                  </button>
+                  <button
+                    className="btn-input-gray"
+                    onClick={() => navigate(`/riwayat-gaji/${user.id_user}`)}
+                  >
+                    Riwayat
+                  </button>
                 </div>
               </div>
-              <div className="payroll-card-footer">
-                <button
-                  className="btn-input-blue"
-                  onClick={() => setSelectedUser(user)}
-                >
-                  Proses
-                </button>
-                <button
-                  className="btn-input-gray"
-                  onClick={() => navigate(`/riwayat-gaji/${user.id_user}`)}
-                >
-                  Riwayat
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalItems={karyawan.length}
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+          />
         </div>
       )}
     </div>
