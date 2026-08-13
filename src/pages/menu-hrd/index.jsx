@@ -4,6 +4,7 @@ import DashboardHRD from './Dashboard/dashboard';
 //Karyawan
 import DataKaryawan from '../menu-pimpinan/DataKaryawan';
 import TambahDataPribadi from './Karyawan/TambahDataPribadi';
+import ListKaryawanView from './Karyawan/ListKaryawanView';
 
 //absensi
 import HrdApproval from './Absensi/HrdApproval';
@@ -15,10 +16,9 @@ import ProsesAbsensi from './Absensi/ProsesAbsensi';
 import HrdApprovalCuti from './Cuti/HrdApprovalCuti';
 import HrdRiwayatCuti from './Cuti/HrdCutiHistory';
 import HrdCutiRiwayatDetail from './Cuti/HrdCutiRiwayatDetail';
+import HrdRiwayatPengajuanCuti from './Cuti/HrdRiwayatPengajuanCuti';
 
 import DaftarGaji from './DaftarGaji/DaftarGaji';
-//Skema Manager
-// Moved to menu-userkaryawan
 
 export {
   DashboardHRD,
@@ -27,9 +27,11 @@ export {
   HrdMonitoring,
   HrdApprovalCuti,
   TambahDataPribadi,
+  ListKaryawanView,
   HrdKaryawanDetail,
   HrdRiwayatCuti,
   HrdCutiRiwayatDetail,
+  HrdRiwayatPengajuanCuti,
   ProsesAbsensi,
   DaftarGaji,
 };

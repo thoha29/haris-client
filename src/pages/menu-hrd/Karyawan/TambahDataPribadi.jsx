@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
 import Swal from 'sweetalert2';
 import './TambahDataPribadi.css';
 import api from '../../../config/api';
+import SelectSearch from '../../../components/SelectSearch';
 
 const TambahDataPribadi = () => {
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedUser, setSelectedUser] = useState();
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // State FULL sesuai kolom di database lu (18 Kolom)
+  // State FULL sesuai kolom di database
   const [formData, setFormData] = useState({
     id_user: '',
     nik: '',
@@ -37,9 +37,9 @@ const TambahDataPribadi = () => {
     nama_atasan: '',
     lokasi_proyek: '',
     lokasi_kerja: '',
+    tipe_kerja: 'non-shift', // Enum: 'shift' / 'non-shift'
   });
 
-  // Ambil token dari localStorage (Pastikan key-nya 'access_token')
   const token = localStorage.getItem('access_token');
 
   // 1. Ambil list user buat dropdown
@@ -75,11 +75,12 @@ const TambahDataPribadi = () => {
     tanggal_lahir: formatDate(data.tanggal_lahir),
     tanggal_masuk: formatDate(data.tanggal_masuk),
     tanggal_kontrak_berakhir: formatDate(data.tanggal_kontrak_berakhir),
+    tipe_kerja: data.tipe_kerja || 'non-shift',
   });
 
   // 2. Logic Auto-fill pas pilih user
-  const handleUserChange = async (e) => {
-    const userId = e.target.value;
+  const handleUserChange = async (val) => {
+    const userId = typeof val === 'object' ? val.target.value : "pilih karyawan";
     setSelectedUser(userId);
     if (!userId) {
       resetForm();
@@ -91,12 +92,10 @@ const TambahDataPribadi = () => {
         headers: { Authorization: `Bearer ${token.trim()}` },
       });
       if (res.data) {
-        //setFormData(res.data);
         setFormData(normalizeData(res.data));
         setIsEditMode(true);
       }
     } catch (err) {
-      // Jika data belum ada, set id_user saja untuk input baru
       resetForm(userId);
       setIsEditMode(false);
     }
@@ -129,6 +128,7 @@ const TambahDataPribadi = () => {
       nama_atasan: '',
       lokasi_proyek: '',
       lokasi_kerja: '',
+      tipe_kerja: 'non-shift',
     });
   };
 
@@ -153,11 +153,11 @@ const TambahDataPribadi = () => {
       };
 
       if (isEditMode) {
-        await api.put(`${url}/${formData.id_user}`, payload, config);
-        Swal.fire('Berhasil!', 'Data berhasil diupdate!', 'success');
+        const res = await api.put(`${url}/${formData.id_user}`, payload, config);
+        Swal.fire('Berhasil!', res.data.message || 'Data berhasil diupdate!', 'success');
       } else {
-        await api.post(url, payload, config);
-        Swal.fire('Berhasil!', 'Data berhasil disimpan!', 'success');
+        const res = await api.post(url, payload, config);
+        Swal.fire('Berhasil!', res.data.message || 'Data berhasil disimpan!', 'success');
         setIsEditMode(true);
       }
     } catch (error) {
@@ -172,6 +172,16 @@ const TambahDataPribadi = () => {
     }
   };
 
+  const userOptions = users.map((u) => ({
+    value: u.id_user,
+    label: `${u.username}`,
+  }));
+
+  const tipeKerjaOptions = [
+    { value: 'non-shift', label: 'Non-Shift (Jadwal Otomatis Skema 6)' },
+    { value: 'shift', label: 'Shift' },
+  ];
+
   return (
     <div className="tambah-data-container">
       <h2 className="form-header">
@@ -180,18 +190,14 @@ const TambahDataPribadi = () => {
 
       <div className="user-selector" style={{ marginBottom: '20px' }}>
         <label>Pilih Username Karyawan:</label>
-        <select
+        <SelectSearch
+          options={userOptions}
           value={selectedUser}
           onChange={handleUserChange}
-          className="login-input"
-        >
-          <option value="">-- Pilih User --</option>
-          {users.map((u) => (
-            <option key={u.id_user} value={u.id_user}>
-              {u.username}
-            </option>
-          ))}
-        </select>
+          placeholder="Pilih User Karyawan"
+          searchPlaceholder="Cari username..."
+          isClearable={true}
+        />
       </div>
 
       <form onSubmit={handleSubmit} className="tambah-data-grid">
@@ -248,14 +254,15 @@ const TambahDataPribadi = () => {
         </div>
         <div className="input-box">
           <label>Jenis Kelamin</label>
-          <select
-            name="jenis_kelamin"
+          <SelectSearch
+            options={[
+              { value: 'L', label: 'Laki-laki' },
+              { value: 'P', label: 'Perempuan' },
+            ]}
             value={formData.jenis_kelamin}
-            onChange={handleChange}
-          >
-            <option value="L">Laki-laki</option>
-            <option value="P">Perempuan</option>
-          </select>
+            onChange={(e) => setFormData({ ...formData, jenis_kelamin: e.value })}
+            placeholder="-- Pilih Jenis Kelamin --"
+          />
         </div>
         <div className="input-box">
           <label>Agama</label>
@@ -306,16 +313,26 @@ const TambahDataPribadi = () => {
           />
         </div>
         <div className="input-box">
+          <label>Tipe Kerja Karyawan (Shift / Non-Shift)</label>
+          <SelectSearch
+            options={tipeKerjaOptions}
+            value={formData.tipe_kerja}
+            onChange={(e) => setFormData({ ...formData, tipe_kerja: e.value })}
+            placeholder="-- Pilih Tipe Kerja --"
+          />
+        </div>
+        <div className="input-box">
           <label>Status Karyawan</label>
-          <select
-            name="status_karyawan"
+          <SelectSearch
+            options={[
+              { value: 'tetap', label: 'Tetap' },
+              { value: 'kontrak', label: 'Kontrak' },
+              { value: 'probation', label: 'Probation' },
+            ]}
             value={formData.status_karyawan}
-            onChange={handleChange}
-          >
-            <option value="tetap">Tetap</option>
-            <option value="kontrak">Kontrak</option>
-            <option value="probation">Probation</option>
-          </select>
+            onChange={(e) => setFormData({ ...formData, status_karyawan: e.value })}
+            placeholder="-- Pilih Status Karyawan --"
+          />
         </div>
         <div className="input-box">
           <label>Institusi</label>
@@ -345,7 +362,7 @@ const TambahDataPribadi = () => {
           />
         </div>
         <div className="input-box">
-          <label>Tanggal Masuk</label>
+          <label>Tanggal Masuk (Awal Kontrak)</label>
           <input
             type="date"
             name="tanggal_masuk"

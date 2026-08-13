@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
 import './Lembur.css';
 import api from '../../../config/api';
+import SelectSearch from '../../../components/SelectSearch';
 
 const AbsensiLembur = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -203,16 +204,16 @@ const AbsensiLembur = () => {
 
           <div className="mt-3">
             <label className="form-label">Jenis Waktu Lembur</label>
-            <select
+            <SelectSearch
+              options={[
+                { value: '0', label: 'Lembur Hari Kerja' },
+                { value: '1', label: 'Lembur Hari Libur' },
+              ]}
               value={jenisLembur}
-              onChange={(e) => setJenisLembur(e.target.value)}
-              className="form-select"
-              disabled={hasCheckedInToday} // ⬅️ kunci setelah checkin
-            >
-              <option value="">-- Pilih Jenis Lembur --</option>
-              <option value="0">Lembur Hari Kerja</option>
-              <option value="1">Lembur Hari Libur</option>
-            </select>
+              onChange={(e) => setJenisLembur(e.value)}
+              placeholder="-- Pilih Jenis Lembur --"
+              disabled={hasCheckedInToday}
+            />
           </div>
         </div>
         <div className="button-group">

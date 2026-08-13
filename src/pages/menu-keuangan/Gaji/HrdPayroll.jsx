@@ -3,6 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import './HrdPayroll.css';
+import SelectSearch from '../../../components/SelectSearch';
 
 const HrdPayroll = () => {
   const navigate = useNavigate();
@@ -273,18 +274,15 @@ const HrdPayroll = () => {
             <div className="input-row-flex">
               <div className="input-group flex-2">
                 <label>Bulan</label>
-                <select
+                <SelectSearch
+                  options={namaBulan.map((bulan, i) => ({
+                    value: i + 1,
+                    label: bulan,
+                  }))}
                   value={formData.bulan}
-                  onChange={(e) =>
-                    setFormData({ ...formData, bulan: e.target.value })
-                  }
-                >
-                  {namaBulan.map((bulan, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      {bulan}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(e) => setFormData({ ...formData, bulan: e.value })}
+                  placeholder="Pilih Bulan"
+                />
               </div>
               <div className="input-group flex-1">
                 <label>Tahun</label>
@@ -300,19 +298,17 @@ const HrdPayroll = () => {
 
             <div className="input-group">
               <label>Golongan / Skema Gaji</label>
-              <select
+              <SelectSearch
+                options={skemaGajiList.map((s) => ({
+                  value: s.id_skemagaji,
+                  label: `${s.nama_golongan} — Rp ${Number(s.gaji_bulanan).toLocaleString('id-ID')} (Rate: Rp ${Number(s.rate_per_jam).toLocaleString('id-ID')}/Jam)`,
+                }))}
                 value={formData.id_skemagaji || ''}
-                onChange={handleSkemaChange}
-              >
-                <option value="">-- Pilih Golongan --</option>
-                {skemaGajiList.map((s) => (
-                  <option key={s.id_skemagaji} value={s.id_skemagaji}>
-                    {s.nama_golongan} — Rp{' '}
-                    {Number(s.gaji_bulanan).toLocaleString('id-ID')} (Rate: Rp{' '}
-                    {Number(s.rate_per_jam).toLocaleString('id-ID')}/Jam)
-                  </option>
-                ))}
-              </select>
+                onChange={(e) => handleSkemaChange({ target: { value: e.value } })}
+                placeholder="-- Pilih Golongan --"
+                searchPlaceholder="Cari skema gaji..."
+                isClearable={true}
+              />
             </div>
 
             <div className="input-group">

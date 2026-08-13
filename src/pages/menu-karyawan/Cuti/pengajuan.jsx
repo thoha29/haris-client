@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
 import './pengajuan.css';
 import api from '../../../config/api';
+import SelectSearch from '../../../components/SelectSearch';
 
 const PengajuanCuti = () => {
   const [formData, setFormData] = useState({
@@ -125,17 +126,17 @@ const PengajuanCuti = () => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Tipe Pengajuan</label>
-            <select
-              name="tipe"
+            <SelectSearch
+              options={[
+                { value: 'Cuti', label: 'Cuti Tahunan' },
+                { value: 'Izin', label: 'Izin (Sakit/Mendesak)' },
+                { value: 'Cuti Meninggal', label: 'Cuti Meninggal' },
+                { value: 'Cuti Melahirkan', label: 'Cuti Melahirkan' },
+              ]}
               value={formData.tipe}
-              onChange={handleChange}
-              className="form-control"
-            >
-              <option value="Cuti">Cuti Tahunan</option>
-              <option value="Izin">Izin (Sakit/Mendesak)</option>
-              <option value="Cuti Meninggal">Cuti Meninggal</option>
-              <option value="Cuti Melahirkan">Cuti Melahirkan</option>
-            </select>
+              onChange={(e) => setFormData({ ...formData, tipe: e.value })}
+              placeholder="Pilih Tipe Pengajuan"
+            />
           </div>
 
           <div className="form-group">

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './HrdKaryawanDetail.css';
 import api from '../../../config/api';
+import SelectSearch from '../../../components/SelectSearch';
 
 const HrdKaryawanDetail = () => {
   const { id_user } = useParams();
@@ -144,30 +145,25 @@ const HrdKaryawanDetail = () => {
 
         <div className="header-right" style={{ display: 'flex', gap: '10px' }}>
           {/* UI Filter Dropdown */}
-          <div className="filter-group-hrd">
+          <div className="filter-group-hrd" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <label>Filter Periode:</label>
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="filter-select-sm"
-            >
-              {months.map((m, i) => (
-                <option key={i} value={i}>
-                  {m}
-                </option>
-              ))}
-            </select>
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="filter-select-sm"
-            >
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
+            <div style={{ width: '150px' }}>
+              <SelectSearch
+                options={months.map((m, i) => ({ value: i, label: m }))}
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(Number(e.value))}
+                placeholder="Bulan"
+              />
+            </div>
+            <div style={{ width: '110px' }}>
+              <SelectSearch
+                options={years.map((y) => ({ value: y, label: String(y) }))}
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(Number(e.value))}
+                placeholder="Tahun"
+              />
+            </div>
+          </div>
             {dataPribadi && (
               <div
                 style={{
@@ -245,8 +241,6 @@ const HrdKaryawanDetail = () => {
                 </div>
               </div>
             )}
-          </div>
-
           <button
             onClick={handleDownloadExcel}
             className="btn-download"
@@ -428,27 +422,29 @@ const HrdKaryawanDetail = () => {
               </div>
               <div className="form-group">
                 <label>Status HRD:</label>
-                <select
-                  name="status_hrd"
+                <SelectSearch
+                  options={[
+                    { value: 'pending', label: 'Pending' },
+                    { value: 'approved', label: 'Approved' },
+                    { value: 'rejected', label: 'Rejected' },
+                  ]}
                   value={editData?.status_hrd || 'pending'}
-                  onChange={handleEditChange}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="rejected">Rejected</option>
-                </select>
+                  onChange={(e) => setEditData({ ...editData, status_hrd: e.value })}
+                  placeholder="Pilih Status HRD"
+                />
               </div>
               <div className="form-group">
                 <label>Hasil Final:</label>
-                <select
-                  name="is_approved"
+                <SelectSearch
+                  options={[
+                    { value: 'pending', label: 'Pending' },
+                    { value: 'approved', label: 'Approved' },
+                    { value: 'rejected', label: 'Rejected' },
+                  ]}
                   value={editData?.is_approved || 'pending'}
-                  onChange={handleEditChange}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="rejected">Rejected</option>
-                </select>
+                  onChange={(e) => setEditData({ ...editData, is_approved: e.value })}
+                  placeholder="Pilih Hasil Final"
+                />
               </div>
               <div className="modal-actions">
                 <button

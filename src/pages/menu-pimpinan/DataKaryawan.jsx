@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './DataKaryawan.css';
+import SelectSearch from '../../components/SelectSearch';
 
 const DataKaryawan = () => {
   const [karyawanList, setKaryawanList] = useState([]);
@@ -133,19 +134,18 @@ const DataKaryawan = () => {
               </div>
               <div className="form-group">
                 <label className="form-label">Role Jabatan</label>
-                <select
-                  name="role"
+                <SelectSearch
+                  options={[
+                    { value: 'karyawan', label: 'Karyawan' },
+                    { value: 'hrd', label: 'HRD' },
+                    { value: 'pimpinan', label: 'Pimpinan' },
+                    { value: 'keuangan', label: 'Keuangan' },
+                    { value: 'user', label: 'User Umum' },
+                  ]}
                   value={formData.role}
-                  onChange={handleChange}
-                  className="form-select"
-                  required
-                >
-                  <option value="karyawan">Karyawan</option>
-                  <option value="hrd">HRD</option>
-                  <option value="pimpinan">Pimpinan</option>
-                  <option value="keuangan">Keuangan</option> {/* Role Baru */}
-                  <option value="user">User Umum</option> {/* Role Baru */}
-                </select>
+                  onChange={(e) => setFormData({ ...formData, role: e.value })}
+                  placeholder="Pilih Role Jabatan"
+                />
               </div>
             </div>
             <div className="button-group">

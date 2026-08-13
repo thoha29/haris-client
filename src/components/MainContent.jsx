@@ -18,10 +18,12 @@ import {
   DataKaryawan,
   HrdApprovalCuti,
   TambahDataPribadi,
+  ListKaryawanView,
   HrdMonitoring,
   HrdKaryawanDetail,
   HrdRiwayatCuti,
   HrdCutiRiwayatDetail,
+  HrdRiwayatPengajuanCuti,
   ProsesAbsensi,
   DaftarGaji,
 } from '../pages/menu-hrd';
@@ -39,7 +41,7 @@ import {
   RiwayatAbsensi,
   DashboardKaryawan,
   DataPribadi,
-  DokumenPribadi, // Komponen yang kita perbaiki
+  DokumenPribadi,
   Karyawan,
   Pengajuan,
   RiwayatKarier,
@@ -51,8 +53,6 @@ import {
 } from '../pages/menu-karyawan';
 
 function MainContent({ isSidebarOpen }) {
-  // --- TAMBAHKAN LOGIKA INI ---
-  // Mengambil userId dari localStorage sesuai data yang kamu temukan (userId: 13)
   const currentUserId = localStorage.getItem('userId');
 
   return (
@@ -71,7 +71,6 @@ function MainContent({ isSidebarOpen }) {
         <Route path="data-pribadi" element={<DataPribadi />} />
         <Route path="riwayat-karier" element={<RiwayatKarier />} />
 
-        {/* --- UPDATE DISINI: Kirim props idUser --- */}
         <Route
           path="dokumen-pribadi"
           element={<DokumenPribadi idUser={currentUserId} />}
@@ -95,7 +94,9 @@ function MainContent({ isSidebarOpen }) {
         <Route path="Dashboard-HRD" element={<DashboardHRD />} />
         <Route path="HrdApproval" element={<HrdApproval />} />
         <Route path="DataKaryawan" element={<DataKaryawan />} />
+        <Route path="ListKaryawanView" element={<ListKaryawanView />} />
         <Route path="HrdApprovalCuti" element={<HrdApprovalCuti />} />
+        <Route path="HrdRiwayatPengajuanCuti" element={<HrdRiwayatPengajuanCuti />} />
         <Route path="TambahDataPribadi" element={<TambahDataPribadi />} />
         <Route path="HrdMonitoring" element={<HrdMonitoring />} />
         <Route path="hrd/riwayat/:id_user" element={<HrdKaryawanDetail />} />

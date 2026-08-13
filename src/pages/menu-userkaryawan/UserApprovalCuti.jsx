@@ -3,6 +3,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import './UserApproval.css';
 
+import SelectSearch from '../../components/SelectSearch';
+
 const UserApprovalCuti = () => {
   const [listPengajuan, setListPengajuan] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -105,19 +107,21 @@ const UserApprovalCuti = () => {
               className="filter-input"
             />
           </div>
-          <div className="filter-group">
+          <div className="filter-group" style={{ minWidth: '200px' }}>
             <label>Tipe:</label>
-            <select
+            <SelectSearch
+              options={[
+                { value: '', label: 'Semua Tipe' },
+                { value: 'Cuti', label: 'Cuti Tahunan' },
+                { value: 'Izin', label: 'Izin' },
+                { value: 'Cuti Meninggal', label: 'Cuti Meninggal' },
+                { value: 'Cuti Melahirkan', label: 'Cuti Melahirkan' },
+              ]}
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="filter-input"
-            >
-              <option value="">Semua Tipe</option>
-              <option value="Cuti">Cuti Tahunan</option>
-              <option value="Izin">Izin</option>
-              <option value="Cuti Meninggal">Cuti Meninggal</option>
-              <option value="Cuti Melahirkan">Cuti Melahirkan</option>
-            </select>
+              onChange={(e) => setSelectedType(e.value)}
+              placeholder="Semua Tipe"
+              isClearable={true}
+            />
           </div>
           <button
             className="btn-reset"

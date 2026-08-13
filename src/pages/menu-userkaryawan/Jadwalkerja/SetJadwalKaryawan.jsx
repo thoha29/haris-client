@@ -11,6 +11,7 @@ import {
   BulkActionPanel,
   DailyWorkersTable,
 } from './components';
+import SelectSearch from '../../../components/SelectSearch';
 import {
   getKaryawanList,
   getSkemaList,
@@ -489,19 +490,17 @@ const SetJadwalKaryawan = () => {
 
             <div className="input-group">
               <label className="filter-label">Shift / Skema</label>
-              <select
+              <SelectSearch
+                options={daftarSkema.map((s) => ({
+                  value: s.id_skema,
+                  label: `${s.nama_skema} (${s.jam_masuk ? s.jam_masuk.substring(0, 5) : ''} - ${s.jam_keluar ? s.jam_keluar.substring(0, 5) : ''})`,
+                }))}
                 value={selectedSkema}
-                onChange={(e) => setSelectedSkema(e.target.value)}
-                className="select-elite"
-              >
-                <option value="">-- Pilih Shift --</option>
-                {daftarSkema.map((s) => (
-                  <option key={s.id_skema} value={s.id_skema}>
-                    {s.nama_skema} ({s.jam_masuk.substring(0, 5)} -{' '}
-                    {s.jam_keluar.substring(0, 5)})
-                  </option>
-                ))}
-              </select>
+                onChange={(e) => setSelectedSkema(e.value)}
+                placeholder="-- Pilih Shift --"
+                searchPlaceholder="Cari shift/skema..."
+                isClearable={true}
+              />
             </div>
           </div>
 

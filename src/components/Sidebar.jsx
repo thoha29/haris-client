@@ -242,6 +242,17 @@ function SideBar({ isOpen }) {
                 <span>Tambah Data Pribadi</span>
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to="ListKaryawanView"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? '' : ' collapsed')
+                }
+              >
+                <i className="bi bi-people-fill"></i>
+                <span>List Data Karyawan</span>
+              </NavLink>
+            </li>
 
             {/* Group Approval Absensi */}
             <li className="nav-item">
@@ -298,8 +309,13 @@ function SideBar({ isOpen }) {
                   </NavLink>
                 </li>
                 <li>
+                  <NavLink to="HrdRiwayatPengajuanCuti">
+                    <span>Riwayat Pengajuan Cuti</span>
+                  </NavLink>
+                </li>
+                <li>
                   <NavLink to="HrdRiwayatCuti">
-                    <span>Riwayat Cuti</span>
+                    <span>Riwayat Absensi</span>
                   </NavLink>
                 </li>
               </ul>

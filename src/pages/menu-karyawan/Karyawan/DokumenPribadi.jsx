@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './DokumenPribadi.css';
+import SelectSearch from '../../../components/SelectSearch';
 
 const DokumenPribadi = ({ idUser }) => {
   const [file, setFile] = useState(null);
@@ -63,22 +64,23 @@ const DokumenPribadi = ({ idUser }) => {
       <form onSubmit={handleSubmit} className="mb-8">
         <div className="form-group">
           <label className="form-label">Jenis Dokumen</label>
-          <select
-            className="form-select"
+          <SelectSearch
+            options={[
+              { value: 'KTP', label: 'KTP' },
+              { value: 'NPWP', label: 'NPWP' },
+              { value: 'Ijazah', label: 'Ijazah' },
+              { value: 'KK', label: 'Kartu Keluarga (KK)' },
+              { value: 'SIM', label: 'SIM' },
+              { value: 'Buku Nikah', label: 'Buku Nikah' },
+              { value: 'Akta Kelahiran', label: 'Akta Kelahiran' },
+              { value: 'Paspor', label: 'Paspor' },
+              { value: 'Lainnya', label: 'Lainnya' },
+            ]}
             value={jenis}
-            onChange={(e) => setJenis(e.target.value)}
-          >
-            <option value="">-- Pilih --</option>
-            <option value="KTP">KTP</option>
-            <option value="NPWP">NPWP</option>
-            <option value="Ijazah">Ijazah</option>
-            <option value="KK">Kartu Keluarga</option>
-            <option value="SIM">SIM</option>
-            <option value="Buku Nikah">Buku Nikah</option>
-            <option value="Akta Kelahiran">Akta Kelahiran</option>
-            <option value="Paspor">Paspor</option>
-            <option value="Lainnya">Lainnya</option>
-          </select>
+            onChange={(e) => setJenis(e.value)}
+            placeholder="-- Pilih Jenis Dokumen --"
+            isClearable={true}
+          />
         </div>
         <div className="form-group">
           <label className="form-label">Pilih File</label>

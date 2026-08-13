@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './ApprovalGaji.css';
+import SelectSearch from '../../components/SelectSearch';
 
 const ApprovalGaji = () => {
   const [riwayat, setRiwayat] = useState([]);
@@ -130,17 +131,15 @@ const ApprovalGaji = () => {
                         {h.status_bayar.toUpperCase()}
                       </span>
                     </td>
-                    <td>
-                      <select
+                    <td style={{ minWidth: '130px' }}>
+                      <SelectSearch
+                        options={[
+                          { value: 'pending', label: 'Pending' },
+                          { value: 'paid', label: 'Paid' },
+                        ]}
                         value={h.status_bayar}
-                        onChange={(e) =>
-                          handleUpdateStatus(h.id_slip, e.target.value)
-                        }
-                        className="status-dropdown"
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="paid">Paid</option>
-                      </select>
+                        onChange={(e) => handleUpdateStatus(h.id_slip, e.value)}
+                      />
                     </td>
                     <td>
                       <button

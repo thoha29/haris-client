@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import './RiwayatAbsensi.css';
+import SelectSearch from '../../../components/SelectSearch';
 
 const RiwayatAbsensi = () => {
   const [riwayat, setRiwayat] = useState([]);
@@ -104,29 +105,22 @@ const RiwayatAbsensi = () => {
           }}
         >
           <label>Filter Periode:</label>
-          <select
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="filter-select"
-          >
-            {months.map((month, index) => (
-              <option key={index} value={index}>
-                {month}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="filter-select"
-          >
-            {years.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
+          <div style={{ width: '160px' }}>
+            <SelectSearch
+              options={months.map((m, idx) => ({ value: idx, label: m }))}
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.value))}
+              placeholder="Bulan"
+            />
+          </div>
+          <div style={{ width: '120px' }}>
+            <SelectSearch
+              options={years.map((y) => ({ value: y, label: String(y) }))}
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.value))}
+              placeholder="Tahun"
+            />
+          </div>
         </div>
 
         {error && <div className="message error">{error}</div>}

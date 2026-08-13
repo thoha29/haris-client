@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Swal from 'sweetalert2';
 import './HrdApprovalCuti.css';
 import api from '../../../config/api';
+import SelectSearch from '../../../components/SelectSearch';
 
 const HrdApprovalCuti = () => {
   const [listPengajuan, setListPengajuan] = useState([]);
@@ -108,19 +109,21 @@ const HrdApprovalCuti = () => {
               className="filter-input"
             />
           </div>
-          <div className="filter-group">
+          <div className="filter-group" style={{ minWidth: '200px' }}>
             <label>Tipe:</label>
-            <select
+            <SelectSearch
+              options={[
+                { value: '', label: 'Semua Tipe' },
+                { value: 'Cuti', label: 'Cuti Tahunan' },
+                { value: 'Izin', label: 'Izin' },
+                { value: 'Cuti Meninggal', label: 'Cuti Meninggal' },
+                { value: 'Cuti Melahirkan', label: 'Cuti Melahirkan' },
+              ]}
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="filter-input"
-            >
-              <option value="">Semua Tipe</option>
-              <option value="Cuti">Cuti Tahunan</option>
-              <option value="Izin">Izin</option>
-              <option value="Cuti Meninggal">Cuti Meninggal</option>
-              <option value="Cuti Melahirkan">Cuti Melahirkan</option>
-            </select>
+              onChange={(e) => setSelectedType(e.value)}
+              placeholder="Semua Tipe"
+              isClearable={true}
+            />
           </div>
           <div className="filter-group">
             <label>Bulan:</label>
