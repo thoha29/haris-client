@@ -8,6 +8,7 @@ import SummaryCards from './components/SummaryCards';
 import DistributionCards from './components/DistributionCards';
 import ReportTable from './components/ReportTable';
 import { exportToPDF, exportToExcel } from './utils/exportReport';
+import { calculateLemburKonversi } from '../../../utils/overtimeCalculator';
 
 const HrdKaryawanDetail = () => {
   const { id_user } = useParams();
@@ -46,7 +47,31 @@ const HrdKaryawanDetail = () => {
       const res = await api.get(
         `/absensi/hrd/report-lengkap/${id_user}?month=${selectedMonth + 1}&year=${selectedYear}`
       );
-      setReportData(res.data);
+      
+      const rawData = res.data;
+      if (rawData && rawData.items) {
+        let totalKonversi = 0;
+        const recalculatedItems = rawData.items.map((it) => {
+          const lemburAktual = parseFloat(it.lembur_aktual) || 0;
+          const konversi = it.type === 'cuti' ? 0 : calculateLemburKonversi(lemburAktual, it.is_holiday);
+          totalKonversi += konversi;
+          return {
+            ...it,
+            lembur_konversi: konversi,
+          };
+        });
+
+        setReportData({
+          ...rawData,
+          summary: {
+            ...rawData.summary,
+            total_lembur_konversi: Number(totalKonversi.toFixed(1)),
+          },
+          items: recalculatedItems,
+        });
+      } else {
+        setReportData(rawData);
+      }
     } catch (err) {
       console.error('Gagal ambil data report lengkap:', err);
       Swal.fire({

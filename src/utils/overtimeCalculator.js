@@ -31,7 +31,7 @@ export function calculateLemburKonversi(actualHours, isHoliday = false) {
 
   if (isHoliday) {
     const { TIER_1_LIMIT, TIER_1_MULTIPLIER, TIER_2_LIMIT, TIER_2_MULTIPLIER, TIER_3_MULTIPLIER } = OVERTIME_RATES.HOLIDAY;
-    
+
     if (hours <= TIER_1_LIMIT) {
       konversi = hours * TIER_1_MULTIPLIER;
     } else if (hours <= TIER_2_LIMIT) {
@@ -46,9 +46,13 @@ export function calculateLemburKonversi(actualHours, isHoliday = false) {
     }
   } else {
     const { TIER_1_LIMIT, TIER_1_MULTIPLIER, TIER_2_MULTIPLIER } = OVERTIME_RATES.REGULAR;
-    
+
     if (hours <= TIER_1_LIMIT) {
-      konversi = hours * TIER_1_MULTIPLIER;
+      if (hours > 2) {
+        konversi = ((hours - 2) * TIER_2_MULTIPLIER) + 3.5;
+      } else {
+        konversi = hours * TIER_1_MULTIPLIER;
+      }
     } else {
       const tier1 = TIER_1_LIMIT * TIER_1_MULTIPLIER;
       const tier2 = (hours - TIER_1_LIMIT) * TIER_2_MULTIPLIER;
