@@ -204,6 +204,7 @@ const HrdKaryawanDetail = () => {
 
           {/* Distribution Recap Card */}
           <DistributionCards summary={reportData?.summary} periode={reportData?.periode} />
+
           {/* Table Action Bar */}
           {/* <div className="table-action-bar">
             <button
