@@ -67,7 +67,15 @@ const TambahDataPribadi = () => {
 
   const formatDate = (date) => {
     if (!date) return '';
-    return date.split('T')[0];
+    if (typeof date === 'string') {
+      return date.split('T')[0];
+    }
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '';
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const normalizeData = (data) => ({
@@ -76,13 +84,14 @@ const TambahDataPribadi = () => {
     tanggal_masuk: formatDate(data.tanggal_masuk),
     tanggal_kontrak_berakhir: formatDate(data.tanggal_kontrak_berakhir),
     tipe_kerja: data.tipe_kerja || 'non-shift',
+    kewarganegaraan: data.kewarganegaraan || 'WNI',
   });
 
   // 2. Logic Auto-fill pas pilih user
   const handleUserChange = async (val) => {
-    const userId = typeof val === 'object' ? val.target.value : "pilih karyawan";
+    const userId = typeof val === 'object' ? (val?.target?.value !== undefined ? val.target.value : val?.value) : val;
     setSelectedUser(userId);
-    if (!userId) {
+    if (!userId || userId === 'pilih karyawan') {
       resetForm();
       return;
     }
@@ -91,9 +100,15 @@ const TambahDataPribadi = () => {
       const res = await api.get(`/api/data-pribadi/${userId}`, {
         headers: { Authorization: `Bearer ${token.trim()}` },
       });
-      if (res.data) {
-        setFormData(normalizeData(res.data));
+      if (res.data && (res.data.id_data_pribadi || res.data.nama_lengkap)) {
+        setFormData({
+          ...normalizeData(res.data),
+          id_user: userId,
+        });
         setIsEditMode(true);
+      } else {
+        resetForm(userId);
+        setIsEditMode(false);
       }
     } catch (err) {
       resetForm(userId);
@@ -139,6 +154,12 @@ const TambahDataPribadi = () => {
   // 3. Simpan atau Update Data
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const targetUserId = selectedUser || formData.id_user;
+    if (!targetUserId) {
+      Swal.fire('Perhatian', 'Silakan pilih karyawan terlebih dahulu!', 'warning');
+      return;
+    }
+
     try {
       const config = { headers: { Authorization: `Bearer ${token.trim()}` } };
       const url = '/api/data-pribadi';
@@ -147,13 +168,14 @@ const TambahDataPribadi = () => {
 
       const payload = {
         ...formData,
+        id_user: targetUserId,
         tanggal_lahir: cleanDate(formData.tanggal_lahir),
         tanggal_masuk: cleanDate(formData.tanggal_masuk),
         tanggal_kontrak_berakhir: cleanDate(formData.tanggal_kontrak_berakhir),
       };
 
       if (isEditMode) {
-        const res = await api.put(`${url}/${formData.id_user}`, payload, config);
+        const res = await api.put(`${url}/${targetUserId}`, payload, config);
         Swal.fire('Berhasil!', res.data.message || 'Data berhasil diupdate!', 'success');
       } else {
         const res = await api.post(url, payload, config);
@@ -282,6 +304,16 @@ const TambahDataPribadi = () => {
             onChange={handleChange}
           />
         </div>
+        <div className="input-box">
+          <label>Kewarganegaraan</label>
+          <input
+            type="text"
+            name="kewarganegaraan"
+            value={formData.kewarganegaraan}
+            onChange={handleChange}
+            placeholder="WNI"
+          />
+        </div>
 
         <div className="input-box full">
           <label>Alamat</label>
@@ -328,10 +360,29 @@ const TambahDataPribadi = () => {
               { value: 'tetap', label: 'Tetap' },
               { value: 'kontrak', label: 'Kontrak' },
               { value: 'probation', label: 'Probation' },
+              { value: 'magang', label: 'Magang' },
             ]}
             value={formData.status_karyawan}
             onChange={(e) => setFormData({ ...formData, status_karyawan: e.value })}
             placeholder="-- Pilih Status Karyawan --"
+          />
+        </div>
+        <div className="input-box">
+          <label>Jenjang Pendidikan</label>
+          <SelectSearch
+            options={[
+              { value: 'SMA/SMK', label: 'SMA / SMK' },
+              { value: 'D1', label: 'D1' },
+              { value: 'D2', label: 'D2' },
+              { value: 'D3', label: 'D3' },
+              { value: 'D4', label: 'D4' },
+              { value: 'S1', label: 'S1' },
+              { value: 'S2', label: 'S2' },
+              { value: 'S3', label: 'S3' },
+            ]}
+            value={formData.jenjang_pendidikan}
+            onChange={(e) => setFormData({ ...formData, jenjang_pendidikan: e.value })}
+            placeholder="-- Pilih Jenjang Pendidikan --"
           />
         </div>
         <div className="input-box">
