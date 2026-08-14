@@ -113,12 +113,11 @@ function Profile() {
                 <span className="info-val" style={{ textTransform: 'capitalize' }}>{role}</span>
               </li>
             </ul>
-            {/* <button
-              className="btn btn-outline-primary btn-sm mt-3"
-              onClick={() => switchTab('change-password')}
-            >
-              <i className="bi bi-key me-1"></i> Ganti Password
-            </button> */}
+            <div className="mt-3">
+              <a href="/data-pribadi" className="btn btn-outline-primary btn-sm">
+                <i className="bi bi-person-lines-fill me-1"></i> Lihat & Unduh Data Pribadi
+              </a>
+            </div>
           </div>
         )}
 
