@@ -26,21 +26,23 @@ const HrdCutiHistory = () => {
   }, []);
 
   // Filter pencarian tetap jalan untuk mempermudah HRD mencari nama
-  const filteredKaryawan = karyawan.filter((k) =>
-    k.username?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredKaryawan = karyawan.filter(
+    (k) =>
+      k.nama_lengkap?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      k.username?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="monitoring-wrapper">
       <div className="monitoring-header">
         <div>
-          <h1>Monitoring Riwayat Cuti</h1>
-          <p>PT. Banggai Sentral Sulawesi - Semua Divisi</p>
+          <h1>Riwayat Absensi Karyawan</h1>
+          <p>Pilih karyawan untuk melihat laporan lengkap absensi, lembur, dan cuti</p>
         </div>
         <div className="search-box">
           <input
             type="text"
-            placeholder="Cari username..."
+            placeholder="Cari nama karyawan / username..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -59,13 +61,15 @@ const HrdCutiHistory = () => {
                   <div
                     className={`avatar-circle role-${user.role?.toLowerCase()}`}
                   >
-                    {user.username?.charAt(0).toUpperCase()}
+                    {(user.nama_lengkap || user.username || 'U')
+                      .charAt(0)
+                      .toUpperCase()}
                   </div>
                   <div className="info">
-                    <h3>{user.username}</h3>
+                    <h3>{user.nama_lengkap || user.username}</h3>
                     {/* Menampilkan role: karyawan, user, atau keuangan secara dinamis */}
                     <span className="role-text">
-                      Role: {user.role?.toLowerCase()}
+                      {user.jabatan || `Role: ${user.role?.toLowerCase()}`}
                     </span>
                   </div>
                 </div>
@@ -73,7 +77,7 @@ const HrdCutiHistory = () => {
                   <button
                     className="btn-view-detail"
                     onClick={() =>
-                      navigate(`/hrd/cuti/riwayat/${user.id_user}`)
+                      navigate(`/hrd/riwayat/${user.id_user}`)
                     }
                   >
                     Lihat Riwayat

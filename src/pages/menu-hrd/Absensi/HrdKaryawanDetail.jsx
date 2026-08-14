@@ -1,20 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
-// import axios from 'axios';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './HrdKaryawanDetail.css';
 import api from '../../../config/api';
 import SelectSearch from '../../../components/SelectSearch';
-import Pagination from '../../../components/Pagination';
+import SummaryCards from './components/SummaryCards';
+import DistributionCards from './components/DistributionCards';
+import ReportTable from './components/ReportTable';
+import { exportToPDF, exportToExcel } from './utils/exportReport';
 
 const HrdKaryawanDetail = () => {
   const { id_user } = useParams();
   const navigate = useNavigate();
-  const [riwayat, setRiwayat] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [dataPribadi, setDataPribadi] = useState(null);
 
-  // --- State untuk Filter ---
+  const [loading, setLoading] = useState(true);
+  const [reportData, setReportData] = useState(null);
+
+  // --- State untuk Filter Periode ---
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -38,132 +40,127 @@ const HrdKaryawanDetail = () => {
     return Array.from({ length: 5 }, (_, i) => currentYear - i);
   }, []);
 
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editData, setEditData] = useState(null);
-
-  const fetchDetail = async () => {
+  const fetchReport = useCallback(async () => {
     try {
-      const [riwayatRes, dataPribadiRes] = await Promise.all([
-        api.get(`/absensi/hrd/riwayat/${id_user}`),
-        api.get(`/api/data-pribadi/${id_user}`),
-      ]);
-
-      setRiwayat(riwayatRes.data);
-      setDataPribadi(dataPribadiRes.data);
+      setLoading(true);
+      const res = await api.get(
+        `/absensi/hrd/report-lengkap/${id_user}?month=${selectedMonth + 1}&year=${selectedYear}`
+      );
+      setReportData(res.data);
     } catch (err) {
-      console.error('Gagal ambil data:', err);
+      console.error('Gagal ambil data report lengkap:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal Memuat Data',
+        text: err.response?.data?.error || 'Terjadi kesalahan saat memuat data report absensi.',
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [id_user, selectedMonth, selectedYear]);
 
   useEffect(() => {
-    fetchDetail();
-    // eslint-disable-next-line
-  }, [id_user]);
+    fetchReport();
+  }, [fetchReport]);
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-
-  // --- Logic Filter Data ---
-  const filteredRiwayat = useMemo(() => {
-    return riwayat.filter((item) => {
-      const date = new Date(item.tanggal);
-      return (
-        date.getMonth() === parseInt(selectedMonth) &&
-        date.getFullYear() === parseInt(selectedYear)
-      );
+  const handlePrintPDF = () => {
+    if (!reportData) return;
+    exportToPDF({
+      karyawan: reportData.karyawan,
+      periode: reportData.periode,
+      summary: reportData.summary,
+      items: reportData.items,
+      monthName: months[selectedMonth],
     });
-  }, [riwayat, selectedMonth, selectedYear]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedMonth, selectedYear]);
-
-  const paginatedRiwayat = useMemo(() => {
-    if (pageSize === 'Semua') return filteredRiwayat;
-    const size = Number(pageSize);
-    const start = (currentPage - 1) * size;
-    return filteredRiwayat.slice(start, start + size);
-  }, [filteredRiwayat, currentPage, pageSize]);
-
-  const handleEditClick = (item) => {
-    setEditData({ ...item });
-    setIsEditModalOpen(true);
   };
 
-  const handleEditChange = (e) => {
-    setEditData({ ...editData, [e.target.name]: e.target.value });
+  const handleExportExcel = () => {
+    if (!reportData) return;
+    exportToExcel({
+      karyawan: reportData.karyawan,
+      periode: reportData.periode,
+      summary: reportData.summary,
+      items: reportData.items,
+      monthName: months[selectedMonth],
+    });
   };
 
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
+  const handleDeleteItem = async (item) => {
+    const confirm = await Swal.fire({
+      title: 'Hapus Data Ini?',
+      text: `Apakah Anda yakin ingin menghapus data ${item.status_label} pada tanggal ${new Date(
+        item.tanggal
+      ).toLocaleDateString('id-ID')}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!confirm.isConfirmed) return;
+
     try {
-      await api.put(
-        `/absensi/hrd/edit-absensi/${editData.id_data_absensi}`,
-        editData
-      );
-      Swal.fire('Berhasil!', 'Data absensi berhasil diperbarui!', 'success');
-      setIsEditModalOpen(false);
-      fetchDetail();
-    } catch (error) {
-      console.error('Gagal update absensi:', error);
-      Swal.fire('Error', 'Gagal memperbarui data absensi', 'error');
-    }
-  };
-
-  const handleDownloadExcel = async () => {
-    try {
-      const res = await api.get(
-        `/absensi/hrd/download-excel/${id_user}?month=${
-          parseInt(selectedMonth) + 1
-        }&year=${selectedYear}`,
-        {
-          responseType: 'blob',
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute(
-        'download',
-        `Absensi_User_${id_user}_${parseInt(selectedMonth) + 1}_${selectedYear}.xlsx`
-      );
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      if (item.type === 'absensi') {
+        await api.delete(`/absensi/hrd/hapus/${item.raw_id}`);
+      } else if (item.type === 'lembur') {
+        await api.delete(`/absensi-lembur/hrd/hapus/${item.raw_id}`);
+      }
+      Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
+      fetchReport();
     } catch (err) {
-      console.error('Gagal mengunduh file Excel absensi:', err);
+      console.error('Gagal menghapus data:', err);
+      Swal.fire('Error', err.response?.data?.error || 'Gagal menghapus data.', 'error');
     }
   };
+
+  const handleDeleteAll = async () => {
+    const confirm = await Swal.fire({
+      title: 'Hapus Semua Histori?',
+      text: `PERHATIAN: Semua data absensi dan lembur untuk ${reportData?.karyawan?.nama_lengkap || 'karyawan'
+        } pada periode ${months[selectedMonth]} ${selectedYear} akan dihapus permanen!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Ya, Hapus Semua!',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      await api.delete(
+        `/absensi/hrd/hapus-semua/${id_user}?month=${selectedMonth + 1}&year=${selectedYear}`
+      );
+      Swal.fire('Terhapus!', 'Semua data histori pada periode ini berhasil dihapus.', 'success');
+      fetchReport();
+    } catch (err) {
+      console.error('Gagal menghapus semua data:', err);
+      Swal.fire('Error', err.response?.data?.error || 'Gagal menghapus semua data histori.', 'error');
+    }
+  };
+
+  const namaKaryawan =
+    reportData?.karyawan?.nama_lengkap || reportData?.karyawan?.username || 'Karyawan';
 
   return (
-    <div className="detail-wrapper">
-      <div className="detail-header">
-        <div className="header-left">
-          <button onClick={() => navigate(-1)} className="btn-back">
-            ⬅ Kembali
-          </button>
-          <div>
-            <h2>Riwayat: {riwayat[0]?.username || 'Karyawan'}</h2>
-            {riwayat.length > 0 && (
-              <span className="role-indicator-small">
-                Role:{' '}
-                {riwayat[0].role?.toLowerCase() === 'user'
-                  ? 'User (Bypass Atasan)'
-                  : riwayat[0].role}
-              </span>
-            )}
+    <div className="histori-report-wrapper">
+      {/* Top Header */}
+      <div className="report-main-header">
+        <div className="header-titles">
+          <div className="title-row">
+            <h1>Histori Absen & Rincian Lembur: {namaKaryawan}</h1>
           </div>
+          <p className="subtitle">
+            Data otomatis terurut kronologis dengan ringkasan total di bawah.
+          </p>
         </div>
 
-        <div className="header-right" style={{ display: 'flex', gap: '10px' }}>
-          {/* UI Filter Dropdown */}
-          <div className="filter-group-hrd" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <label>Filter Periode:</label>
-            <div style={{ width: '150px' }}>
+        <div className="header-actions">
+          <div className="period-filter-wrap">
+            <div className="filter-select-box month-select">
               <SelectSearch
                 options={months.map((m, i) => ({ value: i, label: m }))}
                 value={selectedMonth}
@@ -171,7 +168,7 @@ const HrdKaryawanDetail = () => {
                 placeholder="Bulan"
               />
             </div>
-            <div style={{ width: '110px' }}>
+            <div className="filter-select-box year-select">
               <SelectSearch
                 options={years.map((y) => ({ value: y, label: String(y) }))}
                 value={selectedYear}
@@ -180,313 +177,47 @@ const HrdKaryawanDetail = () => {
               />
             </div>
           </div>
-            {dataPribadi && (
-              <div
-                style={{
-                  background: '#fff',
-                  padding: '20px',
-                  marginBottom: '20px',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-                }}
-              >
-                <h3 style={{ marginBottom: '15px' }}>Data Karyawan</h3>
 
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '10px',
-                  }}
-                >
-                  <div>
-                    <strong>Nama:</strong>
-                    <br />
-                    {dataPribadi.nama_lengkap}
-                  </div>
+          <button className="btn-action-print" onClick={handlePrintPDF}>
+            Cetak (Print)
+          </button>
 
-                  <div>
-                    <strong>NIK:</strong>
-                    <br />
-                    {dataPribadi.nik}
-                  </div>
+          <button className="btn-action-excel" onClick={handleExportExcel}>
+            Unduh CSV/Excel
+          </button>
 
-                  <div>
-                    <strong>Jabatan:</strong>
-                    <br />
-                    {dataPribadi.jabatan}
-                  </div>
-
-                  <div>
-                    <strong>Divisi:</strong>
-                    <br />
-                    {dataPribadi.divisi}
-                  </div>
-
-                  <div>
-                    <strong>Tanggal Masuk:</strong>
-                    <br />
-                    {dataPribadi.tanggal_masuk
-                      ? new Date(dataPribadi.tanggal_masuk).toLocaleDateString(
-                          'id-ID'
-                        )
-                      : '-'}
-                  </div>
-
-                  <div>
-                    <strong>Kontrak Berakhir:</strong>
-                    <br />
-                    {dataPribadi.tanggal_kontrak_berakhir
-                      ? new Date(
-                          dataPribadi.tanggal_kontrak_berakhir
-                        ).toLocaleDateString('id-ID')
-                      : '-'}
-                  </div>
-
-                  <div>
-                    <strong>Atasan Langsung:</strong>
-                    <br />
-                    {dataPribadi.atasan_langsung || '-'}
-                  </div>
-
-                  <div>
-                    <strong>Lokasi Kerja:</strong>
-                    <br />
-                    {dataPribadi.lokasi_kerja || '-'}
-                  </div>
-                </div>
-              </div>
-            )}
-          <button
-            onClick={handleDownloadExcel}
-            className="btn-download"
-            disabled={filteredRiwayat.length === 0}
-          >
-            Export Excel
+          <button className="btn-action-close" onClick={() => navigate(-1)} title="Tutup / Kembali">
+            <i className="bi bi-x-lg"></i>
           </button>
         </div>
       </div>
 
       {loading ? (
-        <div className="loading-state">Memuat data riwayat...</div>
+        <div className="report-loading-box">
+          <div className="spinner-border text-primary" role="status"></div>
+          <span>Memuat data laporan absensi & lembur...</span>
+        </div>
       ) : (
-        <div className="table-container">
-          <table className="detail-table">
-            <thead>
-              <tr>
-                <th>Tanggal</th>
-                <th>Jam Kerja</th>
-                <th>Durasi</th>
-                <th>Telat/Lembur</th>
-                <th>Status HRD</th>
-                <th>Hasil Final</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedRiwayat.length > 0 ? (
-                paginatedRiwayat.map((item, index) => (
-                  <tr key={index}>
-                    <td>
-                      {new Date(item.tanggal).toLocaleDateString('id-ID', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </td>
-                    <td>
-                      <small>In: {item.jam_masuk}</small>
-                      <br />
-                      <small>Out: {item.jam_keluar || '--:--'}</small>
-                    </td>
-                    <td>{item.total_jam_kerja || '--'}</td>
-                    <td>
-                      <small
-                        style={{
-                          color: item.keterlambatan > 0 ? '#d9534f' : 'inherit',
-                        }}
-                      >
-                        T: {item.keterlambatan}m
-                      </small>
-                      <br />
-                      <small
-                        style={{
-                          color: item.lembur > 0 ? '#5cb85c' : 'inherit',
-                        }}
-                      >
-                        L: {item.lembur} Jam
-                      </small>
-                    </td>
-                    <td>
-                      <span
-                        className={`badge-mini ${
-                          item.status === 'Alpha'
-                            ? 'alpha'
-                            : item.status_hrd || 'pending'
-                        }`}
-                      >
-                        {item.status === 'Alpha'
-                          ? 'ALPHA'
-                          : (item.status_hrd || 'pending').toUpperCase()}
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className={`badge-final ${
-                          item.status === 'Alpha'
-                            ? 'alpha'
-                            : item.is_approved || 'pending'
-                        }`}
-                      >
-                        {item.status === 'Alpha'
-                          ? 'ALPHA'
-                          : (item.is_approved || 'pending').toUpperCase()}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        className="btn-edit-sm"
-                        onClick={() => handleEditClick(item)}
-                      >
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="7"
-                    className="text-center"
-                    style={{ padding: '30px' }}
-                  >
-                    Tidak ada data absensi untuk periode{' '}
-                    <strong>
-                      {months[selectedMonth]} {selectedYear}
-                    </strong>
-                    .
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-          <Pagination
-            currentPage={currentPage}
-            totalItems={filteredRiwayat.length}
-            pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-            onPageSizeChange={(size) => {
-              setPageSize(size);
-              setCurrentPage(1);
-            }}
-          />
-        </div>
-      )}
+        <>
+          {/* Top Metric Cards */}
+          <SummaryCards summary={reportData?.summary} />
 
-      {/* Modal Edit tetap sama seperti sebelumnya */}
-      {isEditModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Edit Data Absensi</h3>
-            <form onSubmit={handleEditSubmit}>
-              {/* ... (Isi form sama dengan kode awal kamu) ... */}
-              <div className="form-group">
-                <label>Jam Masuk:</label>
-                <input
-                  type="time"
-                  name="jam_masuk"
-                  value={editData?.jam_masuk || ''}
-                  onChange={handleEditChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Jam Keluar:</label>
-                <input
-                  type="time"
-                  name="jam_keluar"
-                  value={editData?.jam_keluar || ''}
-                  onChange={handleEditChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Total Jam Kerja:</label>
-                <input
-                  type="text"
-                  name="total_jam_kerja"
-                  value={editData?.total_jam_kerja || ''}
-                  onChange={handleEditChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Keterlambatan (menit):</label>
-                <input
-                  type="number"
-                  name="keterlambatan"
-                  value={editData?.keterlambatan || 0}
-                  onChange={handleEditChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Lembur (jam):</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  name="lembur"
-                  value={editData?.lembur || 0}
-                  onChange={handleEditChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Status (Hadir/Alpha/Cuti dll):</label>
-                <input
-                  type="text"
-                  name="status"
-                  value={editData?.status || ''}
-                  onChange={handleEditChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Status HRD:</label>
-                <SelectSearch
-                  options={[
-                    { value: 'pending', label: 'Pending' },
-                    { value: 'approved', label: 'Approved' },
-                    { value: 'rejected', label: 'Rejected' },
-                  ]}
-                  value={editData?.status_hrd || 'pending'}
-                  onChange={(e) => setEditData({ ...editData, status_hrd: e.value })}
-                  placeholder="Pilih Status HRD"
-                />
-              </div>
-              <div className="form-group">
-                <label>Hasil Final:</label>
-                <SelectSearch
-                  options={[
-                    { value: 'pending', label: 'Pending' },
-                    { value: 'approved', label: 'Approved' },
-                    { value: 'rejected', label: 'Rejected' },
-                  ]}
-                  value={editData?.is_approved || 'pending'}
-                  onChange={(e) => setEditData({ ...editData, is_approved: e.value })}
-                  placeholder="Pilih Hasil Final"
-                />
-              </div>
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  className="btn-cancel"
-                  onClick={() => setIsEditModalOpen(false)}
-                >
-                  Batal
-                </button>
-                <button type="submit" className="btn-save">
-                  Simpan Perubahan
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+          {/* Distribution Recap Card */}
+          <DistributionCards summary={reportData?.summary} periode={reportData?.periode} />
+          {/* Table Action Bar */}
+          {/* <div className="table-action-bar">
+            <button
+              className="btn-delete-all"
+              onClick={handleDeleteAll}
+              disabled={!reportData?.items || reportData.items.length === 0}
+            >
+              <i className="bi bi-trash-fill"></i> Hapus Semua Histori
+            </button>
+          </div> */}
+
+          {/* Chronological Table */}
+          <ReportTable items={reportData?.items} onDeleteItem={handleDeleteItem} />
+        </>
       )}
     </div>
   );

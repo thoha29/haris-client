@@ -107,7 +107,7 @@ function MainContent({ isSidebarOpen }) {
 
         <Route
           path="hrd/cuti/riwayat/:id_user"
-          element={<HrdCutiRiwayatDetail />}
+          element={<HrdKaryawanDetail />}
         />
 
         <Route path="SkemaManager" element={<SkemaManager />} />
