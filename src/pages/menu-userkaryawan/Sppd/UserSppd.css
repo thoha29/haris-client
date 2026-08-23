@@ -1,0 +1,245 @@
+.sppd-page-container {
+  padding: 20px;
+  background-color: #f4f6f9;
+  min-height: 85vh;
+}
+
+.sppd-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  border: 1px solid #e9ecef;
+}
+
+.sppd-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 16px;
+}
+
+.sppd-page-header h2 {
+  font-size: 1.4rem;
+  text-align: start;
+  font-weight: 700;
+  color: #1f4e78;
+  margin: 0 0 4px 0;
+}
+
+.sppd-page-header p {
+  color: #6c757d;
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.sppd-form-section {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.sppd-form-section h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f4e78;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 8px;
+}
+
+.form-group-custom {
+  margin-bottom: 14px;
+}
+
+.form-group-custom label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.form-control-clean {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+  color: #212529;
+}
+
+.form-control-clean:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary-custom {
+  background-color: #0d6efd;
+  color: #ffffff;
+  border: none;
+  padding: 9px 22px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+  background-color: #0b5ed7;
+  color: #ffffff;
+}
+
+.btn-secondary-custom {
+  background-color: #6c757d;
+  color: #ffffff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-secondary-custom:hover {
+  background-color: #5c636a;
+  color: #ffffff;
+}
+
+.sppd-filter-bar {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.sppd-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+.sppd-table th {
+  background-color: #f1f5f9;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 12px 14px;
+  border-bottom: 2px solid #cbd5e1;
+  text-align: left;
+}
+
+.sppd-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.9rem;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.sppd-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.badge-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-status.approved,
+.badge-status.active {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+.badge-status.pending,
+.badge-status.pending_atasan,
+.badge-status.pending_hrd {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.badge-status.rejected,
+.badge-status.rejected_atasan,
+.badge-status.rejected_hrd {
+  background-color: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+.badge-status.completed {
+  background-color: #cff4fc;
+  color: #055160;
+  border: 1px solid #b6effb;
+}
+
+.badge-status.cancelled {
+  background-color: #e2e3e5;
+  color: #41464b;
+  border: 1px solid #d3d6d8;
+}
+
+.btn-action-detail {
+  background-color: #0d6efd;
+  color: #ffffff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.btn-action-detail:hover {
+  background-color: #0b5ed7;
+  color: #ffffff;
+}
+
+.btn-action-rab {
+  background-color: #198754;
+  color: #ffffff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-action-rab:hover {
+  background-color: #157347;
+  color: #ffffff;
+}
+
+.btn-action-rab.pending {
+  background-color: #ffc107;
+  color: #000000;
+}
+
+.btn-action-rab.pending:hover {
+  background-color: #e0a800;
+}

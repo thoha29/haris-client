@@ -2,7 +2,19 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/', // Pastikan port-nya 3000 sesuai .env http://api1.ptbss.id/
+  baseURL: 'http://localhost:3000/',
 });
+
+api.interceptors.request.use(
+  (config) => {
+    const access_token = localStorage.getItem('access_token');
+    if (access_token) {
+      config.headers['access_token'] = access_token;
+      config.headers['Authorization'] = `Bearer ${access_token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default api;

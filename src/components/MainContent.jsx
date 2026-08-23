@@ -5,7 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import Profile from '../pages/Profile/Profile';
 import UserApproval from '../pages/menu-userkaryawan/UserApproval';
 import UserApprovalCuti from '../pages/menu-userkaryawan/UserApprovalCuti';
-import { SkemaManager, SetJadwalKaryawan } from '../pages/menu-userkaryawan';
+import { SkemaManager, SetJadwalKaryawan, FormSppd, UserSppdMonitoring } from '../pages/menu-userkaryawan';
 import Skemagaji from '../pages/menu-keuangan/Gaji/Skemagaji';
 import ApprovalGaji from '../pages/menu-pimpinan/ApprovalGaji';
 import UserApprovalLembur from '../pages/menu-userkaryawan/UserApprovalLembur';
@@ -23,10 +23,13 @@ import {
   HrdMonitoring,
   HrdKaryawanDetail,
   HrdRiwayatCuti,
-  HrdCutiRiwayatDetail,
   HrdRiwayatPengajuanCuti,
   ProsesAbsensi,
   DaftarGaji,
+  MasterKomponenRab,
+  MasterTransportasi,
+  PengaturanSkema,
+  HrdSppdApproval,
 } from '../pages/menu-hrd';
 
 // Named Imports dari Folder menu-keuangan
@@ -51,6 +54,7 @@ import {
   AbsensiLembur,
   RiwayatAbsensiLembur,
   ListGaji,
+  DinasKaryawan,
 } from '../pages/menu-karyawan';
 
 function MainContent({ isSidebarOpen }) {
@@ -83,6 +87,8 @@ function MainContent({ isSidebarOpen }) {
         <Route path="riwayat-pengajuan" element={<RiwayatPengajuan />} />
         <Route path="SlipGaji" element={<SlipGaji />} />
         <Route path="listGaji" element={<ListGaji />}></Route>
+        <Route path="dinas" element={<DinasKaryawan />} />
+        <Route path="Dinas" element={<DinasKaryawan />} />
 
         {/* untuk Lembur */}
         <Route path="Absensi-Lembur" element={<AbsensiLembur />} />
@@ -104,6 +110,10 @@ function MainContent({ isSidebarOpen }) {
         <Route path="HrdRiwayatCuti" element={<HrdRiwayatCuti />} />
         <Route path="Proses-Absensi" element={<ProsesAbsensi />} />
         <Route path="Daftar-Gaji" element={<DaftarGaji />}></Route>
+        <Route path="MasterKomponenRab" element={<MasterKomponenRab />} />
+        <Route path="MasterTransportasi" element={<MasterTransportasi />} />
+        <Route path="PengaturanSkema" element={<PengaturanSkema />} />
+        <Route path="HrdSppdApproval" element={<HrdSppdApproval />} />
 
         <Route
           path="hrd/cuti/riwayat/:id_user"
@@ -120,6 +130,8 @@ function MainContent({ isSidebarOpen }) {
         <Route path="UserApprovalCuti" element={<UserApprovalCuti />} />
         <Route path="UserApprovalLembur" element={<UserApprovalLembur />} />
         <Route path="UserApprovalRiwayat" element={<UserApprovalRiwayat />} />
+        <Route path="FormSppd" element={<FormSppd />} />
+        <Route path="UserSppdMonitoring" element={<UserSppdMonitoring />} />
 
         {/* Menu Keuangan */}
         <Route path="Dashboard-Keuangan" element={<DashboardKeuangan />} />

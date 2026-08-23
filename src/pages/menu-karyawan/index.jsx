@@ -29,6 +29,9 @@ import RiwayatPengajuan from './Cuti/RiwayatPengajuan';
 import SlipGaji from './Penggajian/SlipGaji';
 import ListGaji from './Penggajian/ListGaji';
 
+//Dinas & SPPD
+import DinasKaryawan from './Dinas';
+
 export {
   Absensi,
   DashboardKaryawan,
@@ -47,4 +50,5 @@ export {
   Lembur,
   RiwayatAbsensiLembur,
   ListGaji,
+  DinasKaryawan,
 };

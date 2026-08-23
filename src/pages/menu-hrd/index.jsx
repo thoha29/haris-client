@@ -20,6 +20,12 @@ import HrdRiwayatPengajuanCuti from './Cuti/HrdRiwayatPengajuanCuti';
 
 import DaftarGaji from './DaftarGaji/DaftarGaji';
 
+// SPPD, Master & Settings
+import MasterKomponenRab from './MasterKomponenRab';
+import MasterTransportasi from './MasterTransportasi';
+import PengaturanSkema from './PengaturanSkema';
+import HrdSppdApproval from './HrdSppd';
+
 export {
   DashboardHRD,
   DataKaryawan,
@@ -34,4 +40,8 @@ export {
   HrdRiwayatPengajuanCuti,
   ProsesAbsensi,
   DaftarGaji,
+  MasterKomponenRab,
+  MasterTransportasi,
+  PengaturanSkema,
+  HrdSppdApproval,
 };

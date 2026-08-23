@@ -57,13 +57,18 @@ const SelectSearch = ({
   }, [options, valueKey, labelKey]);
 
   // Find currently selected option safely
-  const selectedOption = normalizedOptions.find(
-    (opt) =>
-      value !== '' &&
-      value !== undefined &&
-      value !== null &&
-      String(opt.value) === String(value)
-  );
+  const selectedOption = normalizedOptions.find((opt) => {
+    if (value === '' || value === undefined || value === null) return false;
+    const rawVal =
+      typeof value === 'object' && value !== null
+        ? value.value !== undefined
+          ? value.value
+          : value.target?.value !== undefined
+            ? value.target.value
+            : value
+        : value;
+    return String(opt.value) === String(rawVal);
+  });
 
   // Filter options based on search term
   const filteredOptions = normalizedOptions.filter((opt) =>

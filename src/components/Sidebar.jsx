@@ -157,6 +157,18 @@ function SideBar({ isOpen }) {
                 </li>
               </ul>
             </li>
+
+            <li className="nav-item">
+              <NavLink
+                to="dinas"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? ' active' : '')
+                }
+              >
+                <i className="bi bi-briefcase-fill"></i>
+                <span>Perjalanan Dinas (SPPD)</span>
+              </NavLink>
+            </li>
           </>
         )}
 
@@ -341,6 +353,47 @@ function SideBar({ isOpen }) {
                 <i className="bi bi-cash-stack"></i>
                 <span>Daftar Gaji</span>
               </NavLink>
+            </li>
+
+            {/* Group SPPD & RAB */}
+            <li className="nav-item">
+              <a
+                href="/"
+                className="nav-link collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#hrd-sppd-nav"
+                onClick={(e) => e.preventDefault()}
+              >
+                <i className="bi bi-briefcase-fill"></i>
+                <span>Dinas & Master RAB</span>
+                <i className="bi bi-chevron-down ms-auto"></i>
+              </a>
+              <ul
+                id="hrd-sppd-nav"
+                className="nav-content collapse"
+                data-bs-parent="#sidebar-nav"
+              >
+                <li>
+                  <NavLink to="HrdSppdApproval">
+                    <span>Approval SPPD & RAB</span>
+                  </NavLink>
+                </li>
+                {/* <li>
+                  <NavLink to="MasterKomponenRab">
+                    <span>Master Komponen RAB</span>
+                  </NavLink>
+                </li> */}
+                <li>
+                  <NavLink to="MasterTransportasi">
+                    <span>Master Transportasi PT</span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="PengaturanSkema">
+                    <span>Pengaturan Skema</span>
+                  </NavLink>
+                </li>
+              </ul>
             </li>
           </>
         )}
@@ -529,6 +582,37 @@ function SideBar({ isOpen }) {
                 <li>
                   <NavLink to="SetJadwalKaryawan">
                     <span>Atur Jadwal</span>
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
+
+            {/* Group SPPD User */}
+            <li className="nav-item">
+              <a
+                href="/"
+                className="nav-link collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#user-sppd-nav"
+                onClick={(e) => e.preventDefault()}
+              >
+                <i className="bi bi-briefcase-fill"></i>
+                <span>Perjalanan Dinas (SPPD)</span>
+                <i className="bi bi-chevron-down ms-auto"></i>
+              </a>
+              <ul
+                id="user-sppd-nav"
+                className="nav-content collapse"
+                data-bs-parent="#sidebar-nav"
+              >
+                <li>
+                  <NavLink to="FormSppd">
+                    <span>Buat SPPD Baru</span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="UserSppdMonitoring">
+                    <span>Monitoring & RAB SPPD</span>
                   </NavLink>
                 </li>
               </ul>

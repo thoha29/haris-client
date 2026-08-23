@@ -140,6 +140,7 @@ const HrdKaryawanDetail = () => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleDeleteAll = async () => {
     const confirm = await Swal.fire({
       title: 'Hapus Semua Histori?',
