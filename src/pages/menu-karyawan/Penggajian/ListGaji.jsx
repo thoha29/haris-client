@@ -279,6 +279,31 @@ export const ListGaji = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* UPAH DINAS */}
+                  <div className="col-12 col-md-6">
+                    <div className="card h-100 shadow-sm">
+                      <div className="card-header">
+                        <strong>Upah Dinas</strong>
+                      </div>
+                      <div className="card-body">
+                        <div className="row text-center">
+                          <div className="col">
+                            Harian: {formatRupiah(item.uharian) ?? '-'}
+                          </div>
+                          <div className="col">
+                            Pagi: {formatRupiah(item.upagi) ?? '-'}
+                          </div>
+                          <div className="col">
+                            Siang: {formatRupiah(item.usiang) ?? '-'}
+                          </div>
+                          <div className="col">
+                            Malam: {formatRupiah(item.umalam) ?? '-'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))

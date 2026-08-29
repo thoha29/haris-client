@@ -38,7 +38,7 @@ const DaftarGaji = () => {
         didOpen: () => Swal.showLoading(),
       });
 
-      const pdf = new jsPDF('l', 'mm', 'a4');
+      const pdf = new jsPDF('l', 'mm', 'a3');
 
       // 🔥 HEADER LAPORAN
       pdf.setFontSize(16);
@@ -60,6 +60,7 @@ const DaftarGaji = () => {
           { content: 'Kehadiran', colSpan: 8 },
           { content: 'Lembur', colSpan: 5 },
           { content: 'Potongan', colSpan: 3 },
+          { content: 'Upah Dinas', colSpan: 3 },
         ],
         [
           'UP',
@@ -81,6 +82,10 @@ const DaftarGaji = () => {
           'JHT',
           'JP',
           'JKes',
+          'Harian',
+          'Pagi',
+          'Siang',
+          'Malam',
         ],
       ];
 
@@ -107,6 +112,10 @@ const DaftarGaji = () => {
         formatRupiah(item.jht),
         formatRupiah(item.jp),
         formatRupiah(item.jkes),
+        formatRupiah(item.uharian),
+        formatRupiah(item.upagi),
+        formatRupiah(item.usiang),
+        formatRupiah(item.umalam),
       ]);
 
       // 🔥 GENERATE TABLE
@@ -202,6 +211,7 @@ const DaftarGaji = () => {
                   <th colSpan="8">Kehadiran</th>
                   <th colSpan="5">Lembur</th>
                   <th colSpan="3">Potongan</th>
+                  <th colSpan="4">Upah Dinas</th>
                 </tr>
 
                 <tr>
@@ -227,6 +237,11 @@ const DaftarGaji = () => {
                   <th>JHT</th>
                   <th>JP</th>
                   <th>JKes</th>
+
+                  <th>Harian</th>
+                  <th>Pagi</th>
+                  <th>Siang</th>
+                  <th>Malam</th>
                 </tr>
               </thead>
 
@@ -262,6 +277,11 @@ const DaftarGaji = () => {
                       <td>{formatRupiah(item.jht)}</td>
                       <td>{formatRupiah(item.jp)}</td>
                       <td>{formatRupiah(item.jkes)}</td>
+
+                      <td>{formatRupiah(item.uharian)}</td>
+                      <td>{formatRupiah(item.upagi)}</td>
+                      <td>{formatRupiah(item.usiang)}</td>
+                      <td>{formatRupiah(item.umalam)}</td>
                     </tr>
                   ))
                 ) : (
