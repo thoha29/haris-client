@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import './UserApproval.css';
+import { formatJamMenit } from '../../utils/formatTime';
 import Pagination from '../../components/Pagination';
 
 const UserApproval = () => {
@@ -141,7 +142,7 @@ const UserApproval = () => {
                     <td>
                       <small className="txt-late">T: {item.keterlambatan}m</small>
                       <br />
-                      <small className="txt-overtime">L: {item.lembur} Jam</small>
+                      <small className="txt-overtime">L: {formatJamMenit(item.lembur)}</small>
                     </td>
                     <td>
                       <span className={`badge-status ${item.status_user}`}>

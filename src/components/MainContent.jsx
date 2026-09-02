@@ -55,6 +55,7 @@ import {
   RiwayatAbsensiLembur,
   ListGaji,
   DinasKaryawan,
+  PengajuanSppd,
 } from '../pages/menu-karyawan';
 
 function MainContent({ isSidebarOpen }) {
@@ -87,8 +88,11 @@ function MainContent({ isSidebarOpen }) {
         <Route path="riwayat-pengajuan" element={<RiwayatPengajuan />} />
         <Route path="SlipGaji" element={<SlipGaji />} />
         <Route path="listGaji" element={<ListGaji />}></Route>
+        <Route path="PengajuanSppd" element={<PengajuanSppd />} />
+        <Route path="pengajuan-sppd" element={<PengajuanSppd />} />
         <Route path="dinas" element={<DinasKaryawan />} />
         <Route path="Dinas" element={<DinasKaryawan />} />
+
 
         {/* untuk Lembur */}
         <Route path="Absensi-Lembur" element={<AbsensiLembur />} />

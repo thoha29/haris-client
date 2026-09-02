@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import './UserApprovalRiwayat.css';
+import { formatJamMenit } from '../../utils/formatTime';
 import Pagination from '../../components/Pagination';
 import SelectSearch from '../../components/SelectSearch';
 
@@ -197,7 +198,7 @@ const UserApprovalRiwayat = () => {
                           {item.jam_masuk} - {item.jam_keluar || '--:--'}
                         </td>
                         <td>
-                          <small className="text-muted">T: {item.keterlambatan || 0}m | L: {item.lembur || 0}j</small>
+                          <small className="text-muted">T: {item.keterlambatan || 0}m | L: {formatJamMenit(item.lembur)}</small>
                         </td>
                         {isLembur && (
                           <td>

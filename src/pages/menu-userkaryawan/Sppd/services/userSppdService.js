@@ -28,6 +28,21 @@ export const getRabBySppd = async (id_sppd) => {
   return await api.get(`/api/rab/sppd/${id_sppd}`);
 };
 
+// ─── ATASAN APPROVE / TOLAK SPPD ──────────────────────────────────────────
+export const approveSppdAtasan = async (id_sppd, status, catatan) => {
+  return await api.put('/api/sppd/approve-atasan', { id_sppd, status, catatan });
+};
+
+// ─── ATASAN BATALKAN SPPD ─────────────────────────────────────────────────
+export const cancelSppdAtasan = async (id_sppd) => {
+  return await api.put('/api/sppd/cancel-atasan', { id_sppd });
+};
+
+// ─── ATASAN REVIEW RAB (approve / minta revisi) ───────────────────────────
+export const reviewRabAtasan = async (id_rab, action, catatan) => {
+  return await api.put('/api/rab/review-atasan', { id_rab, action, catatan });
+};
+
 export const approveCancelAtasan = async (id_sppd, status) => {
   return await api.put('/api/sppd/approve-cancel-atasan', { id_sppd, status });
 };
@@ -35,3 +50,4 @@ export const approveCancelAtasan = async (id_sppd, status) => {
 export const getMasterKomponenActive = async () => {
   return await api.get('/api/master-komponen/active');
 };
+

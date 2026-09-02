@@ -135,24 +135,62 @@ const HrdSppdApproval = () => {
   };
 
   const handleApproveCancel = async (id_sppd) => {
+    const result = await Swal.fire({
+      title: 'Setujui Pembatalan SPPD?',
+      text: 'Permohonan pembatalan dari karyawan akan disetujui dan diteruskan ke Atasan untuk persetujuan akhir.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#16a34a',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Ya, Setujui Pembatalan',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await approveCancelHRD(id_sppd, 'approved');
-      Swal.fire('Berhasil', 'Persetujuan pembatalan diteruskan ke Atasan.', 'success');
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: 'Persetujuan pembatalan SPPD berhasil diteruskan ke Atasan.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
       setShowDetailModal(false);
       fetchSppd();
     } catch (err) {
-      Swal.fire('Gagal', 'Gagal memproses pembatalan', 'error');
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal memproses pembatalan', 'error');
     }
   };
 
   const handleRejectCancel = async (id_sppd) => {
+    const result = await Swal.fire({
+      title: 'Tolak Pembatalan SPPD?',
+      text: 'Permohonan pembatalan SPPD dari karyawan akan ditolak.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Ya, Tolak Pembatalan',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await approveCancelHRD(id_sppd, 'rejected');
-      Swal.fire('Ditolak', 'Permohonan pembatalan ditolak.', 'info');
+      Swal.fire({
+        icon: 'info',
+        title: 'Ditolak',
+        text: 'Permohonan pembatalan SPPD telah ditolak.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
       setShowDetailModal(false);
       fetchSppd();
     } catch (err) {
-      Swal.fire('Gagal', 'Gagal memproses pembatalan', 'error');
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal memproses penolakan pembatalan', 'error');
     }
   };
 
@@ -166,20 +204,20 @@ const HrdSppdApproval = () => {
     }
   };
 
-  const handleReviewRabSubmit = async (id_rab, status, catatan, updatedDetails) => {
+  const handleReviewRabSubmit = async (id_rab, catatan) => {
     try {
-      await reviewRabHRD(id_rab, status, catatan, updatedDetails);
+      await reviewRabHRD(id_rab, catatan);
       Swal.fire({
         icon: 'success',
-        title: status === 'approved' ? 'RAB Disetujui' : 'RAB Ditolak',
-        text: status === 'approved' ? 'RAB berhasil disetujui dan penyesuaian biaya dinas telah disimpan.' : 'RAB telah ditolak.',
+        title: 'RAB & SPPD Disetujui',
+        text: 'RAB dan SPPD berhasil disetujui secara final.',
         timer: 1800,
         showConfirmButton: false,
       });
       setShowRabModal(false);
       fetchSppd();
     } catch (err) {
-      Swal.fire('Gagal', err.response?.data?.error || 'Gagal memproses review RAB', 'error');
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal memproses persetujuan RAB', 'error');
     }
   };
 
@@ -256,6 +294,8 @@ const HrdSppdApproval = () => {
           data={filteredData}
           onViewDetail={handleViewDetail}
           onReviewRab={handleReviewRab}
+          onApproveCancel={handleApproveCancel}
+          onRejectCancel={handleRejectCancel}
           loading={loading}
         />
       </div>

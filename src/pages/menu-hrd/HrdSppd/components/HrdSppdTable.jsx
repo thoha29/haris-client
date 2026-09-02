@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HrdSppdTable = ({ data, onViewDetail, onReviewRab, loading }) => {
+const HrdSppdTable = ({ data, onViewDetail, onReviewRab, onApproveCancel, onRejectCancel, loading }) => {
   if (loading) {
     return (
       <div className="text-center py-5">
@@ -34,7 +34,7 @@ const HrdSppdTable = ({ data, onViewDetail, onReviewRab, loading }) => {
             <th style={{ textAlign: 'center' }}>Approval HRD</th>
             <th style={{ textAlign: 'center' }}>Status SPPD</th>
             <th style={{ textAlign: 'center' }}>Status RAB</th>
-            <th style={{ width: '170px', textAlign: 'center' }}>Aksi</th>
+            <th style={{ minWidth: '190px', textAlign: 'center' }}>Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -59,7 +59,30 @@ const HrdSppdTable = ({ data, onViewDetail, onReviewRab, loading }) => {
                 </small>
               </td>
               <td style={{ textAlign: 'center' }}>{renderBadge(item.status_hrd)}</td>
-              <td style={{ textAlign: 'center' }}>{renderBadge(item.status_sppd)}</td>
+              <td style={{ textAlign: 'center' }}>
+                {renderBadge(item.status_sppd)}
+                {item.pembatalan === 'pending_hrd' && (
+                  <div>
+                    <span className="badge-cancel-box" title={`Alasan Batal: ${item.alasan_batal || '-'}`}>
+                      <i className="bi bi-exclamation-circle-fill"></i> Req Batal Karyawan
+                    </span>
+                  </div>
+                )}
+                {item.pembatalan === 'pending_atasan' && (
+                  <div>
+                    <span className="badge-cancel-box" style={{ background: '#e0e7ff', color: '#3730a3', borderColor: '#c7d2fe' }}>
+                      <i className="bi bi-clock-history"></i> Batal: Menunggu Atasan
+                    </span>
+                  </div>
+                )}
+                {item.pembatalan === 'rejected' && (
+                  <div>
+                    <span className="badge-cancel-box" style={{ background: '#fee2e2', color: '#991b1b', borderColor: '#fecaca' }}>
+                      <i className="bi bi-x-circle"></i> Batal Ditolak
+                    </span>
+                  </div>
+                )}
+              </td>
               <td style={{ textAlign: 'center' }}>
                 {item.id_rab ? (
                   <div>
@@ -77,21 +100,44 @@ const HrdSppdTable = ({ data, onViewDetail, onReviewRab, loading }) => {
                 )}
               </td>
               <td style={{ textAlign: 'center' }}>
-                <button
-                  type="button"
-                  className="btn-action-detail"
-                  onClick={() => onViewDetail(item.id_sppd)}
-                >
-                  Detail
-                </button>
-                {item.id_rab && (
+                <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: item.pembatalan === 'pending_hrd' ? '6px' : '0' }}>
                   <button
                     type="button"
-                    className="btn-action-rab"
-                    onClick={() => onReviewRab(item.id_sppd)}
+                    className="btn-action-detail"
+                    onClick={() => onViewDetail(item.id_sppd)}
                   >
-                    Review RAB
+                    Detail
                   </button>
+                  {item.id_rab && (
+                    <button
+                      type="button"
+                      className="btn-action-rab"
+                      onClick={() => onReviewRab(item.id_sppd)}
+                    >
+                      Review RAB
+                    </button>
+                  )}
+                </div>
+
+                {item.pembatalan === 'pending_hrd' && onApproveCancel && onRejectCancel && (
+                  <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'wrap', paddingTop: '4px', borderTop: '1px dashed #e2e8f0' }}>
+                    <button
+                      type="button"
+                      className="btn-action-cancel-approve"
+                      title="Setujui Pembatalan (Teruskan ke Atasan)"
+                      onClick={() => onApproveCancel(item.id_sppd)}
+                    >
+                      <i className="bi bi-check-circle"></i> Setujui Batal
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-action-cancel-reject"
+                      title="Tolak Pembatalan SPPD"
+                      onClick={() => onRejectCancel(item.id_sppd)}
+                    >
+                      <i className="bi bi-x-circle"></i> Tolak Batal
+                    </button>
+                  </div>
                 )}
               </td>
             </tr>

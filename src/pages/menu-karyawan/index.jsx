@@ -31,6 +31,7 @@ import ListGaji from './Penggajian/ListGaji';
 
 //Dinas & SPPD
 import DinasKaryawan from './Dinas';
+import PengajuanSppd from './Dinas/PengajuanSppd';
 
 export {
   Absensi,
@@ -51,4 +52,6 @@ export {
   RiwayatAbsensiLembur,
   ListGaji,
   DinasKaryawan,
+  PengajuanSppd,
 };
+

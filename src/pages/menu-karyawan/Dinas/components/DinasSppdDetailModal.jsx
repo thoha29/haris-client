@@ -7,6 +7,7 @@ const DinasSppdDetailModal = ({
   sppd,
   onCancelRequest,
   onViewRab,
+  onSubmitRab,
 }) => {
   const [alasanBatal, setAlasanBatal] = useState('');
   const [showCancelInput, setShowCancelInput] = useState(false);
@@ -18,6 +19,8 @@ const DinasSppdDetailModal = ({
     sppd.status_sppd !== 'completed' &&
     sppd.status_sppd !== 'cancelled' &&
     sppd.status_sppd !== 'rejected';
+
+  const isRevisiAtasan = sppd.status_rab === 'revisi_atasan';
 
   const handleSendCancel = () => {
     if (!alasanBatal.trim()) {
@@ -93,14 +96,24 @@ const DinasSppdDetailModal = ({
           {/* Header Info */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
             <div>
-              <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Diterbitkan Oleh</div>
-              <div style={{ fontWeight: '600', color: '#1e293b' }}>{sppd.nama_pembuat || 'Atasan'}</div>
+              <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Diajukan Oleh</div>
+              <div style={{ fontWeight: '600', color: '#1e293b' }}>{sppd.nama_karyawan || 'Saya'}</div>
             </div>
             <div>
               <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Status SPPD</div>
               <div style={{ fontWeight: '700', color: '#0f5132' }}>{sppd.status_sppd?.toUpperCase() || 'PENDING'}</div>
             </div>
           </div>
+
+          {/* Catatan Atasan jika ada revisi / penolakan */}
+          {sppd.catatan_atasan && (
+            <div style={{ background: '#fffbeb', border: '1px solid #fde68a', padding: '12px 14px', borderRadius: '8px', marginBottom: '16px' }}>
+              <div style={{ fontWeight: '700', color: '#b45309', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <i className="bi bi-exclamation-triangle-fill"></i> Catatan dari Atasan:
+              </div>
+              <div style={{ fontSize: '0.9rem', color: '#78350f' }}>{sppd.catatan_atasan}</div>
+            </div>
+          )}
 
           {/* Travel Details */}
           <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1f4e78', marginBottom: '10px' }}>
@@ -221,18 +234,43 @@ const DinasSppdDetailModal = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '10px',
           }}
         >
-          <div>
-            {sppd.id_rab && (
-              <button
-                type="button"
-                style={{ backgroundColor: '#198754', color: '#ffffff', border: 'none', padding: '8px 18px', borderRadius: '6px', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer' }}
-                onClick={() => onViewRab(sppd.id_sppd)}
-              >
-                <i className="bi bi-receipt me-1"></i>
-                Lihat Rincian Biaya (RAB)
-              </button>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {sppd.id_rab ? (
+              <>
+                <button
+                  type="button"
+                  style={{ backgroundColor: '#198754', color: '#ffffff', border: 'none', padding: '8px 18px', borderRadius: '6px', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer' }}
+                  onClick={() => onViewRab(sppd.id_sppd)}
+                >
+                  <i className="bi bi-receipt me-1"></i>
+                  Lihat Rincian Biaya (RAB)
+                </button>
+                {isRevisiAtasan && onSubmitRab && (
+                  <button
+                    type="button"
+                    style={{ backgroundColor: '#d97706', color: '#ffffff', border: 'none', padding: '8px 18px', borderRadius: '6px', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer' }}
+                    onClick={() => onSubmitRab(sppd.id_sppd)}
+                  >
+                    <i className="bi bi-pencil-square me-1"></i>
+                    Revisi / Edit RAB
+                  </button>
+                )}
+              </>
+            ) : (
+              onSubmitRab && (
+                <button
+                  type="button"
+                  style={{ backgroundColor: '#2563eb', color: '#ffffff', border: 'none', padding: '8px 18px', borderRadius: '6px', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer' }}
+                  onClick={() => onSubmitRab(sppd.id_sppd)}
+                >
+                  <i className="bi bi-plus-circle me-1"></i>
+                  Buat Rincian Biaya (RAB)
+                </button>
+              )
             )}
           </div>
 
@@ -259,3 +297,4 @@ const DinasSppdDetailModal = ({
 };
 
 export default DinasSppdDetailModal;
+

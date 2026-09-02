@@ -162,26 +162,32 @@ const HrdSppdDetailModal = ({ show, onClose, sppd, onApprove, onReject, onApprov
 
           {/* Cancellation Notice if requested */}
           {sppd.pembatalan && sppd.pembatalan !== 'none' && (
-            <div style={{ background: '#fff3cd', border: '1px solid #ffeeba', padding: '12px', borderRadius: '6px', marginBottom: '14px' }}>
-              <div style={{ fontWeight: '700', color: '#856404', marginBottom: '4px' }}>Permohonan Pembatalan SPPD</div>
-              <div style={{ fontSize: '0.88rem', marginBottom: '6px' }}>Alasan: {sppd.alasan_batal || '-'}</div>
-              <div style={{ fontSize: '0.82rem' }}>Status Pembatalan: <strong>{sppd.pembatalan}</strong></div>
-              
+            <div style={{ background: '#fffbeb', border: '1px solid #fde68a', padding: '14px', borderRadius: '8px', marginBottom: '16px' }}>
+              <div style={{ fontWeight: '700', color: '#92400e', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.92rem' }}>
+                <i className="bi bi-exclamation-triangle-fill text-warning"></i> Permohonan Pembatalan SPPD oleh Karyawan
+              </div>
+              <div style={{ fontSize: '0.88rem', color: '#1e293b', marginBottom: '6px' }}>
+                <strong>Alasan Pembatalan:</strong> {sppd.alasan_batal || '-'}
+              </div>
+              <div style={{ fontSize: '0.84rem', color: '#475569', marginBottom: '10px' }}>
+                Status Proses Pembatalan: <strong style={{ textTransform: 'uppercase', color: '#1e293b' }}>{sppd.pembatalan}</strong>
+              </div>
+
               {sppd.pembatalan === 'pending_hrd' && (
-                <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', paddingTop: '8px', borderTop: '1px dashed #fde68a' }}>
                   <button
                     type="button"
-                    style={{ backgroundColor: '#dc3545', color: '#ffffff', border: 'none', padding: '6px 14px', borderRadius: '5px', fontWeight: '600', fontSize: '0.82rem', cursor: 'pointer' }}
+                    style={{ backgroundColor: '#16a34a', color: '#ffffff', border: 'none', padding: '7px 16px', borderRadius: '6px', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                     onClick={() => onApproveCancel(sppd.id_sppd)}
                   >
-                    Setujui Pembatalan (Teruskan ke Atasan)
+                    <i className="bi bi-check-circle-fill"></i> Setujui Pembatalan (Teruskan ke Atasan)
                   </button>
                   <button
                     type="button"
-                    style={{ backgroundColor: '#6c757d', color: '#ffffff', border: 'none', padding: '6px 14px', borderRadius: '5px', fontWeight: '600', fontSize: '0.82rem', cursor: 'pointer' }}
+                    style={{ backgroundColor: '#dc2626', color: '#ffffff', border: 'none', padding: '7px 16px', borderRadius: '6px', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                     onClick={() => onRejectCancel(sppd.id_sppd)}
                   >
-                    Tolak Pembatalan
+                    <i className="bi bi-x-circle-fill"></i> Tolak Pembatalan
                   </button>
                 </div>
               )}
