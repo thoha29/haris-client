@@ -111,7 +111,7 @@ const DinasSppdCard = ({ sppd, onViewDetail, onViewRab, onSubmitRab }) => {
             <span className="badge-kategori">{sppd.total_hari || 1} Hari</span>
           </div>
 
-          {sppd.pembatalan && sppd.pembatalan !== 'none' && (
+          {/* {sppd.pembatalan && sppd.pembatalan !== 'none' && (
             <div
               style={{
                 backgroundColor: '#e0f2fe',
@@ -127,7 +127,7 @@ const DinasSppdCard = ({ sppd, onViewDetail, onViewRab, onSubmitRab }) => {
               <i className="bi bi-info-circle-fill me-1"></i>
               Pengajuan Pembatalan: {sppd.pembatalan}
             </div>
-          )}
+          )} */}
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
             <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: '600' }}>Status RAB:</span>

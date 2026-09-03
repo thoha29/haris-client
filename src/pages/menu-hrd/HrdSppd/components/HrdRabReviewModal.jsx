@@ -500,7 +500,7 @@ const HrdRabReviewModal = ({
           )}
 
           {/* Catatan HRD Section */}
-          <div style={{ marginTop: '16px' }}>
+          {/* <div style={{ marginTop: '16px' }}>
             <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '4px', display: 'block' }}>
               Catatan / Keterangan Persetujuan Final (Opsional):
             </label>
@@ -513,7 +513,7 @@ const HrdRabReviewModal = ({
               onChange={(e) => setCatatan(e.target.value)}
               style={{ fontSize: '0.84rem', backgroundColor: isApproved ? '#f8fafc' : '#ffffff' }}
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Footer Buttons */}
