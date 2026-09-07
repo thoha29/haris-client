@@ -181,9 +181,9 @@ const DinasSppdDetailModal = ({
             </div>
           )}
 
-          {canRequestCancel && (
+          {/* {canRequestCancel && (
             <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '14px', borderRadius: '6px', marginBottom: '14px' }}>
-              {/* {!showCancelInput ? (
+              {!showCancelInput ? (
                 <button
                   type="button"
                   style={{ backgroundColor: '#dc3545', color: '#ffffff', border: 'none', padding: '6px 14px', borderRadius: '5px', fontSize: '0.85rem', fontWeight: '600', cursor: 'pointer' }}
@@ -191,40 +191,39 @@ const DinasSppdDetailModal = ({
                 >
                   Ajukan Permohonan Pembatalan SPPD
                 </button>
-              ) :  */}
-              (
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#991b1b', marginBottom: '6px' }}>
-                  Alasan Permohonan Pembatalan SPPD:
-                </label>
-                <textarea
-                  className="form-control-clean"
-                  rows="2"
-                  placeholder="Tulis alasan pembatalan..."
-                  value={alasanBatal}
-                  onChange={(e) => setAlasanBatal(e.target.value)}
-                  style={{ marginBottom: '10px' }}
-                ></textarea>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    type="button"
-                    style={{ backgroundColor: '#dc3545', color: '#ffffff', border: 'none', padding: '6px 14px', borderRadius: '5px', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}
-                    onClick={handleSendCancel}
-                  >
-                    Kirim Permohonan
-                  </button>
-                  <button
-                    type="button"
-                    style={{ backgroundColor: '#6c757d', color: '#ffffff', border: 'none', padding: '6px 14px', borderRadius: '5px', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}
-                    onClick={() => setShowCancelInput(false)}
-                  >
-                    Batal
-                  </button>
+              ) : (
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#991b1b', marginBottom: '6px' }}>
+                    Alasan Permohonan Pembatalan SPPD:
+                  </label>
+                  <textarea
+                    className="form-control-clean"
+                    rows="2"
+                    placeholder="Tulis alasan pembatalan..."
+                    value={alasanBatal}
+                    onChange={(e) => setAlasanBatal(e.target.value)}
+                    style={{ marginBottom: '10px' }}
+                  ></textarea>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      style={{ backgroundColor: '#dc3545', color: '#ffffff', border: 'none', padding: '6px 14px', borderRadius: '5px', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}
+                      onClick={handleSendCancel}
+                    >
+                      Kirim Permohonan
+                    </button>
+                    <button
+                      type="button"
+                      style={{ backgroundColor: '#6c757d', color: '#ffffff', border: 'none', padding: '6px 14px', borderRadius: '5px', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}
+                      onClick={() => setShowCancelInput(false)}
+                    >
+                      Batal
+                    </button>
+                  </div>
                 </div>
-              </div>
-              )
+              )}
             </div>
-          )}
+          )} */}
         </div>
 
         <div
