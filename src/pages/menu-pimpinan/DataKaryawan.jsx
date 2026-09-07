@@ -7,6 +7,7 @@ import Pagination from '../../components/Pagination';
 
 const DataKaryawan = () => {
   const [karyawanList, setKaryawanList] = useState([]);
+  const [skemaGajiList, setSkemaGajiList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -17,13 +18,17 @@ const DataKaryawan = () => {
     username: '',
     password: '',
     role: 'karyawan',
+    jatah_cuti: 12,
+    id_skemagaji: '',
   });
   const [editId, setEditId] = useState(null);
 
   const API_URL = 'http://localhost:3000/api/karyawan';
+  const SKEMA_URL = 'http://localhost:3000/api/skemagaji';
 
   useEffect(() => {
     fetchKaryawan();
+    fetchSkemaGaji();
   }, []);
 
   const fetchKaryawan = async () => {
@@ -35,6 +40,15 @@ const DataKaryawan = () => {
       console.error('Gagal ambil data:', error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSkemaGaji = async () => {
+    try {
+      const response = await axios.get(SKEMA_URL);
+      setSkemaGajiList(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Gagal ambil data skema gaji:', error.message);
     }
   };
 
@@ -88,13 +102,21 @@ const DataKaryawan = () => {
       username: karyawan.username || '',
       password: '',
       role: karyawan.role || 'karyawan',
+      jatah_cuti: karyawan.jatah_cuti !== undefined && karyawan.jatah_cuti !== null ? karyawan.jatah_cuti : 12,
+      id_skemagaji: karyawan.id_skemagaji || '',
     });
     window.scrollTo(0, 0);
   };
 
   const handleReset = () => {
     setEditId(null);
-    setFormData({ username: '', password: '', role: 'karyawan' });
+    setFormData({
+      username: '',
+      password: '',
+      role: 'karyawan',
+      jatah_cuti: 12,
+      id_skemagaji: '',
+    });
   };
 
   const filteredKaryawan = React.useMemo(() => {
@@ -165,6 +187,31 @@ const DataKaryawan = () => {
                   placeholder="Pilih Role Jabatan"
                 />
               </div>
+              <div className="form-group">
+                <label className="form-label">Jatah Cuti (Hari)</label>
+                <input
+                  type="number"
+                  name="jatah_cuti"
+                  value={formData.jatah_cuti}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Contoh: 12"
+                  min="0"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Skema Gaji (Golongan)</label>
+                <SelectSearch
+                  options={skemaGajiList.map((item) => ({
+                    value: item.id_skemagaji,
+                    label: item.nama_golongan,
+                  }))}
+                  value={formData.id_skemagaji}
+                  onChange={(e) => setFormData({ ...formData, id_skemagaji: e.value })}
+                  placeholder="Pilih Skema Gaji"
+                  isClearable
+                />
+              </div>
             </div>
             <div className="button-group">
               <button type="submit" className="btn btn-primary">
@@ -205,13 +252,15 @@ const DataKaryawan = () => {
                   <th>ID Karyawan</th>
                   <th>Nama Karyawan</th>
                   <th>Role</th>
+                  <th>Jatah Cuti</th>
+                  <th>Skema Gaji</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="4" className="text-center">
+                    <td colSpan="6" className="text-center">
                       Memuat data...
                     </td>
                   </tr>
@@ -223,6 +272,20 @@ const DataKaryawan = () => {
                       <td>
                         {/* Class badge otomatis menyesuaikan k.role */}
                         <span className={`badge role-${k.role}`}>{k.role}</span>
+                      </td>
+                      <td>
+                        <span style={{ fontWeight: 500 }}>
+                          {k.jatah_cuti !== null && k.jatah_cuti !== undefined ? `${k.jatah_cuti} Hari` : '-'}
+                        </span>
+                      </td>
+                      <td>
+                        {k.nama_golongan ? (
+                          <span className="badge badge-skema">{k.nama_golongan}</span>
+                        ) : (
+                          <span className="text-muted" style={{ fontSize: '13px', color: '#95a5a6' }}>
+                            Belum diatur
+                          </span>
+                        )}
                       </td>
                       <td>
                         <div className="action-buttons">
@@ -246,7 +309,7 @@ const DataKaryawan = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="text-center">
+                    <td colSpan="6" className="text-center">
                       Data tidak ditemukan.
                     </td>
                   </tr>
