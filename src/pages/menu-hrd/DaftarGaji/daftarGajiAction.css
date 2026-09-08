@@ -1,0 +1,125 @@
+/* ========================================================
+   Daftar Gaji - Kolom Aksi & Tombol Aksi Styling
+   ======================================================== */
+
+/* Kolom Aksi di Header */
+.col-aksi-header {
+  width: 140px;
+  min-width: 140px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #1e3a8a !important; /* Deep navy blue to give prominence */
+  color: #ffffff !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Kolom Aksi di Body */
+.col-aksi-body {
+  width: 140px;
+  min-width: 140px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px 8px !important;
+  background-color: #fafbfc;
+}
+
+/* Container Pembungkus Tombol Aksi */
+.btn-action-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Base style untuk tombol aksi */
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+}
+
+.btn-action i {
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* Tombol Lihat Slip - Biru Elegan */
+.btn-action-slip {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+}
+
+.btn-action-slip:hover:not(:disabled) {
+  background-color: #1d4ed8 !important;
+  border-color: #1e40af !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(37, 99, 235, 0.35);
+}
+
+.btn-action-slip:active:not(:disabled) {
+  transform: translateY(0);
+  background-color: #1e40af !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Tombol Download Excel Slip - Hijau Emerald */
+.btn-action-excel {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  border-color: #047857 !important;
+}
+
+.btn-action-excel:hover:not(:disabled) {
+  background-color: #047857 !important;
+  border-color: #065f46 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(5, 150, 105, 0.35);
+}
+
+.btn-action-excel:active:not(:disabled) {
+  transform: translateY(0);
+  background-color: #065f46 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Status Disabled */
+.btn-action:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Tombol Tutup Modal */
+.btn-modal-close {
+  background-color: #ffffff;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 6px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-modal-close:hover {
+  background-color: #f3f4f6;
+  color: #111827 !important;
+  border-color: #9ca3af;
+}

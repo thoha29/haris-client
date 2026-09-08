@@ -1,0 +1,387 @@
+/* ============================================================
+   SlipGajiView.css — Slip Gaji Bergaya Dokumen Spreadsheet
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Wrapper ── */
+.sgv-wrapper {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 13px;
+  color: #1a1a1a;
+  background: #fff;
+  border: 2px solid #1f3864;
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 860px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(31, 56, 100, 0.12);
+}
+
+/* ── Header Info ── */
+.sgv-doc-header {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+  border-bottom: 2px solid #c5cae9;
+  padding: 14px 20px;
+}
+
+.sgv-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sgv-info-row {
+  display: grid;
+  grid-template-columns: 200px 16px 1fr;
+  align-items: center;
+  line-height: 1.6;
+}
+
+.sgv-info-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1a5276;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.sgv-info-sep {
+  font-weight: 700;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.sgv-info-val {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 12.5px;
+}
+
+.sgv-slash {
+  color: #7f8c8d;
+  margin: 0 6px;
+}
+
+.sgv-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sgv-badge.shift {
+  background: #1f3864;
+  color: #fff;
+}
+
+.sgv-badge.non-shift {
+  background: #2e7d32;
+  color: #fff;
+}
+
+/* ── Table Wrapper ── */
+.sgv-table-wrap {
+  overflow-x: auto;
+}
+
+/* ── Table ── */
+.sgv-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* ── Section Header ── */
+.sgv-section-header {
+  background: #d6e4f0;
+}
+
+.sgv-section-roman {
+  padding: 5px 8px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #1f3864;
+  border-top: 1.5px solid #1f3864;
+  border-bottom: 1px solid #aec6e8;
+  border-left: 1.5px solid #1f3864;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.sgv-section-label {
+  padding: 5px 10px;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 12px;
+  color: #1f3864;
+  text-decoration: underline;
+  border-top: 1.5px solid #1f3864;
+  border-bottom: 1px solid #aec6e8;
+  border-right: 1.5px solid #1f3864;
+}
+
+/* ── Detail Rows ── */
+.sgv-detail-row {
+  background: #fff;
+  transition: background 0.15s;
+}
+
+.sgv-detail-row:hover {
+  background: #f5f8ff;
+}
+
+.sgv-sub-row {
+  background: #fafbff;
+}
+
+.sgv-cell-num {
+  padding: 4px 6px;
+  text-align: center;
+  font-size: 11.5px;
+  color: #2c3e50;
+  border: 0.5px solid #d0d7e8;
+  white-space: nowrap;
+}
+
+.sgv-cell-label {
+  padding: 4px 10px;
+  font-size: 11.5px;
+  color: #1a1a1a;
+  border: 0.5px solid #d0d7e8;
+  line-height: 1.4;
+}
+
+.sgv-indent {
+  padding-left: 26px !important;
+  color: #4a4a6a;
+}
+
+.sgv-cell-qty {
+  padding: 4px 4px;
+  text-align: center;
+  font-size: 11.5px;
+  font-style: italic;
+  color: #2c3e50;
+  border: 0.5px solid #d0d7e8;
+}
+
+.sgv-cell-unit {
+  padding: 4px 4px;
+  text-align: center;
+  font-size: 11px;
+  color: #555;
+  border: 0.5px solid #d0d7e8;
+}
+
+.sgv-cell-x {
+  padding: 4px 2px;
+  text-align: center;
+  font-size: 11px;
+  color: #333;
+  border: 0.5px solid #d0d7e8;
+}
+
+.sgv-cell-mult {
+  padding: 4px 6px;
+  text-align: right;
+  font-size: 11px;
+  color: #2c3e50;
+  border: 0.5px solid #d0d7e8;
+}
+
+.sgv-cell-sep {
+  padding: 4px 2px;
+  text-align: center;
+  font-size: 11px;
+  color: #1f3864;
+  font-weight: 700;
+  border: 0.5px solid #d0d7e8;
+}
+
+.sgv-cell-rp {
+  padding: 4px 10px 4px 4px;
+  text-align: right;
+  font-size: 11.5px;
+  border: 0.5px solid #d0d7e8;
+  white-space: nowrap;
+  border-right: 1.5px solid #1f3864;
+}
+
+.sgv-rp-prefix {
+  color: #555;
+  font-size: 10.5px;
+  margin-right: 4px;
+}
+
+.sgv-rp-amount {
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+.sgv-dash {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.sgv-pct {
+  color: #888;
+  font-size: 10px;
+  font-style: italic;
+  margin-left: 4px;
+}
+
+/* ── Jumlah Row ── */
+.sgv-jumlah-row {
+  background: #d6e4f0;
+  border-top: 1px solid #aec6e8;
+  border-bottom: 1.5px dashed #1f3864;
+}
+
+.sgv-jumlah-label {
+  padding: 5px 12px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #1f3864;
+  text-align: right;
+  border-left: 1.5px solid #1f3864;
+  border-bottom: 1px solid #aec6e8;
+}
+
+.sgv-jumlah-val {
+  padding: 5px 10px 5px 4px;
+  text-align: right;
+  font-size: 12px;
+  white-space: nowrap;
+  border-right: 1.5px solid #1f3864;
+  border-bottom: 1px solid #aec6e8;
+}
+
+.sgv-jumlah-val .sgv-rp-prefix {
+  margin-right: 4px;
+}
+
+/* ── Spacer ── */
+.sgv-spacer td {
+  height: 6px;
+  background: #f8f9ff;
+  border: none;
+}
+
+/* ── Gaji Bruto ── */
+.sgv-bruto-row {
+  background: #1f3864;
+}
+
+.sgv-bruto-label {
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 12.5px;
+  color: #fff;
+  text-align: right;
+  letter-spacing: 0.5px;
+  border-left: 1.5px solid #1f3864;
+}
+
+.sgv-bruto-val {
+  padding: 8px 10px 8px 4px;
+  text-align: right;
+  font-size: 13px;
+  color: #fff;
+  white-space: nowrap;
+  border-right: 1.5px solid #1f3864;
+}
+
+.sgv-bruto-val .sgv-rp-prefix {
+  color: #b3ccf8;
+  margin-right: 4px;
+}
+
+/* ── Net Row ── */
+.sgv-net-row {
+  background: #fff3e0;
+  border-top: 2px solid #e65100;
+  border-bottom: 2px solid #e65100;
+}
+
+.sgv-net-label {
+  padding: 9px 14px;
+  font-weight: 700;
+  font-size: 12.5px;
+  color: #b71c1c;
+  text-align: right;
+  letter-spacing: 0.3px;
+  border-left: 2px solid #e65100;
+}
+
+.sgv-net-val {
+  padding: 9px 10px 9px 4px;
+  text-align: right;
+  font-size: 13px;
+  color: #b71c1c;
+  white-space: nowrap;
+  border-right: 2px solid #e65100;
+}
+
+.sgv-net-val .sgv-rp-prefix {
+  color: #e57373;
+  margin-right: 4px;
+}
+
+/* ── Actions ── */
+.sgv-actions {
+  padding: 12px 16px;
+  background: #f8f9ff;
+  border-top: 1px solid #d0d7e8;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.sgv-btn-excel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: #217346;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(33,115,70,0.3);
+}
+
+.sgv-btn-excel:hover {
+  background: #1a5c37;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(33,115,70,0.4);
+}
+
+.sgv-btn-excel:active {
+  transform: translateY(0);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .sgv-info-row {
+    grid-template-columns: 140px 14px 1fr;
+  }
+
+  .sgv-info-label {
+    font-size: 10px;
+  }
+
+  .sgv-table {
+    font-size: 10px;
+  }
+
+  .sgv-cell-label {
+    font-size: 10px;
+  }
+}

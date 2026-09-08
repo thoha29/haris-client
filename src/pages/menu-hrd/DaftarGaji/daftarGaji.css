@@ -105,7 +105,8 @@
 /* Garis tipis seluruh tabel */
 .approval-table th,
 .approval-table td {
-    border: 1px solid #e5e7eb; /* abu tipis */
+    border: 1px solid #e5e7eb;
+    /* abu tipis */
 }
 
 /* Biar tidak double border */
@@ -120,8 +121,8 @@
     align-items: center;
 }
 
-/* Base style untuk semua tombol di tabel */
-.btn {
+/* Base style untuk semua tombol di tabel approval */
+.approval-table .btn {
     padding: 6px 14px;
     border: none;
     border-radius: 6px;
