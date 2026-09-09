@@ -52,7 +52,9 @@ const UserApprovalCuti = () => {
 
         Swal.fire({
           title: 'Berhasil!',
-          text: `Pengajuan berhasil di-${status === 'approved' ? 'setujui' : 'tolak'}.`,
+          text: `Pengajuan berhasil di-${
+            status === 'approved' ? 'setujui' : 'tolak'
+          }.`,
           icon: 'success',
           timer: 1500,
           showConfirmButton: false,
@@ -163,8 +165,16 @@ const UserApprovalCuti = () => {
                   <tr key={item.id_cuti}>
                     <td className="emp-name">{item.nama_karyawan}</td>
                     <td>
-                      <span className={`badge ${item.tipe_kerja === 'shift' ? 'bg-warning text-dark' : 'bg-info text-dark'}`}>
-                        {item.tipe_kerja ? item.tipe_kerja.toUpperCase() : 'NON-SHIFT'}
+                      <span
+                        className={`badge ${
+                          item.tipe_kerja === 'shift'
+                            ? 'bg-warning text-dark'
+                            : 'bg-info text-dark'
+                        }`}
+                      >
+                        {item.tipe_kerja
+                          ? item.tipe_kerja.toUpperCase()
+                          : 'NON-SHIFT'}
                       </span>
                     </td>
                     <td>

@@ -241,7 +241,7 @@ export const ListGaji = () => {
                       <div className="card-body">
                         <div className="row text-center">
                           <div className="col">
-                            Jam: {item.jml_jam_lembur ?? '-'}
+                            Jam: {item.jml_lembur ?? '-'}
                           </div>
                           <div className="col">
                             Hari: {item.hr_lembur ?? '-'}

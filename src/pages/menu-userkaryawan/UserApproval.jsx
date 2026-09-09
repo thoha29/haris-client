@@ -130,18 +130,32 @@ const UserApproval = () => {
                       <strong>{item.nama}</strong>
                     </td>
                     <td>
-                      <span className={`badge ${item.tipe_kerja === 'shift' ? 'bg-warning text-dark' : 'bg-info text-dark'}`}>
-                        {item.tipe_kerja ? item.tipe_kerja.toUpperCase() : 'NON-SHIFT'}
+                      <span
+                        className={`badge ${
+                          item.tipe_kerja === 'shift'
+                            ? 'bg-warning text-dark'
+                            : 'bg-info text-dark'
+                        }`}
+                      >
+                        {item.tipe_kerja
+                          ? item.tipe_kerja.toUpperCase()
+                          : 'NON-SHIFT'}
                       </span>
                     </td>
-                    <td>{new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                    <td>
+                      {new Date(item.tanggal).toLocaleDateString('id-ID')}
+                    </td>
                     <td>
                       {item.jam_masuk} - {item.jam_keluar || '--:--'}
                     </td>
                     <td>
-                      <small className="txt-late">T: {item.keterlambatan}m</small>
+                      <small className="txt-late">
+                        T: {item.keterlambatan}m
+                      </small>
                       <br />
-                      <small className="txt-overtime">L: {item.lembur} Jam</small>
+                      <small className="txt-overtime">
+                        L: {item.lembur} Jam
+                      </small>
                     </td>
                     <td>
                       <span className={`badge-status ${item.status_user}`}>
@@ -162,7 +176,11 @@ const UserApproval = () => {
                             }
                             className="btn btn-approve"
                             disabled={!hasCheckedOut}
-                            title={!hasCheckedOut ? 'Tidak dapat disetujui sebelum karyawan Check-Out' : ''}
+                            title={
+                              !hasCheckedOut
+                                ? 'Tidak dapat disetujui sebelum karyawan Check-Out'
+                                : ''
+                            }
                           >
                             Setuju
                           </button>

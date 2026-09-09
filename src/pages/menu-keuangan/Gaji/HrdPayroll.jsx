@@ -313,10 +313,16 @@ const HrdPayroll = () => {
               <SelectSearch
                 options={skemaGajiList.map((s) => ({
                   value: s.id_skemagaji,
-                  label: `${s.nama_golongan} — Rp ${Number(s.gaji_bulanan).toLocaleString('id-ID')} (Rate: Rp ${Number(s.rate_per_jam).toLocaleString('id-ID')}/Jam)`,
+                  label: `${s.nama_golongan} — Rp ${Number(
+                    s.gaji_bulanan
+                  ).toLocaleString('id-ID')} (Rate: Rp ${Number(
+                    s.rate_per_jam
+                  ).toLocaleString('id-ID')}/Jam)`,
                 }))}
                 value={formData.id_skemagaji || ''}
-                onChange={(e) => handleSkemaChange({ target: { value: e.value } })}
+                onChange={(e) =>
+                  handleSkemaChange({ target: { value: e.value } })
+                }
                 placeholder="-- Pilih Golongan --"
                 searchPlaceholder="Cari skema gaji..."
                 isClearable={true}

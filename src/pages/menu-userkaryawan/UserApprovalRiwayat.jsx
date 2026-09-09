@@ -65,7 +65,10 @@ const UserApprovalRiwayat = () => {
     <div className="user-approval-riwayat-container">
       <div className="riwayat-header">
         <h2>Riwayat Approval Atasan</h2>
-        <p>Daftar seluruh pengajuan absensi, lembur, dan cuti/izin yang telah diproses oleh Atasan</p>
+        <p>
+          Daftar seluruh pengajuan absensi, lembur, dan cuti/izin yang telah
+          diproses oleh Atasan
+        </p>
       </div>
 
       {/* Navigation Tabs */}
@@ -148,7 +151,9 @@ const UserApprovalRiwayat = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="8" className="text-center py-4">Memuat data riwayat...</td>
+                <td colSpan="8" className="text-center py-4">
+                  Memuat data riwayat...
+                </td>
               </tr>
             ) : paginatedData.length > 0 ? (
               paginatedData.map((item, idx) => {
@@ -156,64 +161,138 @@ const UserApprovalRiwayat = () => {
                 const isLembur = activeTab === 'lembur';
 
                 return (
-                  <tr key={item.id_data_absensi || item.id_absensi_lembur || item.id_cuti || idx}>
+                  <tr
+                    key={
+                      item.id_data_absensi ||
+                      item.id_absensi_lembur ||
+                      item.id_cuti ||
+                      idx
+                    }
+                  >
                     <td>
                       <strong>{item.nama || item.nama_karyawan}</strong>
                     </td>
                     <td>
-                      <span className={`badge ${item.tipe_kerja === 'shift' ? 'bg-warning text-dark' : 'bg-info text-dark'}`}>
-                        {item.tipe_kerja ? item.tipe_kerja.toUpperCase() : 'NON-SHIFT'}
+                      <span
+                        className={`badge ${
+                          item.tipe_kerja === 'shift'
+                            ? 'bg-warning text-dark'
+                            : 'bg-info text-dark'
+                        }`}
+                      >
+                        {item.tipe_kerja
+                          ? item.tipe_kerja.toUpperCase()
+                          : 'NON-SHIFT'}
                       </span>
                     </td>
 
                     {isCuti ? (
                       <>
                         <td>
-                          <span className={`type-badge type-${(item.tipe || '').toLowerCase().replace(/\s+/g, '-')}`}>
+                          <span
+                            className={`type-badge type-${(item.tipe || '')
+                              .toLowerCase()
+                              .replace(/\s+/g, '-')}`}
+                          >
                             {item.tipe}
                           </span>
                         </td>
                         <td>
                           <small>
-                            {new Date(item.tanggal_mulai).toLocaleDateString('id-ID')} - {new Date(item.tanggal_selesai).toLocaleDateString('id-ID')}
+                            {new Date(item.tanggal_mulai).toLocaleDateString(
+                              'id-ID'
+                            )}{' '}
+                            -{' '}
+                            {new Date(item.tanggal_selesai).toLocaleDateString(
+                              'id-ID'
+                            )}
                           </small>
                         </td>
                         <td>{item.alasan}</td>
                         <td>
-                          <span className={`badge ${item.status_user === 'approved' ? 'bg-success' : 'bg-danger'}`}>
+                          <span
+                            className={`badge ${
+                              item.status_user === 'approved'
+                                ? 'bg-success'
+                                : 'bg-danger'
+                            }`}
+                          >
                             {(item.status_user || 'PENDING').toUpperCase()}
                           </span>
                         </td>
                         <td>
-                          <span className={`badge ${item.status_hrd === 'approved' ? 'bg-success' : item.status_hrd === 'rejected' ? 'bg-danger' : 'bg-secondary'}`}>
-                            {(item.status_hrd || item.status || 'PENDING').toUpperCase()}
+                          <span
+                            className={`badge ${
+                              item.status_hrd === 'approved'
+                                ? 'bg-success'
+                                : item.status_hrd === 'rejected'
+                                ? 'bg-danger'
+                                : 'bg-secondary'
+                            }`}
+                          >
+                            {(
+                              item.status_hrd ||
+                              item.status ||
+                              'PENDING'
+                            ).toUpperCase()}
                           </span>
                         </td>
                       </>
                     ) : (
                       <>
-                        <td>{new Date(item.tanggal).toLocaleDateString('id-ID')}</td>
+                        <td>
+                          {new Date(item.tanggal).toLocaleDateString('id-ID')}
+                        </td>
                         <td>
                           {item.jam_masuk} - {item.jam_keluar || '--:--'}
                         </td>
                         <td>
-                          <small className="text-muted">T: {item.keterlambatan || 0}m | L: {item.lembur || 0}j</small>
+                          <small className="text-muted">
+                            T: {item.keterlambatan || 0}m | L:{' '}
+                            {item.lembur || 0}j
+                          </small>
                         </td>
                         {isLembur && (
                           <td>
-                            <span className={`badge ${item.id_skema === 0 ? 'bg-success' : 'bg-primary'}`}>
-                              {item.id_skema === 0 ? 'HARI KERJA' : 'HARI LIBUR'}
+                            <span
+                              className={`badge ${
+                                item.id_skema === 0
+                                  ? 'bg-success'
+                                  : 'bg-primary'
+                              }`}
+                            >
+                              {item.id_skema === 0
+                                ? 'HARI KERJA'
+                                : 'HARI LIBUR'}
                             </span>
                           </td>
                         )}
                         <td>
-                          <span className={`badge ${item.status_user === 'approved' ? 'bg-success' : 'bg-danger'}`}>
+                          <span
+                            className={`badge ${
+                              item.status_user === 'approved'
+                                ? 'bg-success'
+                                : 'bg-danger'
+                            }`}
+                          >
                             {(item.status_user || 'PENDING').toUpperCase()}
                           </span>
                         </td>
                         <td>
-                          <span className={`badge ${item.is_approved === 'approved' ? 'bg-success' : item.is_approved === 'rejected' ? 'bg-danger' : 'bg-secondary'}`}>
-                            {(item.is_approved || item.status || 'PENDING').toUpperCase()}
+                          <span
+                            className={`badge ${
+                              item.is_approved === 'approved'
+                                ? 'bg-success'
+                                : item.is_approved === 'rejected'
+                                ? 'bg-danger'
+                                : 'bg-secondary'
+                            }`}
+                          >
+                            {(
+                              item.is_approved ||
+                              item.status ||
+                              'PENDING'
+                            ).toUpperCase()}
                           </span>
                         </td>
                       </>

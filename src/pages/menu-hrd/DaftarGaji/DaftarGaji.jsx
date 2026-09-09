@@ -226,7 +226,7 @@ const DaftarGaji = () => {
                   <th>Premi Shift</th>
                   <th>KJK</th>
                   <th>Extra Fooding</th>
-                  <th>Total Tunj</th>
+                  <th>Total Tunj. Kehadiran</th>
 
                   <th>Jam</th>
                   <th>Hari</th>
@@ -253,9 +253,11 @@ const DaftarGaji = () => {
                         <strong>{item.nama}</strong>
                       </td>
 
-                      <td>{formatRupiah(item.upah)}</td>
-                      <td>{formatRupiah(item.tunj)}</td>
-                      <td>{formatRupiah(item.upah_tetap)}</td>
+                      <td>{formatRupiah(Number(item.upah))}</td>
+                      <td>{formatRupiah(Number(item.tunj))}</td>
+                      <td>
+                        {formatRupiah(Number(item.upah) + Number(item.tunj))}
+                      </td>
 
                       <td className="text-center">{item.status_perkawinan}</td>
 
@@ -268,7 +270,7 @@ const DaftarGaji = () => {
                       <td>{formatRupiah(item.extra_fooding)}</td>
                       <td>{formatRupiah(item.total_tunjangan)}</td>
 
-                      <td>{item.jml_jam_lembur ?? '-'}</td>
+                      <td>{item.jml_lembur ?? '-'}</td>
                       <td>{item.hr_lembur ?? '-'}</td>
                       <td>{formatRupiah(item.upah_lembur)}</td>
                       <td>{formatRupiah(item.uang_makan_lembur)}</td>
