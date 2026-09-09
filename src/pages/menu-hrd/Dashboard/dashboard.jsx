@@ -8,7 +8,7 @@ function dashboardHRD() {
       <div className="dashboard-container">
         <div className="card">
           <div className="card-body">
-            <h2>Selamat Datang, {namaHRD}! 👋</h2>
+            <h2>Selamat Datang, {namaHRD}!</h2>
             <p className="text-muted">Dashboard HRD</p>
           </div>
         </div>
