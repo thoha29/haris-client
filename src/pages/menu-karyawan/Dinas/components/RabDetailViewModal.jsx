@@ -19,7 +19,7 @@ const formatDateLabel = (dateStr) => {
   });
 };
 
-const RabDetailViewModal = ({ show, onClose, rab }) => {
+const RabDetailViewModal = ({ show, onClose, rab, onEditRab }) => {
   const [activeTab, setActiveTab] = useState('komparasi'); // 'komparasi' | 'komponen_summary'
 
   if (!show || !rab) return null;
@@ -31,28 +31,36 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
     rab.grand_total_atasan ||
     details.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
 
-  const grandTotalHrd =
-    rab.grand_total_hrd ||
+  const grandTotalFinal =
+    rab.grand_total_final ||
     details.reduce((acc, curr) => {
-      const qHrd =
-        curr.jumlah_hrd !== null && curr.jumlah_hrd !== undefined
-          ? Number(curr.jumlah_hrd)
+      const qFinal =
+        curr.jumlah_final !== null && curr.jumlah_final !== undefined
+          ? Number(curr.jumlah_final)
           : Number(curr.jumlah) || 1;
-      const hHrd =
-        curr.harga_satuan_hrd !== null && curr.harga_satuan_hrd !== undefined
-          ? parseFloat(curr.harga_satuan_hrd)
+      const hFinal =
+        curr.harga_satuan_final !== null && curr.harga_satuan_final !== undefined
+          ? parseFloat(curr.harga_satuan_final)
           : parseFloat(curr.harga_satuan) || 0;
-      return (
-        acc +
-        (curr.total_hrd !== null && curr.total_hrd !== undefined
-          ? parseFloat(curr.total_hrd)
-          : qHrd * hHrd)
-      );
+      const tFinal =
+        curr.total_final !== null && curr.total_final !== undefined
+          ? parseFloat(curr.total_final)
+          : qFinal * hFinal;
+      return acc + tFinal;
     }, 0);
 
-  const selisihGrandTotal = grandTotalHrd - grandTotalAtasan;
+  const selisihGrandTotal = grandTotalFinal - grandTotalAtasan;
   const isApproved = rab.status === 'approved';
-  const isRejected = rab.status === 'rejected_hrd';
+  const isRejected = rab.status === 'rejected_hrd' || rab.status === 'rejected';
+  const isRevisiAtasan = rab.status === 'revisi_atasan';
+
+  const getStatusLabel = () => {
+    if (isApproved) return 'Disetujui Final';
+    if (isRejected) return 'Ditolak';
+    if (isRevisiAtasan) return 'Perlu Revisi (Atasan)';
+    if (rab.status === 'pending_hrd') return 'Menunggu Persetujuan Final (HRD)';
+    return 'Menunggu Review Atasan';
+  };
 
   return (
     <div
@@ -102,7 +110,7 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
               Rincian Anggaran Biaya (RAB) - {rab.nomor_sppd}
             </div>
             <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '2px' }}>
-              Diterbitkan oleh: <span style={{ color: '#f8fafc', fontWeight: '600' }}>{rab.nama_pembuat || 'Atasan'}</span> | Periode Dinas: {rab.tanggal_mulai} s/d {rab.tanggal_selesai} ({rab.total_hari} Hari)
+              Diterbitkan oleh: <span style={{ color: '#f8fafc', fontWeight: '600' }}>{rab.nama_pembuat || rab.nama_karyawan || 'Karyawan'}</span> | Periode Dinas: {rab.tanggal_mulai} s/d {rab.tanggal_selesai} ({rab.total_hari} Hari)
             </div>
           </div>
           <button
@@ -131,15 +139,15 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
         <div style={{ padding: '10px 20px', backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
             <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px 12px' }}>
-              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>Total Pengajuan Awal Atasan</div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>Total Pengajuan Awal</div>
               <div style={{ fontSize: '1.05rem', fontWeight: '700', color: '#334155', marginTop: '2px' }}>
                 {formatRupiah(grandTotalAtasan)}
               </div>
             </div>
             <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '8px 12px' }}>
-              <div style={{ fontSize: '0.7rem', color: '#166534', fontWeight: '700', textTransform: 'uppercase' }}>Total Akhir Disetujui HRD</div>
+              <div style={{ fontSize: '0.7rem', color: '#166534', fontWeight: '700', textTransform: 'uppercase' }}>Total Akhir Disetujui</div>
               <div style={{ fontSize: '1.15rem', fontWeight: '800', color: '#15803d', marginTop: '2px' }}>
-                {formatRupiah(grandTotalHrd)}
+                {formatRupiah(grandTotalFinal)}
               </div>
             </div>
             <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px 12px' }}>
@@ -150,10 +158,10 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                   borderRadius: '4px',
                   fontSize: '0.76rem',
                   fontWeight: '700',
-                  backgroundColor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : '#fef3c7',
-                  color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : '#92400e',
+                  backgroundColor: isApproved ? '#dcfce7' : isRejected ? '#fee2e2' : isRevisiAtasan ? '#fef3c7' : '#e0f2fe',
+                  color: isApproved ? '#15803d' : isRejected ? '#b91c1c' : isRevisiAtasan ? '#92400e' : '#0369a1',
                 }}>
-                  {isApproved ? 'Disetujui HRD' : isRejected ? 'Ditolak HRD' : 'Menunggu Review HRD'}
+                  {getStatusLabel()}
                 </span>
                 {selisihGrandTotal !== 0 && (
                   <span style={{ fontSize: '0.84rem', fontWeight: '700', color: selisihGrandTotal > 0 ? '#b45309' : '#15803d' }}>
@@ -163,6 +171,27 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
               </div>
             </div>
           </div>
+
+          {/* Catatan Revisi dari Atasan Alert if any */}
+          {rab.catatan_atasan && (
+            <div
+              style={{
+                marginTop: '8px',
+                padding: '8px 14px',
+                backgroundColor: '#fffbeb',
+                border: '1px solid #fde68a',
+                borderRadius: '6px',
+                fontSize: '0.84rem',
+                color: '#92400e',
+              }}
+            >
+              <div style={{ fontWeight: '700', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <i className="bi bi-exclamation-triangle-fill" style={{ color: '#d97706' }}></i>
+                <span>Catatan Revisi dari Atasan:</span>
+              </div>
+              <div style={{ color: '#78350f' }}>{rab.catatan_atasan}</div>
+            </div>
+          )}
 
           {/* Catatan HRD Alert if any */}
           {rab.catatan_hrd && (
@@ -177,7 +206,7 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                 color: isRejected ? '#991b1b' : '#0369a1',
               }}
             >
-              <strong>Catatan / Alasan HRD:</strong> {rab.catatan_hrd}
+              <strong>Catatan / Alasan Persetujuan Final:</strong> {rab.catatan_hrd}
             </div>
           )}
         </div>
@@ -202,7 +231,7 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                 marginBottom: '-1px',
               }}
             >
-              Tabel Komparasi Rincian (Atasan vs HRD)
+              Tabel Komparasi Rincian (Pengajuan vs Persetujuan Final)
             </button>
             <button
               type="button"
@@ -228,7 +257,15 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
 
         {/* Body Content */}
         <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1, backgroundColor: '#ffffff' }}>
-          {activeTab === 'komparasi' ? (
+          {details.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px 16px', color: '#64748b' }}>
+              <i className="bi bi-folder-x" style={{ fontSize: '2.5rem', color: '#94a3b8', display: 'block', marginBottom: '8px' }}></i>
+              <div style={{ fontWeight: '700', fontSize: '0.96rem', color: '#334155' }}>Belum Ada Rincian Komponen RAB</div>
+              <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '4px' }}>
+                Pengajuan SPPD ini belum memiliki rincian estimasi biaya dinas.
+              </div>
+            </div>
+          ) : activeTab === 'komparasi' ? (
             <div>
               <div style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
@@ -237,8 +274,8 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                       <th style={{ padding: '6px 10px', width: '35px', textAlign: 'center' }}>No</th>
                       <th style={{ padding: '6px 10px', textAlign: 'left' }}>Komponen & Jadwal</th>
                       <th style={{ padding: '6px 10px', textAlign: 'left', width: '110px' }}>Kategori</th>
-                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '20%' }}>Pengajuan Awal Atasan</th>
-                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '20%' }}>Persetujuan Final HRD</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '20%' }}>Pengajuan Awal</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '20%' }}>Persetujuan Final</th>
                       <th style={{ padding: '6px 10px', textAlign: 'right', width: '15%' }}>Selisih Biaya</th>
                       <th style={{ padding: '6px 10px', textAlign: 'left', width: '15%' }}>Keterangan</th>
                     </tr>
@@ -249,21 +286,21 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                       const pAtasan = parseFloat(item.harga_satuan) || 0;
                       const totAtasan = parseFloat(item.total) || (qAtasan * pAtasan);
 
-                      const qHrd =
-                        item.jumlah_hrd !== null && item.jumlah_hrd !== undefined
-                          ? Number(item.jumlah_hrd)
+                      const qFinal =
+                        item.jumlah_final !== null && item.jumlah_final !== undefined
+                          ? Number(item.jumlah_final)
                           : qAtasan;
-                      const pHrd =
-                        item.harga_satuan_hrd !== null && item.harga_satuan_hrd !== undefined
-                          ? parseFloat(item.harga_satuan_hrd)
+                      const pFinal =
+                        item.harga_satuan_final !== null && item.harga_satuan_final !== undefined
+                          ? parseFloat(item.harga_satuan_final)
                           : pAtasan;
-                      const totHrd =
-                        item.total_hrd !== null && item.total_hrd !== undefined
-                          ? parseFloat(item.total_hrd)
-                          : qHrd * pHrd;
+                      const totFinal =
+                        item.total_final !== null && item.total_final !== undefined
+                          ? parseFloat(item.total_final)
+                          : qFinal * pFinal;
 
-                      const selisih = totHrd - totAtasan;
-                      const isAdjusted = selisih !== 0 || qHrd !== qAtasan || pHrd !== pAtasan;
+                      const selisih = totFinal - totAtasan;
+                      const isAdjusted = selisih !== 0 || qFinal !== qAtasan || pFinal !== pAtasan;
 
                       return (
                         <tr key={item.id || idx} style={{ borderBottom: '1px solid #f1f5f9', backgroundColor: isAdjusted ? '#fffbeb' : idx % 2 === 1 ? '#f8fafc' : '#ffffff' }}>
@@ -293,8 +330,8 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                             <div style={{ fontWeight: '700', color: '#334155' }}>{formatRupiah(totAtasan)}</div>
                           </td>
                           <td style={{ padding: '6px 10px', textAlign: 'right', backgroundColor: '#f0fdf4' }}>
-                            <div style={{ fontSize: '0.74rem', color: '#166534' }}>{qHrd} × {formatRupiah(pHrd)}</div>
-                            <div style={{ fontWeight: '800', color: '#15803d' }}>{formatRupiah(totHrd)}</div>
+                            <div style={{ fontSize: '0.74rem', color: '#166534' }}>{qFinal} × {formatRupiah(pFinal)}</div>
+                            <div style={{ fontWeight: '800', color: '#15803d' }}>{formatRupiah(totFinal)}</div>
                           </td>
                           <td style={{ padding: '6px 10px', textAlign: 'right', fontWeight: '700' }}>
                             {selisih === 0 ? (
@@ -319,7 +356,7 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                         {formatRupiah(grandTotalAtasan)}
                       </td>
                       <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.94rem', color: '#15803d' }}>
-                        {formatRupiah(grandTotalHrd)}
+                        {formatRupiah(grandTotalFinal)}
                       </td>
                       <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.86rem', color: selisihGrandTotal > 0 ? '#b45309' : selisihGrandTotal < 0 ? '#15803d' : '#64748b' }}>
                         {selisihGrandTotal > 0 ? `+${formatRupiah(selisihGrandTotal)}` : formatRupiah(selisihGrandTotal)}
@@ -340,7 +377,7 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                       <th style={{ padding: '8px 10px', textAlign: 'left' }}>Nama Komponen Biaya</th>
                       <th style={{ padding: '8px 10px', textAlign: 'left', width: '130px' }}>Tipe / Kategori</th>
                       <th style={{ padding: '8px 10px', textAlign: 'right', width: '20%' }}>Total Pengajuan Awal</th>
-                      <th style={{ padding: '8px 10px', textAlign: 'right', width: '20%' }}>Total Disetujui HRD</th>
+                      <th style={{ padding: '8px 10px', textAlign: 'right', width: '20%' }}>Total Persetujuan Final</th>
                       <th style={{ padding: '8px 10px', textAlign: 'right', width: '16%' }}>Selisih Biaya</th>
                     </tr>
                   </thead>
@@ -373,9 +410,11 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                           </div>
                         </td>
                         <td style={{ padding: '6px 10px', textAlign: 'right', backgroundColor: '#f0fdf4' }}>
-                          <div style={{ fontSize: '0.74rem', color: '#166534' }}>{comp.total_jumlah_hrd} {comp.satuan || ''}</div>
+                          <div style={{ fontSize: '0.74rem', color: '#166534' }}>
+                            {comp.total_jumlah_final !== undefined ? comp.total_jumlah_final : comp.total_jumlah_atasan} {comp.satuan || ''}
+                          </div>
                           <div style={{ fontWeight: '800', color: '#15803d' }}>
-                            {formatRupiah(comp.total_biaya_hrd)}
+                            {formatRupiah(comp.total_biaya_final !== undefined ? comp.total_biaya_final : comp.total_biaya_atasan)}
                           </div>
                         </td>
                         <td style={{ padding: '6px 10px', textAlign: 'right', fontWeight: '700' }}>
@@ -399,7 +438,7 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
                         {formatRupiah(grandTotalAtasan)}
                       </td>
                       <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.94rem', color: '#15803d' }}>
-                        {formatRupiah(grandTotalHrd)}
+                        {formatRupiah(grandTotalFinal)}
                       </td>
                       <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.86rem', color: selisihGrandTotal > 0 ? '#b45309' : selisihGrandTotal < 0 ? '#15803d' : '#64748b' }}>
                         {selisihGrandTotal > 0 ? `+${formatRupiah(selisihGrandTotal)}` : formatRupiah(selisihGrandTotal)}
@@ -419,9 +458,37 @@ const RabDetailViewModal = ({ show, onClose, rab }) => {
             backgroundColor: '#f8fafc',
             borderTop: '1px solid #e2e8f0',
             display: 'flex',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
+          <div>
+            {isRevisiAtasan && onEditRab && (
+              <button
+                type="button"
+                style={{
+                  backgroundColor: '#d97706',
+                  color: '#ffffff',
+                  border: 'none',
+                  padding: '8px 20px',
+                  borderRadius: '6px',
+                  fontWeight: '700',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+                onClick={() => {
+                  onClose();
+                  onEditRab(rab.id_sppd);
+                }}
+              >
+                <i className="bi bi-pencil-square"></i>
+                Revisi / Edit RAB Sekarang
+              </button>
+            )}
+          </div>
           <button
             type="button"
             style={{

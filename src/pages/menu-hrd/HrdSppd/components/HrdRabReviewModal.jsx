@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
 const formatRupiah = (val) => {
@@ -24,234 +24,64 @@ const HrdRabReviewModal = ({
   show,
   onClose,
   rab,
-  masterKomponenList,
   onReviewSubmit,
 }) => {
-  const [items, setItems] = useState([]);
   const [catatan, setCatatan] = useState('');
-  const [activeTab, setActiveTab] = useState('rincian'); // 'rincian' | 'komponen_summary'
-
-  // Component add state
-  const [newCompId, setNewCompId] = useState('');
-  const [newCompDate, setNewCompDate] = useState('');
+  const [activeTab, setActiveTab] = useState('komparasi'); // 'komparasi' | 'summary'
 
   useEffect(() => {
-    if (rab && rab.details) {
-      setItems(
-        rab.details.map((d) => {
-          const qAtasan = Number(d.jumlah) || 1;
-          const pAtasan = parseFloat(d.harga_satuan) || 0;
-          const tAtasan = parseFloat(d.total) || (qAtasan * pAtasan);
-
-          const qHrd = d.jumlah_hrd !== null && d.jumlah_hrd !== undefined ? Number(d.jumlah_hrd) : qAtasan;
-          const pHrd = d.harga_satuan_hrd !== null && d.harga_satuan_hrd !== undefined ? parseFloat(d.harga_satuan_hrd) : pAtasan;
-          const tHrd = d.total_hrd !== null && d.total_hrd !== undefined ? parseFloat(d.total_hrd) : (qHrd * pHrd);
-
-          return {
-            id: d.id,
-            id_komponen: d.id_komponen,
-            nama_komponen: d.nama_komponen,
-            kategori: d.kategori,
-            satuan: d.satuan,
-            tanggal: d.tanggal || null,
-            tipe_komponen: d.tipe_komponen || 'harian',
-            // Atasan values
-            jumlah_atasan: qAtasan,
-            harga_satuan_atasan: pAtasan,
-            total_atasan: tAtasan,
-            // HRD values (editable)
-            jumlah_hrd: qHrd,
-            harga_satuan_hrd: pHrd,
-            total_hrd: tHrd,
-            keterangan: d.keterangan || '',
-          };
-        })
-      );
+    if (rab) {
       setCatatan(rab.catatan_hrd || '');
-      setNewCompDate(rab.tanggal_mulai || '');
     } else {
-      setItems([]);
       setCatatan('');
     }
   }, [rab, show]);
 
-  const canEditHrd = useMemo(() => {
-    if (!rab) return false;
-    const todayStr = new Date().toISOString().split('T')[0];
-    const endStr = rab.tanggal_selesai || '';
-    return endStr ? todayStr <= endStr : true;
-  }, [rab]);
-
-  // Component-level aggregation summary
-  const summaryPerKomponen = useMemo(() => {
-    const map = {};
-    items.forEach((it) => {
-      if (!map[it.id_komponen]) {
-        map[it.id_komponen] = {
-          id_komponen: it.id_komponen,
-          nama_komponen: it.nama_komponen,
-          kategori: it.kategori,
-          satuan: it.satuan,
-          tipe_komponen: it.tipe_komponen,
-          total_qty_atasan: 0,
-          total_biaya_atasan: 0,
-          total_qty_hrd: 0,
-          total_biaya_hrd: 0,
-          selisih_biaya: 0,
-        };
-      }
-      map[it.id_komponen].total_qty_atasan += Number(it.jumlah_atasan) || 0;
-      map[it.id_komponen].total_biaya_atasan += parseFloat(it.total_atasan) || 0;
-      map[it.id_komponen].total_qty_hrd += Number(it.jumlah_hrd) || 0;
-      map[it.id_komponen].total_biaya_hrd += parseFloat(it.total_hrd) || 0;
-      map[it.id_komponen].selisih_biaya = map[it.id_komponen].total_biaya_hrd - map[it.id_komponen].total_biaya_atasan;
-    });
-    return Object.values(map);
-  }, [items]);
-
   if (!show || !rab) return null;
 
-  // Date options for adding daily items
-  const dateOptions = [];
-  if (rab.tanggal_mulai && rab.tanggal_selesai) {
-    const start = new Date(rab.tanggal_mulai);
-    const end = new Date(rab.tanggal_selesai);
-    const curr = new Date(start);
-    while (curr <= end) {
-      const yyyy = curr.getFullYear();
-      const mm = String(curr.getMonth() + 1).padStart(2, '0');
-      const dd = String(curr.getDate()).padStart(2, '0');
-      dateOptions.push(`${yyyy}-${mm}-${dd}`);
-      curr.setDate(curr.getDate() + 1);
-    }
-  }
+  const details = rab.details || [];
+  const summaryPerKomponen = rab.summary_per_komponen || [];
 
-  const handlePriceChange = (index, val) => {
-    const num = parseFloat(val) || 0;
-    setItems((prev) =>
-      prev.map((item, idx) => {
-        if (idx === index) {
-          const qty = Number(item.jumlah_hrd) || 1;
-          return { ...item, harga_satuan_hrd: num, total_hrd: num * qty };
-        }
-        return item;
-      })
-    );
-  };
+  const grandTotalAtasan =
+    rab.grand_total_atasan ||
+    details.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
 
-  const handleQtyChange = (index, val) => {
-    const num = parseInt(val) || 1;
-    setItems((prev) =>
-      prev.map((item, idx) => {
-        if (idx === index) {
-          const price = parseFloat(item.harga_satuan_hrd) || 0;
-          return { ...item, jumlah_hrd: num, total_hrd: num * price };
-        }
-        return item;
-      })
-    );
-  };
+  const grandTotalFinal =
+    rab.grand_total_final ||
+    details.reduce((acc, curr) => {
+      const qFinal =
+        curr.jumlah_final !== null && curr.jumlah_final !== undefined
+          ? Number(curr.jumlah_final)
+          : Number(curr.jumlah) || 1;
+      const hFinal =
+        curr.harga_satuan_final !== null && curr.harga_satuan_final !== undefined
+          ? parseFloat(curr.harga_satuan_final)
+          : parseFloat(curr.harga_satuan) || 0;
+      const tFinal =
+        curr.total_final !== null && curr.total_final !== undefined
+          ? parseFloat(curr.total_final)
+          : qFinal * hFinal;
+      return acc + tFinal;
+    }, 0);
 
-  const handleKeteranganChange = (index, val) => {
-    setItems((prev) =>
-      prev.map((item, idx) => {
-        if (idx === index) {
-          return { ...item, keterangan: val };
-        }
-        return item;
-      })
-    );
-  };
+  const selisihGrandTotal = grandTotalFinal - grandTotalAtasan;
+  const isApproved = rab.status === 'approved';
 
-  const handleAddItem = () => {
-    const compId = Number(newCompId);
-    if (!compId) return;
-    const found = (masterKomponenList || []).find((k) => k.id === compId);
-    if (!found) return;
-
-    const isHarian = (found.tipe_komponen || 'harian') === 'harian';
-    const firstDay = rab.tanggal_mulai ? (typeof rab.tanggal_mulai === 'string' ? rab.tanggal_mulai.split('T')[0] : '') : null;
-    const targetDate = isHarian ? (newCompDate || firstDay) : firstDay;
-
-    setItems((prev) => [
-      ...prev,
-      {
-        id_komponen: found.id,
-        nama_komponen: found.nama_komponen,
-        kategori: found.kategori,
-        satuan: found.satuan,
-        tanggal: targetDate,
-        tipe_komponen: found.tipe_komponen || 'harian',
-        jumlah_atasan: 0,
-        harga_satuan_atasan: 0,
-        total_atasan: 0,
-        jumlah_hrd: 1,
-        harga_satuan_hrd: 0,
-        total_hrd: 0,
-        keterangan: isHarian ? `Tambahan HRD (${targetDate})` : `Tambahan HRD (${firstDay || 'Hari ke-1'})`,
-      },
-    ]);
-
-    setNewCompId('');
-  };
-
-  const handleRemoveItem = (index) => {
-    setItems((prev) => prev.filter((_, idx) => idx !== index));
-  };
-
-  // Group items into daily vs once
-  const dailyGrouped = {};
-  const onceList = [];
-  let totalPengajuanAtasan = 0;
-  let totalPenyesuaianHrd = 0;
-
-  items.forEach((it, idx) => {
-    const itemWithIdx = { ...it, originalIndex: idx };
-    totalPengajuanAtasan += it.total_atasan || 0;
-    totalPenyesuaianHrd += it.total_hrd || 0;
-
-    if (it.tipe_komponen === 'harian') {
-      const tglKey = it.tanggal || 'Harian Umum';
-      if (!dailyGrouped[tglKey]) dailyGrouped[tglKey] = [];
-      dailyGrouped[tglKey].push(itemWithIdx);
-    } else {
-      onceList.push(itemWithIdx);
-    }
-  });
-
-  const selisihGrandTotal = totalPenyesuaianHrd - totalPengajuanAtasan;
-
-  // Handle Approve / Save
   const handleApprove = () => {
-    if (!canEditHrd) {
-      Swal.fire('Peringatan', 'Masa dinas telah berakhir. Rincian biaya tidak dapat diubah.', 'warning');
-      return;
-    }
-    onReviewSubmit(rab.id, 'approved', catatan, items);
-  };
-
-  // Handle Reject with mandatory note
-  const handleReject = async () => {
-    const { value: alasanReject } = await Swal.fire({
-      title: 'Tolak RAB & SPPD',
-      text: 'Harap masukkan alasan penolakan rincian anggaran biaya ini:',
-      input: 'textarea',
-      inputPlaceholder: 'Tuliskan alasan penolakan...',
+    Swal.fire({
+      title: 'Konfirmasi Persetujuan Final',
+      text: 'Apakah Anda yakin menyetujui RAB dan SPPD ini secara final?',
+      icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#dc2626',
+      confirmButtonColor: '#16a34a',
       cancelButtonColor: '#64748b',
-      confirmButtonText: 'Tolak RAB',
+      confirmButtonText: 'Ya, Setujui',
       cancelButtonText: 'Batal',
-      inputValidator: (val) => {
-        if (!val || !val.trim()) {
-          return 'Alasan penolakan wajib diisi oleh HRD!';
-        }
-      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onReviewSubmit(rab.id, catatan);
+      }
     });
-
-    if (alasanReject) {
-      onReviewSubmit(rab.id, 'rejected', alasanReject, items);
-    }
   };
 
   return (
@@ -274,7 +104,7 @@ const HrdRabReviewModal = ({
       <div
         style={{
           width: '100%',
-          maxWidth: '1080px',
+          maxWidth: '1020px',
           maxHeight: '94vh',
           backgroundColor: '#ffffff',
           borderRadius: '10px',
@@ -289,7 +119,7 @@ const HrdRabReviewModal = ({
         {/* Header */}
         <div
           style={{
-            padding: '12px 20px',
+            padding: '14px 20px',
             backgroundColor: '#0f172a',
             color: '#ffffff',
             display: 'flex',
@@ -299,10 +129,12 @@ const HrdRabReviewModal = ({
         >
           <div>
             <div style={{ fontSize: '1.05rem', fontWeight: '700', letterSpacing: '0.2px' }}>
-              Review & Penyesuaian Anggaran Biaya (RAB) - HRD
+              Persetujuan Final Rencana Anggaran Biaya (RAB)
             </div>
             <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '2px' }}>
-              SPPD: <span style={{ color: '#f8fafc', fontWeight: '600' }}>{rab.nomor_sppd}</span> | Karyawan: <span style={{ color: '#f8fafc', fontWeight: '600' }}>{rab.nama_karyawan}</span> | Periode: {rab.tanggal_mulai} s/d {rab.tanggal_selesai} ({rab.total_hari} Hari)
+              SPPD: <span style={{ color: '#f8fafc', fontWeight: '600' }}>{rab.nomor_sppd}</span> | Karyawan:{' '}
+              <span style={{ color: '#f8fafc', fontWeight: '600' }}>{rab.nama_karyawan}</span> | Periode:{' '}
+              {rab.tanggal_mulai} s/d {rab.tanggal_selesai} ({rab.total_hari} Hari)
             </div>
           </div>
           <button
@@ -328,433 +160,306 @@ const HrdRabReviewModal = ({
         </div>
 
         {/* Top Summary Banner */}
-        <div style={{ padding: '10px 20px', backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-          {!canEditHrd ? (
-            <div style={{ backgroundColor: '#fffbeb', border: '1px solid #fef3c7', padding: '6px 12px', borderRadius: '6px', marginBottom: '8px', fontSize: '0.8rem', color: '#92400e' }}>
-              <strong>Masa Dinas Berakhir ({rab.tanggal_selesai}):</strong> Rincian biaya terkunci (read-only) dan tidak dapat diubah kembali.
-            </div>
-          ) : (
-            <div style={{ backgroundColor: '#f0f9ff', border: '1px solid #e0f2fe', padding: '6px 12px', borderRadius: '6px', marginBottom: '8px', fontSize: '0.8rem', color: '#0369a1' }}>
-              <strong>Batas Waktu Penyesuaian:</strong> HRD dapat mengubah nominal biaya komponen sewaktu-waktu selama dinas berlangsung hingga <strong>{rab.tanggal_selesai}</strong>. Nilai awal atasan tetap tersimpan utuh di sistem.
+        <div style={{ padding: '12px 20px', backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+          {/* Catatan Revisi dari Atasan jika ada */}
+          {rab.catatan_atasan && (
+            <div
+              style={{
+                marginBottom: '10px',
+                padding: '8px 14px',
+                backgroundColor: '#fffbeb',
+                border: '1px solid #fde68a',
+                borderRadius: '6px',
+                fontSize: '0.84rem',
+                color: '#92400e',
+              }}
+            >
+              <div style={{ fontWeight: '700', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <i className="bi bi-exclamation-triangle-fill" style={{ color: '#d97706' }}></i>
+                <span>Catatan Revisi dari Atasan:</span>
+              </div>
+              <div style={{ color: '#78350f' }}>{rab.catatan_atasan}</div>
             </div>
           )}
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
             <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px 12px' }}>
-              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>Total Pengajuan Atasan</div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>
+                Total Pengajuan Awal
+              </div>
               <div style={{ fontSize: '1.05rem', fontWeight: '700', color: '#334155', marginTop: '2px' }}>
-                {formatRupiah(totalPengajuanAtasan)}
+                {formatRupiah(grandTotalAtasan)}
               </div>
             </div>
             <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '8px 12px' }}>
-              <div style={{ fontSize: '0.7rem', color: '#166534', fontWeight: '700', textTransform: 'uppercase' }}>Total Penyesuaian HRD</div>
+              <div style={{ fontSize: '0.7rem', color: '#166534', fontWeight: '700', textTransform: 'uppercase' }}>
+                Total Persetujuan Final
+              </div>
               <div style={{ fontSize: '1.15rem', fontWeight: '800', color: '#15803d', marginTop: '2px' }}>
-                {formatRupiah(totalPenyesuaianHrd)}
+                {formatRupiah(grandTotalFinal)}
               </div>
             </div>
-            <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px 12px' }}>
-              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>Selisih / Deviasi</div>
-              <div style={{ fontSize: '1.05rem', fontWeight: '700', color: selisihGrandTotal > 0 ? '#b45309' : selisihGrandTotal < 0 ? '#15803d' : '#64748b', marginTop: '2px' }}>
-                {selisihGrandTotal === 0 ? 'Sesuai Pengajuan' : (selisihGrandTotal > 0 ? `+${formatRupiah(selisihGrandTotal)}` : formatRupiah(selisihGrandTotal))}
+            <div
+              style={{
+                backgroundColor: selisihGrandTotal !== 0 ? '#fffbeb' : '#f8fafc',
+                border: `1px solid ${selisihGrandTotal !== 0 ? '#fde68a' : '#e2e8f0'}`,
+                borderRadius: '6px',
+                padding: '8px 12px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '0.7rem',
+                  color: selisihGrandTotal > 0 ? '#b45309' : selisihGrandTotal < 0 ? '#15803d' : '#64748b',
+                  fontWeight: '700',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Selisih Total
+              </div>
+              <div
+                style={{
+                  fontSize: '1.05rem',
+                  fontWeight: '800',
+                  color: selisihGrandTotal > 0 ? '#b45309' : selisihGrandTotal < 0 ? '#15803d' : '#64748b',
+                  marginTop: '2px',
+                }}
+              >
+                {selisihGrandTotal === 0 ? 'Sesuai' : selisihGrandTotal > 0 ? `+${formatRupiah(selisihGrandTotal)}` : formatRupiah(selisihGrandTotal)}
               </div>
             </div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div style={{ padding: '0 20px', backgroundColor: '#f1f5f9', borderBottom: '1px solid #cbd5e1' }}>
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <button
-              type="button"
-              onClick={() => setActiveTab('rincian')}
-              style={{
-                padding: '8px 16px',
-                background: activeTab === 'rincian' ? '#ffffff' : 'transparent',
-                border: '1px solid',
-                borderColor: activeTab === 'rincian' ? '#cbd5e1 #cbd5e1 #ffffff #cbd5e1' : 'transparent',
-                borderTopLeftRadius: '6px',
-                borderTopRightRadius: '6px',
-                color: activeTab === 'rincian' ? '#0f172a' : '#64748b',
-                fontWeight: activeTab === 'rincian' ? '700' : '600',
-                cursor: 'pointer',
-                fontSize: '0.84rem',
-                marginBottom: '-1px',
-              }}
-            >
-              Penyesuaian Biaya per Tanggal & Komponen
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('komponen_summary')}
-              style={{
-                padding: '8px 16px',
-                background: activeTab === 'komponen_summary' ? '#ffffff' : 'transparent',
-                border: '1px solid',
-                borderColor: activeTab === 'komponen_summary' ? '#cbd5e1 #cbd5e1 #ffffff #cbd5e1' : 'transparent',
-                borderTopLeftRadius: '6px',
-                borderTopRightRadius: '6px',
-                color: activeTab === 'komponen_summary' ? '#0f172a' : '#64748b',
-                fontWeight: activeTab === 'komponen_summary' ? '700' : '600',
-                cursor: 'pointer',
-                fontSize: '0.84rem',
-                marginBottom: '-1px',
-              }}
-            >
-              Total Akumulasi per Komponen ({summaryPerKomponen.length} Komponen)
-            </button>
-          </div>
+        <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', backgroundColor: '#f1f5f9', padding: '0 20px' }}>
+          <button
+            type="button"
+            style={{
+              padding: '10px 16px',
+              border: 'none',
+              borderBottom: activeTab === 'komparasi' ? '2px solid #2563eb' : '2px solid transparent',
+              backgroundColor: 'transparent',
+              fontWeight: activeTab === 'komparasi' ? '700' : '500',
+              color: activeTab === 'komparasi' ? '#2563eb' : '#64748b',
+              cursor: 'pointer',
+              fontSize: '0.84rem',
+            }}
+            onClick={() => setActiveTab('komparasi')}
+          >
+            Tabel Komparasi Rincian ({details.length} item)
+          </button>
+          <button
+            type="button"
+            style={{
+              padding: '10px 16px',
+              border: 'none',
+              borderBottom: activeTab === 'summary' ? '2px solid #2563eb' : '2px solid transparent',
+              backgroundColor: 'transparent',
+              fontWeight: activeTab === 'summary' ? '700' : '500',
+              color: activeTab === 'summary' ? '#2563eb' : '#64748b',
+              cursor: 'pointer',
+              fontSize: '0.84rem',
+            }}
+            onClick={() => setActiveTab('summary')}
+          >
+            Ringkasan per Komponen
+          </button>
         </div>
 
         {/* Modal Body */}
         <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1, backgroundColor: '#ffffff' }}>
-          {activeTab === 'rincian' ? (
+          {details.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px 16px', color: '#64748b' }}>
+              <i className="bi bi-folder-x" style={{ fontSize: '2.5rem', color: '#94a3b8', display: 'block', marginBottom: '8px' }}></i>
+              <div style={{ fontWeight: '700', fontSize: '0.96rem', color: '#334155' }}>Belum Ada Rincian Komponen RAB</div>
+              <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '4px' }}>
+                Pengajuan SPPD ini belum memiliki rincian estimasi biaya dinas.
+              </div>
+            </div>
+          ) : activeTab === 'komparasi' ? (
             <div>
-              {/* Add New Component Bar */}
-              {canEditHrd && (
-                <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '10px 14px', marginBottom: '14px' }}>
-                  <div style={{ fontWeight: '700', fontSize: '0.84rem', color: '#334155', marginBottom: '6px' }}>
-                    Tambah Komponen Biaya Baru (Tambahan HRD):
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr', gap: '10px', alignItems: 'center' }}>
-                    <select
-                      className="form-select"
-                      style={{ fontSize: '0.88rem', padding: '6px 12px', height: '38px', backgroundColor: '#fff', color: '#1e293b' }}
-                      value={newCompId}
-                      onChange={(e) => setNewCompId(e.target.value)}
-                    >
-                      <option value="">-- Pilih Master Komponen --</option>
-                      {(masterKomponenList || []).map((k) => (
-                        <option key={k.id} value={k.id}>
-                          {k.nama_komponen} ({k.tipe_komponen || 'harian'} - {k.kategori})
-                        </option>
-                      ))}
-                    </select>
-                    <select
-                      className="form-select"
-                      style={{ fontSize: '0.88rem', padding: '6px 12px', height: '38px', backgroundColor: '#fff', color: '#1e293b' }}
-                      value={newCompDate}
-                      onChange={(e) => setNewCompDate(e.target.value)}
-                    >
-                      <option value="">Komponen Sekali / Tanpa Tanggal</option>
-                      {dateOptions.map((dStr) => (
-                        <option key={dStr} value={dStr}>
-                          {formatDateLabel(dStr)} ({dStr})
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      style={{
-                        backgroundColor: newCompId ? '#0284c7' : '#64748b',
-                        color: '#ffffff',
-                        border: 'none',
-                        height: '38px',
-                        borderRadius: '6px',
-                        fontSize: '0.86rem',
-                        fontWeight: '700',
-                        cursor: newCompId ? 'pointer' : 'not-allowed',
-                      }}
-                      onClick={handleAddItem}
-                      disabled={!newCompId}
-                    >
-                      + Tambah ke Daftar
-                    </button>
-                  </div>
-                </div>
-              )}
+              <div style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#0f172a', color: '#ffffff', fontSize: '0.74rem', textTransform: 'uppercase' }}>
+                      <th style={{ padding: '6px 10px', width: '35px', textAlign: 'center' }}>No</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'left' }}>Komponen & Jadwal</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'left', width: '110px' }}>Kategori</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '20%' }}>Pengajuan Awal</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '20%' }}>Persetujuan Final</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '15%' }}>Selisih Biaya</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'left', width: '15%' }}>Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {details.map((item, idx) => {
+                      const qAtasan = Number(item.jumlah) || 1;
+                      const pAtasan = parseFloat(item.harga_satuan) || 0;
+                      const totAtasan = parseFloat(item.total) || (qAtasan * pAtasan);
 
-              {/* Bagian A: Harian Grouped */}
-              {Object.keys(dailyGrouped).length > 0 && (
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#0f172a', marginBottom: '8px' }}>
-                    A. Rincian Biaya Harian
-                  </div>
-                  {Object.keys(dailyGrouped).map((dateKey) => (
-                    <div
-                      key={dateKey}
-                      style={{
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '6px',
-                        marginBottom: '12px',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
+                      const qFinal =
+                        item.jumlah_final !== null && item.jumlah_final !== undefined
+                          ? Number(item.jumlah_final)
+                          : qAtasan;
+                      const pFinal =
+                        item.harga_satuan_final !== null && item.harga_satuan_final !== undefined
+                          ? parseFloat(item.harga_satuan_final)
+                          : pAtasan;
+                      const totFinal =
+                        item.total_final !== null && item.total_final !== undefined
+                          ? parseFloat(item.total_final)
+                          : qFinal * pFinal;
+
+                      const selisih = totFinal - totAtasan;
+                      const isAdjusted = selisih !== 0 || qFinal !== qAtasan || pFinal !== pAtasan;
+
+                      return (
+                        <tr
+                          key={item.id || idx}
+                          style={{
+                            borderBottom: '1px solid #f1f5f9',
+                            backgroundColor: isAdjusted ? '#fffbeb' : idx % 2 === 1 ? '#f8fafc' : '#ffffff',
+                          }}
+                        >
+                          <td style={{ padding: '6px 10px', textAlign: 'center', color: '#64748b' }}>{idx + 1}</td>
+                          <td style={{ padding: '6px 10px' }}>
+                            <div style={{ fontWeight: '700', color: '#1e293b' }}>{item.nama_komponen}</div>
+                            <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                              {item.tipe_komponen === 'sekali' ? (
+                                <>
+                                  <span style={{ color: '#d97706', fontWeight: '600' }}>Sekali Pakai</span>
+                                  {item.tanggal && (
+                                    <span style={{ color: '#64748b', fontWeight: '400' }}>
+                                      {' '}
+                                      ({formatDateLabel(item.tanggal)})
+                                    </span>
+                                  )}
+                                </>
+                              ) : item.tanggal ? (
+                                `${formatDateLabel(item.tanggal)}`
+                              ) : (
+                                'Harian'
+                              )}
+                            </div>
+                          </td>
+                          <td style={{ padding: '6px 10px' }}>
+                            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{item.kategori || 'Umum'}</span>
+                          </td>
+                          <td style={{ padding: '6px 10px', textAlign: 'right', backgroundColor: '#f8fafc' }}>
+                            <div style={{ fontSize: '0.74rem', color: '#64748b' }}>
+                              {qAtasan} × {formatRupiah(pAtasan)}
+                            </div>
+                            <div style={{ fontWeight: '700', color: '#334155' }}>{formatRupiah(totAtasan)}</div>
+                          </td>
+                          <td style={{ padding: '6px 10px', textAlign: 'right', backgroundColor: '#f0fdf4' }}>
+                            <div style={{ fontSize: '0.74rem', color: '#166534' }}>
+                              {qFinal} × {formatRupiah(pFinal)}
+                            </div>
+                            <div style={{ fontWeight: '800', color: '#15803d' }}>{formatRupiah(totFinal)}</div>
+                          </td>
+                          <td
+                            style={{
+                              padding: '6px 10px',
+                              textAlign: 'right',
+                              fontWeight: '700',
+                              color: selisih > 0 ? '#b45309' : selisih < 0 ? '#15803d' : '#64748b',
+                            }}
+                          >
+                            {selisih === 0 ? 'Sesuai' : selisih > 0 ? `+${formatRupiah(selisih)}` : formatRupiah(selisih)}
+                          </td>
+                          <td style={{ padding: '6px 10px', fontSize: '0.76rem', color: '#475569' }}>
+                            {item.keterangan || '-'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot>
+                    <tr style={{ backgroundColor: '#e2e8f0', fontWeight: '800', borderTop: '2px solid #cbd5e1' }}>
+                      <td colSpan="3" style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.84rem', color: '#0f172a' }}>
+                        GRAND TOTAL KESELURUHAN:
+                      </td>
+                      <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.86rem', color: '#334155' }}>
+                        {formatRupiah(grandTotalAtasan)}
+                      </td>
+                      <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.94rem', color: '#15803d' }}>
+                        {formatRupiah(grandTotalFinal)}
+                      </td>
+                      <td
                         style={{
-                          backgroundColor: '#f1f5f9',
-                          borderBottom: '1px solid #e2e8f0',
-                          padding: '7px 12px',
-                          fontWeight: '700',
-                          fontSize: '0.84rem',
-                          color: '#1e293b',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          padding: '8px 10px',
+                          textAlign: 'right',
+                          fontSize: '0.86rem',
+                          color: selisihGrandTotal > 0 ? '#b45309' : selisihGrandTotal < 0 ? '#15803d' : '#64748b',
                         }}
                       >
-                        <span>{formatDateLabel(dateKey)} ({dateKey})</span>
-                        <span style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: '600' }}>
-                          {dailyGrouped[dateKey].length} Komponen
-                        </span>
-                      </div>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>
-                        <thead>
-                          <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569', fontSize: '0.76rem', textTransform: 'uppercase' }}>
-                            <th style={{ padding: '8px 10px', textAlign: 'left', width: '22%' }}>Komponen</th>
-                            <th style={{ padding: '8px 10px', textAlign: 'right', width: '18%' }}>Pengajuan Atasan</th>
-                            <th style={{ padding: '8px 8px', textAlign: 'center', width: '9%' }}>Qty HRD</th>
-                            <th style={{ padding: '8px 8px', textAlign: 'right', width: '16%' }}>Harga HRD (Rp)</th>
-                            <th style={{ padding: '8px 10px', textAlign: 'right', width: '15%' }}>Total HRD (Rp)</th>
-                            <th style={{ padding: '8px 8px', textAlign: 'left', width: '14%' }}>Keterangan HRD</th>
-                            {canEditHrd && <th style={{ padding: '8px 6px', textAlign: 'center', width: '6%' }}>Aksi</th>}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {dailyGrouped[dateKey].map((item) => (
-                            <tr key={item.originalIndex} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                              <td style={{ padding: '8px 10px' }}>
-                                <div style={{ fontWeight: '600', color: '#1e293b' }}>{item.nama_komponen}</div>
-                                <div style={{ fontSize: '0.74rem', color: '#64748b' }}>Satuan: {item.satuan || '-'}</div>
-                              </td>
-                              <td style={{ padding: '8px 10px', textAlign: 'right', backgroundColor: '#f8fafc' }}>
-                                <div style={{ fontSize: '0.76rem', color: '#64748b' }}>{item.jumlah_atasan} × {formatRupiah(item.harga_satuan_atasan)}</div>
-                                <div style={{ fontWeight: '700', color: '#334155' }}>{formatRupiah(item.total_atasan)}</div>
-                              </td>
-                              <td style={{ padding: '6px 8px' }}>
-                                <input
-                                  type="number"
-                                  className="form-control"
-                                  style={{ fontSize: '0.86rem', textAlign: 'center', padding: '5px 8px' }}
-                                  min="1"
-                                  disabled={!canEditHrd}
-                                  value={item.jumlah_hrd}
-                                  onChange={(e) => handleQtyChange(item.originalIndex, e.target.value)}
-                                />
-                              </td>
-                              <td style={{ padding: '6px 8px' }}>
-                                <input
-                                  type="number"
-                                  className="form-control"
-                                  style={{ fontSize: '0.86rem', textAlign: 'right', padding: '5px 8px' }}
-                                  min="0"
-                                  step="1000"
-                                  disabled={!canEditHrd}
-                                  value={item.harga_satuan_hrd}
-                                  onChange={(e) => handlePriceChange(item.originalIndex, e.target.value)}
-                                />
-                              </td>
-                              <td style={{ padding: '8px 10px', textAlign: 'right', fontWeight: '700', color: '#16a34a' }}>
-                                {formatRupiah(item.total_hrd)}
-                              </td>
-                              <td style={{ padding: '6px 8px' }}>
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  style={{ fontSize: '0.82rem', padding: '5px 8px' }}
-                                  placeholder="Catatan..."
-                                  disabled={!canEditHrd}
-                                  value={item.keterangan}
-                                  onChange={(e) => handleKeteranganChange(item.originalIndex, e.target.value)}
-                                />
-                              </td>
-                              {canEditHrd && (
-                                <td style={{ padding: '6px 6px', textAlign: 'center' }}>
-                                  <button
-                                    type="button"
-                                    style={{
-                                      backgroundColor: '#fee2e2',
-                                      color: '#dc2626',
-                                      border: '1px solid #fca5a5',
-                                      borderRadius: '4px',
-                                      padding: '4px 8px',
-                                      fontSize: '0.78rem',
-                                      fontWeight: '700',
-                                      cursor: 'pointer',
-                                    }}
-                                    onClick={() => handleRemoveItem(item.originalIndex)}
-                                    title="Hapus baris"
-                                  >
-                                    Hapus
-                                  </button>
-                                </td>
-                              )}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Bagian B: Sekali Pakai */}
-              {onceList.length > 0 && (
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#0f172a', marginBottom: '8px' }}>
-                    B. Rincian Biaya Sekali Pakai / Logistik
-                  </div>
-                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>
-                      <thead>
-                        <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569', fontSize: '0.76rem', textTransform: 'uppercase' }}>
-                          <th style={{ padding: '8px 10px', textAlign: 'left', width: '22%' }}>Komponen</th>
-                          <th style={{ padding: '8px 10px', textAlign: 'right', width: '18%' }}>Pengajuan Atasan</th>
-                          <th style={{ padding: '8px 8px', textAlign: 'center', width: '9%' }}>Qty HRD</th>
-                          <th style={{ padding: '8px 8px', textAlign: 'right', width: '16%' }}>Harga HRD (Rp)</th>
-                          <th style={{ padding: '8px 10px', textAlign: 'right', width: '15%' }}>Total HRD (Rp)</th>
-                          <th style={{ padding: '8px 8px', textAlign: 'left', width: '14%' }}>Keterangan HRD</th>
-                          {canEditHrd && <th style={{ padding: '8px 6px', textAlign: 'center', width: '6%' }}>Aksi</th>}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {onceList.map((item) => (
-                          <tr key={item.originalIndex} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                            <td style={{ padding: '8px 10px' }}>
-                              <div style={{ fontWeight: '600', color: '#1e293b' }}>{item.nama_komponen}</div>
-                              <div style={{ fontSize: '0.74rem', color: '#64748b' }}>
-                                Satuan: {item.satuan || '-'}
-                                {item.tanggal && (
-                                  <span style={{ marginLeft: '6px', color: '#0284c7', fontWeight: '600' }}>
-                                    • {formatDateLabel(item.tanggal)}
-                                  </span>
-                                )}
-                              </div>
-                            </td>
-                            <td style={{ padding: '8px 10px', textAlign: 'right', backgroundColor: '#f8fafc' }}>
-                              <div style={{ fontSize: '0.76rem', color: '#64748b' }}>{item.jumlah_atasan} × {formatRupiah(item.harga_satuan_atasan)}</div>
-                              <div style={{ fontWeight: '700', color: '#334155' }}>{formatRupiah(item.total_atasan)}</div>
-                            </td>
-                            <td style={{ padding: '6px 8px' }}>
-                              <input
-                                type="number"
-                                className="form-control"
-                                style={{ fontSize: '0.86rem', textAlign: 'center', padding: '5px 8px' }}
-                                min="1"
-                                disabled={!canEditHrd}
-                                value={item.jumlah_hrd}
-                                onChange={(e) => handleQtyChange(item.originalIndex, e.target.value)}
-                              />
-                            </td>
-                            <td style={{ padding: '6px 8px' }}>
-                              <input
-                                type="number"
-                                className="form-control"
-                                style={{ fontSize: '0.86rem', textAlign: 'right', padding: '5px 8px' }}
-                                min="0"
-                                step="1000"
-                                disabled={!canEditHrd}
-                                value={item.harga_satuan_hrd}
-                                onChange={(e) => handlePriceChange(item.originalIndex, e.target.value)}
-                              />
-                            </td>
-                            <td style={{ padding: '8px 10px', textAlign: 'right', fontWeight: '700', color: '#ca8a04' }}>
-                              {formatRupiah(item.total_hrd)}
-                            </td>
-                            <td style={{ padding: '6px 8px' }}>
-                              <input
-                                type="text"
-                                className="form-control"
-                                style={{ fontSize: '0.82rem', padding: '5px 8px' }}
-                                placeholder="Catatan..."
-                                disabled={!canEditHrd}
-                                value={item.keterangan}
-                                onChange={(e) => handleKeteranganChange(item.originalIndex, e.target.value)}
-                              />
-                            </td>
-                            {canEditHrd && (
-                              <td style={{ padding: '6px 6px', textAlign: 'center' }}>
-                                <button
-                                  type="button"
-                                  style={{
-                                    backgroundColor: '#fee2e2',
-                                    color: '#dc2626',
-                                    border: '1px solid #fca5a5',
-                                    borderRadius: '4px',
-                                    padding: '4px 8px',
-                                    fontSize: '0.78rem',
-                                    fontWeight: '700',
-                                    cursor: 'pointer',
-                                  }}
-                                  onClick={() => handleRemoveItem(item.originalIndex)}
-                                  title="Hapus baris"
-                                >
-                                  Hapus
-                                </button>
-                              </td>
-                            )}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              {/* Catatan Tambahan HRD */}
-              <div style={{ marginTop: '12px' }}>
-                <label style={{ fontWeight: '600', fontSize: '0.84rem', color: '#334155', marginBottom: '4px', display: 'block' }}>
-                  Catatan / Instruksi HRD (Opsional):
-                </label>
-                <textarea
-                  className="form-control"
-                  style={{ fontSize: '0.84rem' }}
-                  rows="2"
-                  placeholder="Masukkan catatan atau instruksi penyesuaian biaya dinas bila ada..."
-                  disabled={!canEditHrd}
-                  value={catatan}
-                  onChange={(e) => setCatatan(e.target.value)}
-                ></textarea>
+                        {selisihGrandTotal > 0 ? `+${formatRupiah(selisihGrandTotal)}` : formatRupiah(selisihGrandTotal)}
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
             </div>
           ) : (
             <div>
               <div style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
                   <thead>
-                    <tr style={{ backgroundColor: '#0f172a', color: '#ffffff', fontSize: '0.76rem', textTransform: 'uppercase' }}>
-                      <th style={{ padding: '8px 10px', width: '35px', textAlign: 'center' }}>No</th>
-                      <th style={{ padding: '8px 10px', textAlign: 'left' }}>Nama Komponen Biaya</th>
-                      <th style={{ padding: '8px 10px', textAlign: 'left', width: '130px' }}>Tipe / Kategori</th>
-                      <th style={{ padding: '8px 10px', textAlign: 'right', width: '20%' }}>Total Pengajuan Atasan</th>
-                      <th style={{ padding: '8px 10px', textAlign: 'right', width: '20%' }}>Total Disetujui HRD</th>
-                      <th style={{ padding: '8px 10px', textAlign: 'right', width: '16%' }}>Selisih Biaya</th>
+                    <tr style={{ backgroundColor: '#0f172a', color: '#ffffff', fontSize: '0.74rem', textTransform: 'uppercase' }}>
+                      <th style={{ padding: '6px 10px', width: '35px', textAlign: 'center' }}>No</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'left' }}>Nama Komponen Biaya</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'left', width: '130px' }}>Tipe / Kategori</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '22%' }}>Total Pengajuan Awal</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '22%' }}>Total Persetujuan Final</th>
+                      <th style={{ padding: '6px 10px', textAlign: 'right', width: '18%' }}>Selisih Biaya</th>
                     </tr>
                   </thead>
                   <tbody>
                     {summaryPerKomponen.map((comp, idx) => (
-                      <tr key={comp.id_komponen || idx} style={{ borderBottom: '1px solid #f1f5f9', backgroundColor: idx % 2 === 1 ? '#f8fafc' : '#ffffff' }}>
-                        <td style={{ padding: '8px 10px', textAlign: 'center', color: '#64748b' }}>{idx + 1}</td>
-                        <td style={{ padding: '8px 10px' }}>
+                      <tr
+                        key={comp.id_komponen || idx}
+                        style={{ borderBottom: '1px solid #f1f5f9', backgroundColor: idx % 2 === 1 ? '#f8fafc' : '#ffffff' }}
+                      >
+                        <td style={{ padding: '6px 10px', textAlign: 'center', color: '#64748b' }}>{idx + 1}</td>
+                        <td style={{ padding: '6px 10px' }}>
                           <div style={{ fontWeight: '700', color: '#1e293b' }}>{comp.nama_komponen}</div>
-                          <div style={{ fontSize: '0.74rem', color: '#64748b' }}>Satuan: {comp.satuan || '-'}</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Satuan: {comp.satuan || '-'}</div>
                         </td>
-                        <td style={{ padding: '8px 10px' }}>
-                          <span style={{
-                            display: 'inline-block',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            fontSize: '0.72rem',
-                            fontWeight: '600',
-                            backgroundColor: comp.tipe_komponen === 'harian' ? '#e0f2fe' : '#fef3c7',
-                            color: comp.tipe_komponen === 'harian' ? '#0369a1' : '#92400e',
-                          }}>
+                        <td style={{ padding: '6px 10px' }}>
+                          <span
+                            style={{
+                              display: 'inline-block',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '0.72rem',
+                              fontWeight: '600',
+                              backgroundColor: comp.tipe_komponen === 'harian' ? '#e0f2fe' : '#fef3c7',
+                              color: comp.tipe_komponen === 'harian' ? '#0369a1' : '#92400e',
+                            }}
+                          >
                             {comp.tipe_komponen === 'harian' ? 'Harian' : 'Sekali'}
                           </span>{' '}
-                          <span style={{ fontSize: '0.74rem', color: '#64748b' }}>({comp.kategori})</span>
+                          <span style={{ fontSize: '0.72rem', color: '#64748b' }}>({comp.kategori})</span>
                         </td>
-                        <td style={{ padding: '8px 10px', textAlign: 'right' }}>
-                          <div style={{ fontSize: '0.76rem', color: '#64748b' }}>{comp.total_qty_atasan} {comp.satuan || ''}</div>
+                        <td style={{ padding: '6px 10px', textAlign: 'right' }}>
+                          <div style={{ fontSize: '0.74rem', color: '#64748b' }}>
+                            {comp.total_jumlah_atasan} {comp.satuan || ''}
+                          </div>
                           <div style={{ fontWeight: '700', color: '#334155' }}>
                             {formatRupiah(comp.total_biaya_atasan)}
                           </div>
                         </td>
-                        <td style={{ padding: '8px 10px', textAlign: 'right', backgroundColor: '#f0fdf4' }}>
-                          <div style={{ fontSize: '0.76rem', color: '#166534' }}>{comp.total_qty_hrd} {comp.satuan || ''}</div>
+                        <td style={{ padding: '6px 10px', textAlign: 'right', backgroundColor: '#f0fdf4' }}>
+                          <div style={{ fontSize: '0.74rem', color: '#166534' }}>
+                            {comp.total_jumlah_final !== undefined ? comp.total_jumlah_final : comp.total_jumlah_atasan} {comp.satuan || ''}
+                          </div>
                           <div style={{ fontWeight: '800', color: '#15803d' }}>
-                            {formatRupiah(comp.total_biaya_hrd)}
+                            {formatRupiah(comp.total_biaya_final !== undefined ? comp.total_biaya_final : comp.total_biaya_atasan)}
                           </div>
                         </td>
-                        <td style={{ padding: '8px 10px', textAlign: 'right', fontWeight: '700' }}>
+                        <td style={{ padding: '6px 10px', textAlign: 'right', fontWeight: '700' }}>
                           {comp.selisih_biaya === 0 ? (
                             <span style={{ color: '#64748b' }}>Sesuai</span>
                           ) : comp.selisih_biaya > 0 ? (
@@ -768,16 +473,23 @@ const HrdRabReviewModal = ({
                   </tbody>
                   <tfoot>
                     <tr style={{ backgroundColor: '#e2e8f0', fontWeight: '800', borderTop: '2px solid #cbd5e1' }}>
-                      <td colSpan="3" style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.86rem', color: '#0f172a' }}>
+                      <td colSpan="3" style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.84rem', color: '#0f172a' }}>
                         GRAND TOTAL KESELURUHAN:
                       </td>
-                      <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.88rem', color: '#334155' }}>
-                        {formatRupiah(totalPengajuanAtasan)}
+                      <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.86rem', color: '#334155' }}>
+                        {formatRupiah(grandTotalAtasan)}
                       </td>
-                      <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.96rem', color: '#15803d' }}>
-                        {formatRupiah(totalPenyesuaianHrd)}
+                      <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.94rem', color: '#15803d' }}>
+                        {formatRupiah(grandTotalFinal)}
                       </td>
-                      <td style={{ padding: '8px 10px', textAlign: 'right', fontSize: '0.88rem', color: selisihGrandTotal > 0 ? '#b45309' : selisihGrandTotal < 0 ? '#15803d' : '#64748b' }}>
+                      <td
+                        style={{
+                          padding: '8px 10px',
+                          textAlign: 'right',
+                          fontSize: '0.86rem',
+                          color: selisihGrandTotal > 0 ? '#b45309' : selisihGrandTotal < 0 ? '#15803d' : '#64748b',
+                        }}
+                      >
                         {selisihGrandTotal > 0 ? `+${formatRupiah(selisihGrandTotal)}` : formatRupiah(selisihGrandTotal)}
                       </td>
                     </tr>
@@ -786,6 +498,22 @@ const HrdRabReviewModal = ({
               </div>
             </div>
           )}
+
+          {/* Catatan HRD Section */}
+          {/* <div style={{ marginTop: '16px' }}>
+            <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#475569', marginBottom: '4px', display: 'block' }}>
+              Catatan / Keterangan Persetujuan Final (Opsional):
+            </label>
+            <textarea
+              className="form-control"
+              rows="2"
+              placeholder={isApproved ? '-' : 'Masukkan catatan persetujuan jika ada...'}
+              value={catatan}
+              disabled={isApproved}
+              onChange={(e) => setCatatan(e.target.value)}
+              style={{ fontSize: '0.84rem', backgroundColor: isApproved ? '#f8fafc' : '#ffffff' }}
+            />
+          </div> */}
         </div>
 
         {/* Footer Buttons */}
@@ -816,44 +544,48 @@ const HrdRabReviewModal = ({
             Tutup
           </button>
 
-          {canEditHrd && (
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                type="button"
+          <div>
+            {isApproved ? (
+              <span
                 style={{
-                  backgroundColor: '#dc2626',
-                  color: '#ffffff',
-                  border: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  backgroundColor: '#dcfce7',
+                  color: '#15803d',
                   padding: '8px 18px',
                   borderRadius: '6px',
                   fontWeight: '700',
                   fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 1px 3px rgba(220, 38, 38, 0.3)',
                 }}
-                onClick={handleReject}
               >
-                Tolak RAB & SPPD
-              </button>
+                <i className="bi bi-check-circle-fill"></i>
+                Sudah Disetujui (Approved)
+              </span>
+            ) : (
               <button
                 type="button"
                 style={{
                   backgroundColor: '#16a34a',
                   color: '#ffffff',
                   border: 'none',
-                  padding: '8px 22px',
+                  padding: '8px 24px',
                   borderRadius: '6px',
                   fontWeight: '700',
                   fontSize: '0.85rem',
                   cursor: 'pointer',
                   boxShadow: '0 1px 3px rgba(22, 163, 74, 0.3)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
                 }}
                 onClick={handleApprove}
               >
-                {rab.status === 'approved' ? 'Simpan Penyesuaian' : 'Setujui RAB'}
+                <i className="bi bi-check-lg"></i>
+                Setujui Final RAB & SPPD
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

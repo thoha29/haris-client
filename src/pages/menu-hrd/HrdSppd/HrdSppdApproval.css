@@ -70,3 +70,58 @@
   background-color: #157347;
   color: #ffffff;
 }
+
+.btn-action-cancel-approve {
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-action-cancel-approve:hover {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.btn-action-cancel-reject {
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-action-cancel-reject:hover {
+  background-color: #b91c1c;
+  color: #ffffff;
+}
+
+.badge-cancel-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+

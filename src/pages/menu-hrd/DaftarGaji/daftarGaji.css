@@ -105,7 +105,8 @@
 /* Garis tipis seluruh tabel */
 .approval-table th,
 .approval-table td {
-    border: 1px solid #e5e7eb; /* abu tipis */
+    border: 1px solid #e5e7eb;
+    /* abu tipis */
 }
 
 /* Biar tidak double border */
@@ -120,8 +121,8 @@
     align-items: center;
 }
 
-/* Base style untuk semua tombol di tabel */
-.btn {
+/* Base style untuk semua tombol di tabel approval */
+.approval-table .btn {
     padding: 6px 14px;
     border: none;
     border-radius: 6px;
@@ -146,6 +147,29 @@
 
 .btn-reject:hover {
     background-color: #bb2d3b;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #0b5ed7;
+}
+
+.btn-success {
+    background-color: #198754;
+    color: #fff;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: #157347;
+}
+
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
 }
 
 .approval-table tbody tr {

@@ -20,8 +20,8 @@ export const getRabBySppd = async (id_sppd) => {
   return await api.get(`/api/rab/sppd/${id_sppd}`);
 };
 
-export const reviewRabHRD = async (id_rab, status, catatan, updatedDetails) => {
-  return await api.put('/api/rab/review-hrd', { id_rab, status, catatan, updatedDetails });
+export const reviewRabHRD = async (id_rab, catatan) => {
+  return await api.put('/api/rab/review-hrd', { id_rab, catatan });
 };
 
 export const approvePerubahanRabHRD = async (id_rab, status) => {

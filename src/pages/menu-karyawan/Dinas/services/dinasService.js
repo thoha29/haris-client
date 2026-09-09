@@ -30,6 +30,19 @@ export const postCheckInDinas = async (data) => {
   return await api.post('/api/dinas-absensi/checkin', data);
 };
 
+export const createSppd = async (data) => {
+  return await api.post('/api/sppd', data);
+};
+
+export const submitRab = async (id_sppd, details) => {
+  return await api.post('/api/rab/submit', { id_sppd, details });
+};
+
+export const getMasterTransportasiList = async () => {
+  return await api.get('/api/transportasi', { params: { status: 'available' } });
+};
+
 export const getDinasAbsensiHistory = async (id_user) => {
   return await api.get(`/api/dinas-absensi/history/${id_user}`);
 };
+

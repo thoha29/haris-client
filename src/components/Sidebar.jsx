@@ -158,16 +158,35 @@ function SideBar({ isOpen }) {
               </ul>
             </li>
 
+            {/* Group SPPD Karyawan */}
             <li className="nav-item">
-              <NavLink
-                to="dinas"
-                className={({ isActive }) =>
-                  'nav-link' + (isActive ? ' active' : '')
-                }
+              <a
+                href="/"
+                className="nav-link collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#karyawan-sppd-nav"
+                onClick={(e) => e.preventDefault()}
               >
                 <i className="bi bi-briefcase-fill"></i>
                 <span>Perjalanan Dinas (SPPD)</span>
-              </NavLink>
+                <i className="bi bi-chevron-down ms-auto"></i>
+              </a>
+              <ul
+                id="karyawan-sppd-nav"
+                className="nav-content collapse"
+                data-bs-parent="#sidebar-nav"
+              >
+                <li>
+                  <NavLink to="PengajuanSppd">
+                    <span>Pengajuan SPPD</span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="dinas">
+                    <span>Riwayat & Monitoring SPPD</span>
+                  </NavLink>
+                </li>
+              </ul>
             </li>
           </>
         )}
@@ -587,35 +606,12 @@ function SideBar({ isOpen }) {
               </ul>
             </li>
 
-            {/* Group SPPD User */}
+            {/* SPPD User / Atasan */}
             <li className="nav-item">
-              <a
-                href="/"
-                className="nav-link collapsed"
-                data-bs-toggle="collapse"
-                data-bs-target="#user-sppd-nav"
-                onClick={(e) => e.preventDefault()}
-              >
+              <NavLink to="UserSppdMonitoring" className="nav-link collapsed">
                 <i className="bi bi-briefcase-fill"></i>
-                <span>Perjalanan Dinas (SPPD)</span>
-                <i className="bi bi-chevron-down ms-auto"></i>
-              </a>
-              <ul
-                id="user-sppd-nav"
-                className="nav-content collapse"
-                data-bs-parent="#sidebar-nav"
-              >
-                <li>
-                  <NavLink to="FormSppd">
-                    <span>Buat SPPD Baru</span>
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="UserSppdMonitoring">
-                    <span>Monitoring & RAB SPPD</span>
-                  </NavLink>
-                </li>
-              </ul>
+                <span>Persetujuan & Monitoring SPPD</span>
+              </NavLink>
             </li>
           </>
         )}

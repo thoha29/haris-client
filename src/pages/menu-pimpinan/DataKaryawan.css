@@ -249,6 +249,17 @@ body {
     color: #7d3c98;
 }
 
+.role-keuangan {
+    background-color: #fcf3cf;
+    color: #b7950b;
+}
+
+.badge-skema {
+    background-color: #e8f8f5;
+    color: #117864;
+    border: 1px solid #a3e4d7;
+}
+
 /* Action Buttons */
 .action-buttons {
     display: flex;

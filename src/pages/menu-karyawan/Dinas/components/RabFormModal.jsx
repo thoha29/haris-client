@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Swal from 'sweetalert2';
+import { getActiveMasterKomponen } from '../services/dinasService';
 
 // Helper to generate array of dates between start and end date
 const getDatesInRange = (startDateStr, endDateStr) => {
@@ -39,7 +40,30 @@ const formatRupiah = (val) => {
   }).format(val || 0);
 };
 
-const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails, onSubmitRab }) => {
+const RabFormModal = ({
+  show,
+  onClose,
+  sppd,
+  idSppd,
+  masterKomponenList: initialMasterList,
+  existingRab,
+  existingDetails,
+  onSubmitRab,
+  onSubmit,
+  isRevisi,
+}) => {
+  const [internalMasterList, setInternalMasterList] = useState(initialMasterList || []);
+
+  useEffect(() => {
+    if (initialMasterList && initialMasterList.length > 0) {
+      setInternalMasterList(initialMasterList);
+    } else if (show) {
+      getActiveMasterKomponen()
+        .then((res) => setInternalMasterList(res.data || []))
+        .catch((err) => console.error('Error fetching active master komponen for RAB form:', err));
+    }
+  }, [show, initialMasterList]);
+
   // Dates in SPPD range
   const dates = useMemo(() => {
     if (!sppd) return [];
@@ -48,12 +72,12 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
 
   // Split master into Harian & Sekali
   const harianMaster = useMemo(() => {
-    return (masterKomponenList || []).filter((k) => (k.tipe_komponen || 'harian') === 'harian');
-  }, [masterKomponenList]);
+    return (internalMasterList || []).filter((k) => (k.tipe_komponen || 'harian') === 'harian');
+  }, [internalMasterList]);
 
   const sekaliMaster = useMemo(() => {
-    return (masterKomponenList || []).filter((k) => k.tipe_komponen === 'sekali');
-  }, [masterKomponenList]);
+    return (internalMasterList || []).filter((k) => k.tipe_komponen === 'sekali');
+  }, [internalMasterList]);
 
   // State: dailyItems: { [dateStr]: [ { id_komponen, nama_komponen, kategori, satuan, harga_satuan, selected } ] }
   const [dailyItems, setDailyItems] = useState({});
@@ -66,7 +90,11 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
 
   useEffect(() => {
     if (show && sppd && dates.length > 0) {
-      const details = existingDetails || sppd.rab_details || [];
+      const details =
+        existingDetails ||
+        existingRab?.details ||
+        sppd.rab_details ||
+        [];
 
       // Initialize daily items for each date
       const initialDaily = {};
@@ -74,7 +102,7 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
         initialDaily[d] = harianMaster.map((k) => {
           const matched = details.find(
             (det) =>
-              det.id_komponen === k.id &&
+              Number(det.id_komponen) === Number(k.id) &&
               det.tanggal === d &&
               det.tipe_komponen !== 'sekali'
           );
@@ -96,7 +124,7 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
       const initialOnce = sekaliMaster.map((k) => {
         const matched = details.find(
           (det) =>
-            det.id_komponen === k.id &&
+            Number(det.id_komponen) === Number(k.id) &&
             (det.tipe_komponen === 'sekali' || (!det.tanggal && det.tipe_komponen !== 'harian'))
         );
         const price = matched ? parseFloat(matched.harga_satuan) || 0 : 0;
@@ -113,7 +141,7 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
       });
       setOnceItems(initialOnce);
     }
-  }, [show, sppd, dates, harianMaster, sekaliMaster, existingDetails]);
+  }, [show, sppd, dates, harianMaster, sekaliMaster, existingDetails, existingRab]);
 
   if (!show || !sppd) return null;
 
@@ -255,7 +283,10 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
       return;
     }
 
-    onSubmitRab(sppd.id_sppd, payloadDetails);
+    const submitFn = onSubmitRab || onSubmit;
+    if (submitFn) {
+      submitFn(sppd.id_sppd || idSppd, payloadDetails);
+    }
   };
 
   return (
@@ -302,7 +333,9 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
         >
           <div>
             <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: '600' }}>
-              Pengisian Rencana Anggaran Biaya (RAB) - SPPD: {sppd.nomor_sppd}
+              {isRevisi || existingRab?.status === 'revisi_atasan'
+                ? `Revisi Rencana Anggaran Biaya (RAB) - SPPD: ${sppd.nomor_sppd}`
+                : `Pengisian Rencana Anggaran Biaya (RAB) - SPPD: ${sppd.nomor_sppd}`}
             </h3>
             <small style={{ color: '#cbd5e1' }}>
               Tujuan: {sppd.alamat_tujuan} | Periode: {sppd.tanggal_mulai} s/d {sppd.tanggal_selesai} ({sppd.total_hari} Hari)
@@ -323,6 +356,25 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
             &times;
           </button>
         </div>
+
+        {/* Catatan Revisi dari Atasan Banner */}
+        {(existingRab?.catatan_atasan || sppd?.catatan_atasan) && (
+          <div
+            style={{
+              backgroundColor: '#fffbeb',
+              borderBottom: '1px solid #fde68a',
+              padding: '10px 20px',
+              fontSize: '0.86rem',
+              color: '#92400e',
+            }}
+          >
+            <div style={{ fontWeight: '700', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <i className="bi bi-exclamation-triangle-fill" style={{ color: '#d97706' }}></i>
+              <span>Catatan Revisi dari Atasan:</span>
+            </div>
+            <div style={{ color: '#78350f' }}>{existingRab?.catatan_atasan || sppd?.catatan_atasan}</div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div style={{ padding: '20px', overflowY: 'auto' }}>
@@ -351,81 +403,104 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
                       cursor: 'pointer',
                     }}
                     onClick={() => handleCopyDayToAll(activeDateTab)}
+                    title="Salin nominal hari ini ke seluruh tanggal dinas"
                   >
-                    Terapkan Nilai Hari Ini ke Semua Hari
+                    <i className="bi bi-copy me-1"></i> Terapkan ke Semua Hari
                   </button>
                 )}
               </div>
 
-              {/* Date Navigation Tabs */}
-              <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '8px', marginBottom: '12px', borderBottom: '1px solid #cbd5e1' }}>
-                {dates.map((dateStr, idx) => {
-                  const isActive = activeDateTab === dateStr;
-                  const countFilled = (dailyItems[dateStr] || []).filter((i) => i.selected && i.harga_satuan > 0).length;
-                  const daySubtotal = (dailyItems[dateStr] || []).reduce((acc, curr) => curr.selected ? acc + curr.harga_satuan : acc, 0);
+              {/* Date Tabs */}
+              <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '8px', marginBottom: '14px', borderBottom: '1px solid #e2e8f0' }}>
+                {dates.map((d, idx) => {
+                  const isActive = activeDateTab === d;
+                  const dayItems = dailyItems[d] || [];
+                  const activeCount = dayItems.filter((it) => it.selected && it.harga_satuan > 0).length;
 
                   return (
                     <button
-                      key={dateStr}
+                      key={d}
                       type="button"
-                      onClick={() => setActiveDateTab(dateStr)}
                       style={{
-                        padding: '8px 14px',
+                        padding: '6px 14px',
                         borderRadius: '6px',
-                        border: isActive ? '2px solid #1f4e78' : '1px solid #cbd5e1',
+                        border: '1px solid',
+                        borderColor: isActive ? '#1f4e78' : '#cbd5e1',
                         backgroundColor: isActive ? '#1f4e78' : '#ffffff',
                         color: isActive ? '#ffffff' : '#334155',
-                        fontWeight: '600',
+                        fontWeight: isActive ? '700' : '500',
                         fontSize: '0.82rem',
                         cursor: 'pointer',
                         whiteSpace: 'nowrap',
-                        textAlign: 'left',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
                       }}
+                      onClick={() => setActiveDateTab(d)}
                     >
-                      <div>{formatDateLabel(dateStr, idx)}</div>
-                      <div style={{ fontSize: '0.75rem', opacity: 0.9, marginTop: '2px', color: isActive ? '#e0e7ff' : '#0f5132' }}>
-                        {countFilled > 0 ? `${formatRupiah(daySubtotal)} (${countFilled} item)` : 'Belum diisi'}
-                      </div>
+                      <span>{formatDateLabel(d, idx)}</span>
+                      {activeCount > 0 && (
+                        <span
+                          style={{
+                            backgroundColor: isActive ? '#ffffff' : '#e2e8f0',
+                            color: isActive ? '#1f4e78' : '#475569',
+                            fontSize: '0.72rem',
+                            fontWeight: '700',
+                            padding: '1px 6px',
+                            borderRadius: '10px',
+                          }}
+                        >
+                          {activeCount}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Table for Active Date */}
+              {/* Daily Items Table for Active Date Tab */}
               {activeDateTab && (
-                <div>
-                  <table className="table table-bordered table-sm align-middle" style={{ fontSize: '0.88rem', marginBottom: 0, backgroundColor: '#ffffff' }}>
-                    <thead style={{ backgroundColor: '#f1f5f9' }}>
-                      <tr>
-                        <th style={{ width: '45px', textAlign: 'center' }}>Pilih</th>
-                        <th>Nama Komponen Harian</th>
-                        <th>Kategori</th>
-                        <th>Satuan</th>
-                        <th style={{ width: '220px', textAlign: 'right' }}>Nominal Biaya Hari Ini (Rp)</th>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: '#e2e8f0', color: '#334155', fontSize: '0.78rem', textTransform: 'uppercase' }}>
+                        <th style={{ padding: '8px 10px', width: '40px', textAlign: 'center' }}>Pilih</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'left' }}>Komponen Biaya Harian</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'left', width: '120px' }}>Kategori</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'left', width: '90px' }}>Satuan</th>
+                        <th style={{ padding: '8px 10px', textAlign: 'right', width: '180px' }}>Nomor / Estimasi Biaya (Rp)</th>
                       </tr>
                     </thead>
                     <tbody>
                       {(dailyItems[activeDateTab] || []).length === 0 ? (
                         <tr>
-                          <td colSpan="5" style={{ textAlign: 'center', color: '#94a3b8', padding: '16px' }}>
-                            Tidak ada master komponen bertipe Harian.
+                          <td colSpan="5" className="text-center py-3 text-muted">
+                            Belum ada master komponen harian yang aktif.
                           </td>
                         </tr>
                       ) : (
                         (dailyItems[activeDateTab] || []).map((item) => (
-                          <tr key={item.id_komponen} style={{ backgroundColor: item.selected ? '#f8fafc' : '#ffffff' }}>
-                            <td style={{ textAlign: 'center' }}>
+                          <tr
+                            key={item.id_komponen}
+                            style={{
+                              borderBottom: '1px solid #f1f5f9',
+                              backgroundColor: item.selected ? '#f0fdf4' : '#ffffff',
+                            }}
+                          >
+                            <td style={{ textAlign: 'center', padding: '8px 10px' }}>
                               <input
                                 type="checkbox"
                                 checked={item.selected}
                                 onChange={() => handleDailyToggle(activeDateTab, item.id_komponen)}
-                                style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                                style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                               />
                             </td>
-                            <td style={{ fontWeight: '600', color: '#1e293b' }}>{item.nama_komponen}</td>
-                            <td><span className="badge-kategori">{item.kategori}</span></td>
-                            <td>{item.satuan}</td>
-                            <td>
+                            <td style={{ padding: '8px 10px', fontWeight: '600', color: '#1e293b' }}>
+                              {item.nama_komponen}
+                            </td>
+                            <td style={{ padding: '8px 10px', color: '#64748b' }}>{item.kategori}</td>
+                            <td style={{ padding: '8px 10px', color: '#64748b' }}>{item.satuan}</td>
+                            <td style={{ padding: '6px 10px' }}>
                               <input
                                 type="number"
                                 className="form-control-clean"
@@ -446,128 +521,143 @@ const RabFormModal = ({ show, onClose, sppd, masterKomponenList, existingDetails
               )}
             </div>
 
-            {/* Bagian 2: Biaya Sekali (Lumpsum / Non-Harian) */}
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', marginBottom: '14px' }}>
-              <h4 style={{ fontSize: '1rem', fontWeight: '700', color: '#1f4e78', marginBottom: '4px' }}>
-                2. Biaya Sekali (Lumpsum / Tiket / Operasional Non-Harian)
-              </h4>
-              <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '12px' }}>
-                Komponen yang dikeluarkan satu kali selama penugasan (Tiket Pesawat, Tol, PCR, Sewa Kendaraan, dll.)
-              </p>
+            {/* Bagian 2: Biaya Sekali Pakai (Lump-sum) */}
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <h4 style={{ fontSize: '1rem', fontWeight: '700', color: '#1f4e78', margin: 0 }}>
+                  2. Biaya Sekali Pakai / Lumpsum
+                </h4>
+                <small style={{ color: '#64748b' }}>
+                  Komponen biaya sekali pengeluaran selama perjalanan dinas (Tiket Pesawat, Tol, Bensin, dll.)
+                </small>
+              </div>
 
-              <table className="table table-bordered table-sm align-middle" style={{ fontSize: '0.88rem', marginBottom: 0, backgroundColor: '#ffffff' }}>
-                <thead style={{ backgroundColor: '#f1f5f9' }}>
-                  <tr>
-                    <th style={{ width: '45px', textAlign: 'center' }}>Pilih</th>
-                    <th>Nama Komponen Sekali</th>
-                    <th>Kategori</th>
-                    <th style={{ width: '90px', textAlign: 'center' }}>Jumlah</th>
-                    <th style={{ width: '180px', textAlign: 'right' }}>Harga Satuan (Rp)</th>
-                    <th style={{ width: '180px', textAlign: 'right' }}>Total (Rp)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {onceItems.length === 0 ? (
-                    <tr>
-                      <td colSpan="6" style={{ textAlign: 'center', color: '#94a3b8', padding: '16px' }}>
-                        Tidak ada master komponen bertipe Sekali.
-                      </td>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#e2e8f0', color: '#334155', fontSize: '0.78rem', textTransform: 'uppercase' }}>
+                      <th style={{ padding: '8px 10px', width: '40px', textAlign: 'center' }}>Pilih</th>
+                      <th style={{ padding: '8px 10px', textAlign: 'left' }}>Komponen Biaya</th>
+                      <th style={{ padding: '8px 10px', textAlign: 'left', width: '120px' }}>Kategori</th>
+                      <th style={{ padding: '8px 10px', textAlign: 'center', width: '90px' }}>Jumlah (Qty)</th>
+                      <th style={{ padding: '8px 10px', textAlign: 'right', width: '170px' }}>Harga Satuan (Rp)</th>
+                      <th style={{ padding: '8px 10px', textAlign: 'right', width: '150px' }}>Subtotal (Rp)</th>
                     </tr>
-                  ) : (
-                    onceItems.map((item) => {
-                      const itemTotal = (item.harga_satuan || 0) * (item.jumlah || 1);
-                      return (
-                        <tr key={item.id_komponen} style={{ backgroundColor: item.selected ? '#f8fafc' : '#ffffff' }}>
-                          <td style={{ textAlign: 'center' }}>
-                            <input
-                              type="checkbox"
-                              checked={item.selected}
-                              onChange={() => handleOnceToggle(item.id_komponen)}
-                              style={{ cursor: 'pointer', width: '16px', height: '16px' }}
-                            />
-                          </td>
-                          <td style={{ fontWeight: '600', color: '#1e293b' }}>{item.nama_komponen}</td>
-                          <td><span className="badge-kategori">{item.kategori}</span></td>
-                          <td>
-                            <input
-                              type="number"
-                              className="form-control-clean"
-                              style={{ textAlign: 'center', padding: '4px 6px' }}
-                              value={item.jumlah || 1}
-                              onChange={(e) => handleOnceQtyChange(item.id_komponen, e.target.value)}
-                              min="1"
-                            />
-                          </td>
-                          <td>
-                            <input
-                              type="number"
-                              className="form-control-clean"
-                              style={{ textAlign: 'right', fontWeight: '600', padding: '4px 8px' }}
-                              placeholder="0"
-                              value={item.harga_satuan || ''}
-                              onChange={(e) => handleOncePriceChange(item.id_komponen, e.target.value)}
-                              min="0"
-                              step="1000"
-                            />
-                          </td>
-                          <td style={{ textAlign: 'right', fontWeight: '700', color: '#1e293b' }}>
-                            {formatRupiah(itemTotal)}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {onceItems.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-3 text-muted">
+                          Belum ada master komponen sekali pakai yang aktif.
+                        </td>
+                      </tr>
+                    ) : (
+                      onceItems.map((item) => {
+                        const itemTotal = (item.harga_satuan || 0) * (item.jumlah || 1);
+                        return (
+                          <tr
+                            key={item.id_komponen}
+                            style={{
+                              borderBottom: '1px solid #f1f5f9',
+                              backgroundColor: item.selected ? '#f0fdf4' : '#ffffff',
+                            }}
+                          >
+                            <td style={{ textAlign: 'center', padding: '8px 10px' }}>
+                              <input
+                                type="checkbox"
+                                checked={item.selected}
+                                onChange={() => handleOnceToggle(item.id_komponen)}
+                                style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                              />
+                            </td>
+                            <td style={{ padding: '8px 10px', fontWeight: '600', color: '#1e293b' }}>
+                              {item.nama_komponen}
+                            </td>
+                            <td style={{ padding: '8px 10px', color: '#64748b' }}>{item.kategori}</td>
+                            <td style={{ padding: '6px 8px' }}>
+                              <input
+                                type="number"
+                                className="form-control-clean"
+                                style={{ textAlign: 'center', padding: '4px 6px' }}
+                                value={item.jumlah || 1}
+                                min="1"
+                                onChange={(e) => handleOnceQtyChange(item.id_komponen, e.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                type="number"
+                                className="form-control-clean"
+                                style={{ textAlign: 'right', fontWeight: '600', padding: '4px 8px' }}
+                                placeholder="0"
+                                value={item.harga_satuan || ''}
+                                onChange={(e) => handleOncePriceChange(item.id_komponen, e.target.value)}
+                                min="0"
+                                step="1000"
+                              />
+                            </td>
+                            <td style={{ textAlign: 'right', fontWeight: '700', color: '#1e293b' }}>
+                              {formatRupiah(itemTotal)}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
-            {/* Grand Total Summary Box */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '14px 20px', borderRadius: '8px' }}>
-              <div>
-                <div style={{ fontSize: '0.85rem', color: '#475569' }}>
-                  Subtotal Harian ({dates.length} Hari): <strong>{formatRupiah(totalHarian)}</strong> | Subtotal Sekali: <strong>{formatRupiah(totalSekali)}</strong>
+              {/* Grand Total Summary Box */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '14px 20px', borderRadius: '8px', marginTop: '16px' }}>
+                <div>
+                  <div style={{ fontSize: '0.85rem', color: '#475569' }}>
+                    Subtotal Harian ({dates.length} Hari): <strong>{formatRupiah(totalHarian)}</strong> | Subtotal Sekali: <strong>{formatRupiah(totalSekali)}</strong>
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155', marginRight: '10px' }}>Total Keseluruhan RAB:</span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#15803d' }}>{formatRupiah(grandTotal)}</span>
                 </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: '0.9rem', fontWeight: '600', color: '#334155', marginRight: '10px' }}>Total Keseluruhan RAB:</span>
-                <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#15803d' }}>{formatRupiah(grandTotal)}</span>
-              </div>
             </div>
-          </div>
 
-          {/* Modal Footer */}
-          <div
-            style={{
-              padding: '14px 20px',
-              backgroundColor: '#f8fafc',
-              borderTop: '1px solid #e2e8f0',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '10px',
-            }}
-          >
-            <button
-              type="button"
+            {/* Modal Footer */}
+            <div
               style={{
-                backgroundColor: '#e2e8f0',
-                color: '#334155',
-                border: 'none',
-                padding: '8px 18px',
-                borderRadius: '6px',
-                fontWeight: '600',
-                fontSize: '0.88rem',
-                cursor: 'pointer',
+                padding: '14px 20px',
+                backgroundColor: '#f8fafc',
+                borderTop: '1px solid #e2e8f0',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '10px',
               }}
-              onClick={onClose}
             >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className="btn-success-custom"
-            >
-              Ajukan RAB ke HRD
-            </button>
+              <button
+                type="button"
+                style={{
+                  backgroundColor: '#e2e8f0',
+                  color: '#334155',
+                  border: 'none',
+                  padding: '8px 18px',
+                  borderRadius: '6px',
+                  fontWeight: '600',
+                  fontSize: '0.88rem',
+                  cursor: 'pointer',
+                }}
+                onClick={onClose}
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                className="btn-success-custom"
+                style={{ backgroundColor: isRevisi || existingRab?.status === 'revisi_atasan' ? '#d97706' : '#198754' }}
+              >
+                {isRevisi || existingRab?.status === 'revisi_atasan'
+                  ? 'Kirim Revisi RAB ke Atasan'
+                  : 'Ajukan RAB ke Atasan'}
+              </button>
+            </div>
           </div>
         </form>
       </div>

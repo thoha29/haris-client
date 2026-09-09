@@ -3,6 +3,7 @@ import axios from 'axios';
 import './RiwayatAbsensiLembur.css';
 import SelectSearch from '../../../components/SelectSearch';
 import Pagination from '../../../components/Pagination';
+import { formatJamMenit, formatMenitKeJamMenit } from '../../../utils/formatTime';
 
 const RiwayatAbsensiLembur = () => {
   const [riwayat, setRiwayat] = useState([]);
@@ -174,25 +175,25 @@ const RiwayatAbsensiLembur = () => {
                         fontWeight: item.keterlambatan > 0 ? 'bold' : 'normal',
                       }}
                     >
-                      {item.keterlambatan || 0} m
+                      {item.keterlambatan > 0 ? formatMenitKeJamMenit(item.keterlambatan) : '0 menit'}
                     </td>
                     <td
                       style={{ color: item.lembur > 0 ? '#5cb85c' : 'inherit' }}
                     >
-                      {item.lembur || 0} Jam
+                      {formatJamMenit(item.lembur)}
                     </td>
-                    <td>{item.total_jam_kerja || '--'}</td>
+                    <td>{formatJamMenit(item.total_jam_kerja)}</td>
                     <td>
                       <span
-                        className={`badge ${
-                          item.status === 'Alpha' ? 'alpha' : item.is_approved
-                        }`}
+                        className={`badge ${item.status === 'Alpha' ? 'alpha' : item.is_approved
+                          }`}
                       >
                         {item.status === 'Alpha'
                           ? 'ALPHA'
                           : item.is_approved?.toUpperCase() || 'PENDING'}
                       </span>
                     </td>
+
                     <td style={{ fontSize: '0.85rem', color: '#666' }}>
                       {item.is_approved !== 'pending' ? (
                         new Date(item.updated_at).toLocaleString('id-ID', {

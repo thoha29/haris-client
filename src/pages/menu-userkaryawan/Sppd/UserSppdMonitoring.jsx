@@ -7,6 +7,9 @@ import {
   getSppdListUser,
   getSppdDetailUser,
   getRabBySppd,
+  approveSppdAtasan,
+  cancelSppdAtasan,
+  reviewRabAtasan,
   approveCancelAtasan,
 } from './services/userSppdService';
 import './UserSppd.css';
@@ -51,28 +54,89 @@ const UserSppdMonitoring = () => {
     }
   };
 
-  const handleApproveCancel = async (id_sppd) => {
+  // ─── ATASAN: APPROVE SPPD ────────────────────────────────────────────────
+  const handleApproveSppd = async (id_sppd) => {
+    const result = await Swal.fire({
+      title: 'Setujui SPPD?',
+      text: 'SPPD akan disetujui. Setelah ini, Anda dapat meninjau rincian biaya (RAB).',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#16a34a',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Ya, Setujui SPPD',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
-      await approveCancelAtasan(id_sppd, 'approved');
-      Swal.fire('Berhasil', 'Pembatalan SPPD telah disetujui.', 'success');
+      await approveSppdAtasan(id_sppd, 'approved');
+      Swal.fire('Berhasil', 'SPPD berhasil disetujui! Silakan lanjutkan review RAB.', 'success');
       setShowDetailModal(false);
       fetchSppd();
     } catch (err) {
-      Swal.fire('Gagal', 'Gagal menyetujui pembatalan', 'error');
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal menyetujui SPPD', 'error');
     }
   };
 
-  const handleRejectCancel = async (id_sppd) => {
+  // ─── ATASAN: TOLAK SPPD ──────────────────────────────────────────────────
+  const handleRejectSppd = async (id_sppd) => {
+    const { value: catatan } = await Swal.fire({
+      title: 'Tolak SPPD',
+      input: 'textarea',
+      inputLabel: 'Alasan Penolakan SPPD (Wajib Diisi):',
+      inputPlaceholder: 'Tuliskan alasan penolakan secara jelas...',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Tolak SPPD & RAB',
+      cancelButtonText: 'Batal',
+      inputValidator: (value) => {
+        if (!value || !value.trim()) {
+          return 'Alasan penolakan wajib diisi!';
+        }
+      },
+    });
+
+    if (!catatan) return;
+
     try {
-      await approveCancelAtasan(id_sppd, 'rejected');
-      Swal.fire('Ditolak', 'Permohonan pembatalan ditolak.', 'info');
+      await approveSppdAtasan(id_sppd, 'rejected', catatan);
+      Swal.fire('Ditolak', 'SPPD dan RAB terkait telah ditolak.', 'info');
       setShowDetailModal(false);
       fetchSppd();
     } catch (err) {
-      Swal.fire('Gagal', 'Gagal memproses penolakan', 'error');
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal menolak SPPD', 'error');
     }
   };
 
+  // ─── ATASAN: BATALKAN SPPD ───────────────────────────────────────────────
+  const handleCancelSppd = async (id_sppd) => {
+    const result = await Swal.fire({
+      title: 'Batalkan SPPD & RAB?',
+      text: 'SPPD dan RAB akan dibatalkan (status menjadi Cancelled) dan kendaraan perusahaan (jika ada) akan dibebaskan kembali.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#991b1b',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Ya, Batalkan SPPD',
+      cancelButtonText: 'Kembali',
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await cancelSppdAtasan(id_sppd);
+      Swal.fire('Dibatalkan', 'SPPD dan RAB telah berhasil dibatalkan.', 'success');
+      setShowDetailModal(false);
+      setShowRabModal(false);
+      fetchSppd();
+    } catch (err) {
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal membatalkan SPPD', 'error');
+    }
+  };
+
+  // ─── ATASAN: REVIEW RAB ──────────────────────────────────────────────────
   const handleReviewRab = async (id_sppd) => {
     try {
       const res = await getRabBySppd(id_sppd);
@@ -80,6 +144,123 @@ const UserSppdMonitoring = () => {
       setShowRabModal(true);
     } catch (err) {
       Swal.fire('Info', 'RAB belum tersedia untuk SPPD ini', 'info');
+    }
+  };
+
+  // ─── ATASAN: APPROVE RAB (teruskan ke HRD) ──────────────────────────────
+  const handleApproveRab = async (id_rab) => {
+    const result = await Swal.fire({
+      title: 'Setujui RAB & Teruskan ke HRD?',
+      text: 'RAB akan diteruskan ke HRD untuk verifikasi dan penyesuaian nominal akhir.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#16a34a',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Ya, Teruskan ke HRD',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await reviewRabAtasan(id_rab, 'approve');
+      Swal.fire('Berhasil', 'RAB berhasil disetujui dan diteruskan ke HRD.', 'success');
+      setShowRabModal(false);
+      fetchSppd();
+    } catch (err) {
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal menyetujui RAB', 'error');
+    }
+  };
+
+  // ─── ATASAN: MINTA REVISI RAB ───────────────────────────────────────────
+  const handleRequestRevisiRab = async (id_rab) => {
+    const { value: catatan } = await Swal.fire({
+      title: 'Minta Revisi RAB',
+      input: 'textarea',
+      inputLabel: 'Catatan Revisi untuk Karyawan (Wajib Diisi):',
+      inputPlaceholder: 'Tuliskan catatan perbaikan rincian biaya yang perlu disesuaikan...',
+      showCancelButton: true,
+      confirmButtonColor: '#d97706',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Kirim Catatan Revisi',
+      cancelButtonText: 'Batal',
+      inputValidator: (value) => {
+        if (!value || !value.trim()) {
+          return 'Catatan revisi wajib diisi!';
+        }
+      },
+    });
+
+    if (!catatan) return;
+
+    try {
+      await reviewRabAtasan(id_rab, 'revisi', catatan);
+      Swal.fire('Terkirim', 'RAB telah dikembalikan ke karyawan dengan status revisi_atasan.', 'info');
+      setShowRabModal(false);
+      fetchSppd();
+    } catch (err) {
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal meminta revisi RAB', 'error');
+    }
+  };
+
+  // ─── CANCEL APPROVAL DARI KARYAWAN REQUEST ──────────────────────────────
+  const handleApproveCancel = async (id_sppd) => {
+    const result = await Swal.fire({
+      title: 'Setujui Pembatalan SPPD?',
+      text: 'SPPD akan dibatalkan secara final (status Cancelled), kendaraan (jika ada) akan dibebaskan kembali, dan jadwal kerja akan dikembalikan.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#16a34a',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Ya, Setujui Pembatalan',
+      cancelButtonText: 'Kembali',
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await approveCancelAtasan(id_sppd, 'approved');
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: 'Pembatalan SPPD telah disetujui.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      setShowDetailModal(false);
+      fetchSppd();
+    } catch (err) {
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal menyetujui pembatalan', 'error');
+    }
+  };
+
+  const handleRejectCancel = async (id_sppd) => {
+    const result = await Swal.fire({
+      title: 'Tolak Pembatalan SPPD?',
+      text: 'Permohonan pembatalan SPPD dari karyawan akan ditolak.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Ya, Tolak Pembatalan',
+      cancelButtonText: 'Kembali',
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await approveCancelAtasan(id_sppd, 'rejected');
+      Swal.fire({
+        icon: 'info',
+        title: 'Ditolak',
+        text: 'Permohonan pembatalan ditolak.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      setShowDetailModal(false);
+      fetchSppd();
+    } catch (err) {
+      Swal.fire('Gagal', err.response?.data?.error || 'Gagal memproses penolakan', 'error');
     }
   };
 
@@ -100,8 +281,8 @@ const UserSppdMonitoring = () => {
         {/* Header */}
         <div className="sppd-page-header">
           <div>
-            <h2>Monitoring SPPD & Approval Final RAB</h2>
-            <p>Pantau status perjalanan dinas tim dan lakukan persetujuan akhir Rencana Anggaran Biaya (RAB)</p>
+            <h2>Persetujuan & Monitoring Perjalanan Dinas (SPPD)</h2>
+            <p>Tinjau pengajuan SPPD & RAB dari tim, berikan persetujuan atau catatan revisi</p>
           </div>
         </div>
 
@@ -126,10 +307,11 @@ const UserSppdMonitoring = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="">Semua Status SPPD</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
+              <option value="pending_atasan">Menunggu Persetujuan Atasan</option>
+              <option value="approved_atasan">Disetujui Atasan</option>
+              <option value="approved">Disetujui HRD</option>
+              <option value="active">Active (Sedang Dinas)</option>
+              <option value="completed">Completed (Selesai)</option>
               <option value="cancelled">Cancelled</option>
               <option value="rejected">Rejected</option>
             </select>
@@ -141,6 +323,8 @@ const UserSppdMonitoring = () => {
           data={filteredData}
           onViewDetail={handleViewDetail}
           onReviewRab={handleReviewRab}
+          onApproveCancel={handleApproveCancel}
+          onRejectCancel={handleRejectCancel}
           loading={loading}
         />
       </div>
@@ -149,6 +333,10 @@ const UserSppdMonitoring = () => {
         show={showDetailModal}
         onClose={() => setShowDetailModal(false)}
         sppd={selectedSppd}
+        onApproveSppd={handleApproveSppd}
+        onRejectSppd={handleRejectSppd}
+        onCancelSppd={handleCancelSppd}
+        onReviewRab={handleReviewRab}
         onApproveCancel={handleApproveCancel}
         onRejectCancel={handleRejectCancel}
       />
@@ -157,9 +345,13 @@ const UserSppdMonitoring = () => {
         show={showRabModal}
         onClose={() => setShowRabModal(false)}
         rab={selectedRab}
+        onApproveRab={handleApproveRab}
+        onRequestRevisi={handleRequestRevisiRab}
+        onCancelSppd={handleCancelSppd}
       />
     </div>
   );
 };
 
 export default UserSppdMonitoring;
+
