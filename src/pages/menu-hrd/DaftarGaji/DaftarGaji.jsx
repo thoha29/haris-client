@@ -76,7 +76,12 @@ const DaftarGaji = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
       Swal.close();
-      Swal.fire({ icon: 'success', title: 'Berhasil diunduh', timer: 1500, showConfirmButton: false });
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil diunduh',
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       console.error(err);
       Swal.fire('Error', 'Gagal mengunduh slip Excel', 'error');
@@ -147,7 +152,9 @@ const DaftarGaji = () => {
         item.nama,
         formatRupiah(item.upah),
         formatRupiah(item.tunj),
-        formatRupiah(item.upah_tetap ?? (Number(item.upah || 0) + Number(item.tunj || 0))),
+        formatRupiah(
+          item.upah_tetap ?? Number(item.upah || 0) + Number(item.tunj || 0)
+        ),
         item.status_perkawinan,
         item.pagi,
         item.malam,
@@ -309,7 +316,9 @@ const DaftarGaji = () => {
             <table className="table table-bordered table-hover align-middle">
               <thead className="table-primary text-center align-middle">
                 <tr>
-                  <th rowSpan="2" className="col-aksi-header">Aksi</th>
+                  <th rowSpan="2" className="col-aksi-header">
+                    Aksi
+                  </th>
                   <th rowSpan="2">Karyawan</th>
                   <th colSpan="3">Upah Yang Dibayarkan</th>
                   <th rowSpan="2">Status Perkawinan</th>
@@ -331,7 +340,7 @@ const DaftarGaji = () => {
                   <th>Premi Shift</th>
                   <th>KJK</th>
                   <th>Extra Fooding</th>
-                  <th>Total Tunj</th>
+                  <th>Total Tunj. Kehadiran</th>
 
                   <th>Jam</th>
                   <th>Hari</th>
@@ -354,7 +363,10 @@ const DaftarGaji = () => {
                 {listData.length > 0 ? (
                   listData.map((item) => (
                     <tr key={item.id}>
-                      <td className="col-aksi-body" style={{ whiteSpace: 'nowrap' }}>
+                      <td
+                        className="col-aksi-body"
+                        style={{ whiteSpace: 'nowrap' }}
+                      >
                         <div className="btn-action-group">
                           <button
                             type="button"
@@ -370,7 +382,9 @@ const DaftarGaji = () => {
                             type="button"
                             className="btn-action btn-action-excel"
                             title="Download Excel Slip Gaji"
-                            onClick={() => handleDownloadSlipExcel(item.id, item.nama)}
+                            onClick={() =>
+                              handleDownloadSlipExcel(item.id, item.nama)
+                            }
                           >
                             <i className="bi bi-file-earmark-excel"></i>
                             <span>Excel</span>
@@ -384,7 +398,12 @@ const DaftarGaji = () => {
 
                       <td>{formatRupiah(item.upah)}</td>
                       <td>{formatRupiah(item.tunj)}</td>
-                      <td>{formatRupiah(item.upah_tetap ?? (Number(item.upah || 0) + Number(item.tunj || 0)))}</td>
+                      <td>
+                        {formatRupiah(
+                          item.upah_tetap ??
+                            Number(item.upah || 0) + Number(item.tunj || 0)
+                        )}
+                      </td>
 
                       <td className="text-center">{item.status_perkawinan}</td>
 
@@ -430,14 +449,22 @@ const DaftarGaji = () => {
       {selectedSlip && (
         <div
           className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-          style={{ background: 'rgba(0,0,0,0.55)', zIndex: 1050, overflowY: 'auto', padding: '20px' }}
-          onClick={(e) => { if (e.target === e.currentTarget) setSelectedSlip(null); }}
+          style={{
+            background: 'rgba(0,0,0,0.55)',
+            zIndex: 1050,
+            overflowY: 'auto',
+            padding: '20px',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedSlip(null);
+          }}
         >
           <div style={{ width: '100%', maxWidth: '880px', margin: 'auto' }}>
             {/* Header Modal */}
             <div className="d-flex justify-content-between align-items-center mb-2">
               <h6 className="text-white mb-0 fw-bold">
-                Slip Gaji — {selectedSlip.nama_lengkap || selectedSlip.nama || ''}
+                Slip Gaji —{' '}
+                {selectedSlip.nama_lengkap || selectedSlip.nama || ''}
               </h6>
               <button
                 type="button"

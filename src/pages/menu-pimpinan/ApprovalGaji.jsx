@@ -151,7 +151,9 @@ const ApprovalGaji = () => {
                             { value: 'paid', label: 'Paid' },
                           ]}
                           value={h.status_bayar}
-                          onChange={(e) => handleUpdateStatus(h.id_slip, e.value)}
+                          onChange={(e) =>
+                            handleUpdateStatus(h.id_slip, e.value)
+                          }
                         />
                       </td>
                       <td>
