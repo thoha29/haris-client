@@ -8,6 +8,7 @@ import UserApprovalCuti from '../pages/menu-userkaryawan/UserApprovalCuti';
 import { SkemaManager, SetJadwalKaryawan, FormSppd, UserSppdMonitoring } from '../pages/menu-userkaryawan';
 import Skemagaji from '../pages/menu-keuangan/Gaji/Skemagaji';
 import ApprovalGaji from '../pages/menu-pimpinan/ApprovalGaji';
+import MasterSkemaGaji from '../pages/menu-pimpinan/MasterSkemaGaji';
 import UserApprovalLembur from '../pages/menu-userkaryawan/UserApprovalLembur';
 import UserApprovalRiwayat from '../pages/menu-userkaryawan/UserApprovalRiwayat';
 import './MainContent.css';
@@ -70,6 +71,7 @@ function MainContent({ isSidebarOpen }) {
         {/* Menu Pimpinan */}
         <Route path="datakaryawan" element={<DataKaryawan />} />
         <Route path="ApprovalGaji" element={<ApprovalGaji />} />
+        <Route path="skemagaji" element={<MasterSkemaGaji />} />
 
         {/* Menu Karyawan */}
         <Route path="Dashboard-Karyawan" element={<DashboardKaryawan />} />

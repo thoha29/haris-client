@@ -205,6 +205,17 @@ function SideBar({ isOpen }) {
                 <span>Tambah User Karyawan</span>
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to="skemagaji"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? '' : ' collapsed')
+                }
+              >
+                <i className="bi bi-wallet2"></i>
+                <span>Master Skema Gaji</span>
+              </NavLink>
+            </li>
             {/* <li className="nav-item">
               <NavLink
                 to="ApprovalGaji"
