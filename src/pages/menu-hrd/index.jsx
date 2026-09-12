@@ -25,6 +25,7 @@ import MasterKomponenRab from './MasterKomponenRab';
 import MasterTransportasi from './MasterTransportasi';
 import PengaturanSkema from './PengaturanSkema';
 import HrdSppdApproval from './HrdSppd';
+import MasterSkemaGajiHRD from './MasterSkemaGaji/MasterSkemaGaji';
 
 export {
   DashboardHRD,
@@ -44,4 +45,5 @@ export {
   MasterTransportasi,
   PengaturanSkema,
   HrdSppdApproval,
+  MasterSkemaGajiHRD,
 };

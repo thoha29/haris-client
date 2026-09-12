@@ -5,7 +5,12 @@ import { Route, Routes } from 'react-router-dom';
 import Profile from '../pages/Profile/Profile';
 import UserApproval from '../pages/menu-userkaryawan/UserApproval';
 import UserApprovalCuti from '../pages/menu-userkaryawan/UserApprovalCuti';
-import { SkemaManager, SetJadwalKaryawan, FormSppd, UserSppdMonitoring } from '../pages/menu-userkaryawan';
+import {
+  SkemaManager,
+  SetJadwalKaryawan,
+  FormSppd,
+  UserSppdMonitoring,
+} from '../pages/menu-userkaryawan';
 import Skemagaji from '../pages/menu-keuangan/Gaji/Skemagaji';
 import ApprovalGaji from '../pages/menu-pimpinan/ApprovalGaji';
 import MasterSkemaGaji from '../pages/menu-pimpinan/MasterSkemaGaji';
@@ -31,6 +36,7 @@ import {
   MasterTransportasi,
   PengaturanSkema,
   HrdSppdApproval,
+  MasterSkemaGajiHRD,
 } from '../pages/menu-hrd';
 
 // Named Imports dari Folder menu-keuangan
@@ -95,7 +101,6 @@ function MainContent({ isSidebarOpen }) {
         <Route path="dinas" element={<DinasKaryawan />} />
         <Route path="Dinas" element={<DinasKaryawan />} />
 
-
         {/* untuk Lembur */}
         <Route path="Absensi-Lembur" element={<AbsensiLembur />} />
         <Route
@@ -109,7 +114,10 @@ function MainContent({ isSidebarOpen }) {
         <Route path="DataKaryawan" element={<DataKaryawan />} />
         <Route path="ListKaryawanView" element={<ListKaryawanView />} />
         <Route path="HrdApprovalCuti" element={<HrdApprovalCuti />} />
-        <Route path="HrdRiwayatPengajuanCuti" element={<HrdRiwayatPengajuanCuti />} />
+        <Route
+          path="HrdRiwayatPengajuanCuti"
+          element={<HrdRiwayatPengajuanCuti />}
+        />
         <Route path="TambahDataPribadi" element={<TambahDataPribadi />} />
         <Route path="HrdMonitoring" element={<HrdMonitoring />} />
         <Route path="hrd/riwayat/:id_user" element={<HrdKaryawanDetail />} />
@@ -130,6 +138,7 @@ function MainContent({ isSidebarOpen }) {
         <Route path="SetJadwalKaryawan" element={<SetJadwalKaryawan />} />
         <Route path="HrdPayroll" element={<HrdPayroll />} />
         <Route path="riwayat-gaji/:id_user" element={<RiwayatGaji />} />
+        <Route path="SkemaGajiHRD" element={<MasterSkemaGajiHRD />} />
 
         {/* Menu Approval Tahap 1 (Atasan/User) */}
         <Route path="UserApproval" element={<UserApproval />} />

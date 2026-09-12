@@ -205,7 +205,7 @@ function SideBar({ isOpen }) {
                 <span>Tambah User Karyawan</span>
               </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <NavLink
                 to="skemagaji"
                 className={({ isActive }) =>
@@ -215,7 +215,7 @@ function SideBar({ isOpen }) {
                 <i className="bi bi-wallet2"></i>
                 <span>Master Skema Gaji</span>
               </NavLink>
-            </li>
+            </li> */}
             {/* <li className="nav-item">
               <NavLink
                 to="ApprovalGaji"
@@ -242,6 +242,28 @@ function SideBar({ isOpen }) {
               >
                 <i className="bi bi-grid"></i>
                 <span>Dashboard HRD</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="SkemaGajiHRD"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? '' : ' collapsed')
+                }
+              >
+                <i className="bi bi-wallet2"></i>
+                <span>Master Skema Gaji</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="SkemaGajiHRD"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? '' : ' collapsed')
+                }
+              >
+                <i className="bi bi-calculator"></i>
+                <span>Master PTKP</span>
               </NavLink>
             </li>
             <li className="nav-item">
