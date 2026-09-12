@@ -38,7 +38,11 @@ const MasterSkemaGaji = () => {
       setSkemas(data);
     } catch (error) {
       console.error('Gagal mengambil data skema gaji:', error);
-      Swal.fire('Error', 'Gagal memuat daftar skema gaji dari server.', 'error');
+      Swal.fire(
+        'Error',
+        'Gagal memuat daftar skema gaji dari server.',
+        'error'
+      );
     } finally {
       setLoading(false);
     }
@@ -56,8 +60,14 @@ const MasterSkemaGaji = () => {
 
       // Auto hitung total gaji bulanan jika user mengubah upah_pokok atau tunjangan_up
       if (name === 'upah_pokok' || name === 'tunjangan_up') {
-        const uPokok = name === 'upah_pokok' ? parseFloat(value) || 0 : parseFloat(prev.upah_pokok) || 0;
-        const tUp = name === 'tunjangan_up' ? parseFloat(value) || 0 : parseFloat(prev.tunjangan_up) || 0;
+        const uPokok =
+          name === 'upah_pokok'
+            ? parseFloat(value) || 0
+            : parseFloat(prev.upah_pokok) || 0;
+        const tUp =
+          name === 'tunjangan_up'
+            ? parseFloat(value) || 0
+            : parseFloat(prev.tunjangan_up) || 0;
         if (uPokok > 0 || tUp > 0) {
           updated.gaji_bulanan = (uPokok + tUp).toString();
         }
@@ -77,7 +87,11 @@ const MasterSkemaGaji = () => {
       return Math.round(totalGaji / totalJam);
     }
     return 0;
-  }, [formData.gaji_bulanan, formData.jam_kerja_per_hari, formData.hari_kerja_per_bulan]);
+  }, [
+    formData.gaji_bulanan,
+    formData.jam_kerja_per_hari,
+    formData.hari_kerja_per_bulan,
+  ]);
 
   // Total jam sebulan
   const liveTotalJam = useMemo(() => {
@@ -116,12 +130,21 @@ const MasterSkemaGaji = () => {
     setEditId(item.id_skemagaji);
     setEditingItem(item);
 
-    const uPokok = item.upah_pokok && parseFloat(item.upah_pokok) > 0 ? item.upah_pokok : '';
-    const tUp = item.tunjangan_up && parseFloat(item.tunjangan_up) > 0 ? item.tunjangan_up : '';
-    let gBulanan = item.gaji_bulanan && parseFloat(item.gaji_bulanan) > 0 ? item.gaji_bulanan : '';
+    const uPokok =
+      item.upah_pokok && parseFloat(item.upah_pokok) > 0 ? item.upah_pokok : '';
+    const tUp =
+      item.tunjangan_up && parseFloat(item.tunjangan_up) > 0
+        ? item.tunjangan_up
+        : '';
+    let gBulanan =
+      item.gaji_bulanan && parseFloat(item.gaji_bulanan) > 0
+        ? item.gaji_bulanan
+        : '';
 
     if (!gBulanan && (uPokok || tUp)) {
-      gBulanan = ((parseFloat(uPokok) || 0) + (parseFloat(tUp) || 0)).toString();
+      gBulanan = (
+        (parseFloat(uPokok) || 0) + (parseFloat(tUp) || 0)
+      ).toString();
     }
 
     setFormData({
@@ -131,7 +154,10 @@ const MasterSkemaGaji = () => {
       gaji_bulanan: gBulanan,
       jam_kerja_per_hari: (item.jam_kerja_per_hari || 9).toString(),
       hari_kerja_per_bulan: (item.hari_kerja_per_bulan || 22).toString(),
-      rate_per_jam: item.rate_per_jam && parseFloat(item.rate_per_jam) > 0 ? item.rate_per_jam : '',
+      rate_per_jam:
+        item.rate_per_jam && parseFloat(item.rate_per_jam) > 0
+          ? item.rate_per_jam
+          : '',
     });
 
     setShowForm(true);
@@ -145,13 +171,21 @@ const MasterSkemaGaji = () => {
     e.preventDefault();
 
     if (!formData.nama_golongan.trim()) {
-      return Swal.fire('Peringatan', 'Nama Golongan / Skema wajib diisi.', 'warning');
+      return Swal.fire(
+        'Peringatan',
+        'Nama Golongan / Skema wajib diisi.',
+        'warning'
+      );
     }
 
     const gBulananVal = parseFloat(formData.gaji_bulanan) || 0;
     const uPokokVal = parseFloat(formData.upah_pokok) || 0;
     if (gBulananVal <= 0 && uPokokVal <= 0) {
-      return Swal.fire('Peringatan', 'Gaji Pokok / Total Gaji Bulanan wajib diisi dan lebih dari 0.', 'warning');
+      return Swal.fire(
+        'Peringatan',
+        'Gaji Pokok / Total Gaji Bulanan wajib diisi dan lebih dari 0.',
+        'warning'
+      );
     }
 
     // KONFIRMASI KHUSUS SAAT EDIT JIKA SKEMA INI SEDANG DIGUNAKAN KARYAWAN
@@ -215,7 +249,9 @@ const MasterSkemaGaji = () => {
       fetchSkemas();
     } catch (error) {
       console.error('Error simpan skema:', error);
-      const errMsg = error.response?.data?.error || 'Terjadi kesalahan saat memproses data skema gaji.';
+      const errMsg =
+        error.response?.data?.error ||
+        'Terjadi kesalahan saat memproses data skema gaji.';
       Swal.fire('Gagal Menyimpan', errMsg, 'error');
     }
   };
@@ -266,7 +302,8 @@ const MasterSkemaGaji = () => {
         fetchSkemas();
       } catch (error) {
         console.error('Gagal hapus skema:', error);
-        const errMsg = error.response?.data?.error || 'Gagal menghapus data skema gaji.';
+        const errMsg =
+          error.response?.data?.error || 'Gagal menghapus data skema gaji.';
         Swal.fire('Error', errMsg, 'error');
       }
     }
@@ -281,12 +318,15 @@ const MasterSkemaGaji = () => {
 
     skemas.forEach((s) => {
       totalKaryawan += parseInt(s.total_karyawan) || 0;
-      const g = parseFloat(s.gaji_bulanan) || (parseFloat(s.upah_pokok) || 0) + (parseFloat(s.tunjangan_up) || 0);
+      const g =
+        parseFloat(s.gaji_bulanan) ||
+        (parseFloat(s.upah_pokok) || 0) + (parseFloat(s.tunjangan_up) || 0);
       if (g > maxGaji) maxGaji = g;
       totalNominalGaji += g;
     });
 
-    const rataGaji = totalGolongan > 0 ? Math.round(totalNominalGaji / totalGolongan) : 0;
+    const rataGaji =
+      totalGolongan > 0 ? Math.round(totalNominalGaji / totalGolongan) : 0;
 
     return {
       totalGolongan,
@@ -299,7 +339,9 @@ const MasterSkemaGaji = () => {
   // Filtering
   const filteredSkemas = useMemo(() => {
     return skemas.filter((item) =>
-      (item.nama_golongan || '').toLowerCase().includes(searchTerm.toLowerCase())
+      (item.nama_golongan || '')
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     );
   }, [skemas, searchTerm]);
 
@@ -330,7 +372,8 @@ const MasterSkemaGaji = () => {
             <i className="bi bi-wallet2 text-primary"></i> Master Skema Gaji
           </h1>
           <p>
-            Konfigurasi level golongan, upah pokok, tunjangan, parameter jam kerja, dan kalkulasi tarif rate lembur/terlambat per jam.
+            Konfigurasi level golongan, upah pokok, tunjangan, parameter jam
+            kerja, dan kalkulasi tarif rate lembur/terlambat per jam.
           </p>
         </div>
         <button
@@ -343,7 +386,9 @@ const MasterSkemaGaji = () => {
             }
           }}
         >
-          <i className={`bi ${showForm && !editId ? 'bi-x-lg' : 'bi-plus-lg'}`}></i>
+          <i
+            className={`bi ${showForm && !editId ? 'bi-x-lg' : 'bi-plus-lg'}`}
+          ></i>
           {showForm && !editId ? 'Tutup Form' : 'Tambah Golongan Baru'}
         </button>
       </div>
@@ -396,8 +441,16 @@ const MasterSkemaGaji = () => {
         <div className={`form-card ${editId ? 'edit-mode' : ''}`} ref={formRef}>
           <div className="form-header-bar">
             <h2 className="form-title">
-              <i className={`bi ${editId ? 'bi-pencil-square text-warning' : 'bi-plus-circle text-primary'}`}></i>
-              {editId ? `Edit Skema Gaji: ${editingItem?.nama_golongan}` : 'Tambah Skema / Golongan Gaji Baru'}
+              <i
+                className={`bi ${
+                  editId
+                    ? 'bi-pencil-square text-warning'
+                    : 'bi-plus-circle text-primary'
+                }`}
+              ></i>
+              {editId
+                ? `Edit Skema Gaji: ${editingItem?.nama_golongan}`
+                : 'Tambah Skema / Golongan Gaji Baru'}
             </h2>
             {editId && (
               <span className="edit-badge-warning">
@@ -530,10 +583,16 @@ const MasterSkemaGaji = () => {
             <div className="rate-calc-box">
               <div className="rate-calc-text">
                 <h4>
-                  <i className="bi bi-calculator"></i> Kalkulasi Otomatis Tarif Rate Per Jam
+                  <i className="bi bi-calculator"></i> Kalkulasi Otomatis Tarif
+                  Rate Per Jam
                 </h4>
                 <p>
-                  Rumus: <strong>Gaji Bulanan ÷ ({formData.jam_kerja_per_hari || 0} Jam × {formData.hari_kerja_per_bulan || 0} Hari)</strong> = Total {liveTotalJam} Jam Kerja/Bulan.
+                  Rumus:{' '}
+                  <strong>
+                    Gaji Bulanan ÷ ({formData.jam_kerja_per_hari || 0} Jam ×{' '}
+                    {formData.hari_kerja_per_bulan || 0} Hari)
+                  </strong>{' '}
+                  = Total {liveTotalJam} Jam Kerja/Bulan.
                 </p>
               </div>
               <div className="rate-calc-badge">
@@ -556,9 +615,13 @@ const MasterSkemaGaji = () => {
               </button>
               <button
                 type="submit"
-                className={`btn-sg ${editId ? 'btn-sg-warning' : 'btn-sg-primary'}`}
+                className={`btn-sg ${
+                  editId ? 'btn-sg-warning' : 'btn-sg-primary'
+                }`}
               >
-                <i className={`bi ${editId ? 'bi-check2-circle' : 'bi-save'}`}></i>
+                <i
+                  className={`bi ${editId ? 'bi-check2-circle' : 'bi-save'}`}
+                ></i>
                 {editId ? 'Simpan Perubahan Skema' : 'Simpan Skema Baru'}
               </button>
             </div>
@@ -586,7 +649,10 @@ const MasterSkemaGaji = () => {
 
         {loading ? (
           <div className="loading-state-sg">
-            <div className="spinner-border text-primary me-2" role="status"></div>
+            <div
+              className="spinner-border text-primary me-2"
+              role="status"
+            ></div>
             Memuat data skema gaji...
           </div>
         ) : (
@@ -608,63 +674,100 @@ const MasterSkemaGaji = () => {
                 </thead>
                 <tbody>
                   {paginatedSkemas.length > 0 ? (
-                    paginatedSkemas.sort((a, b) => Number(a.id_skemagaji) - Number(b.id_skemagaji)).map((item, index) => {
-                      const totalJam = (parseInt(item.jam_kerja_per_hari) || 0) * (parseInt(item.hari_kerja_per_bulan) || 0);
-                      const nominalGaji = parseFloat(item.gaji_bulanan) || ((parseFloat(item.upah_pokok) || 0) + (parseFloat(item.tunjangan_up) || 0));
-                      const rateVal = parseFloat(item.rate_per_jam) || (totalJam > 0 ? Math.round(nominalGaji / totalJam) : 0);
-                      const totalKaryawanNum = parseInt(item.total_karyawan) || 0;
-                      const rowNumber = pageSize === 'Semua' ? index + 1 : (currentPage - 1) * Number(pageSize) + index + 1;
+                    paginatedSkemas
+                      .sort(
+                        (a, b) =>
+                          Number(a.id_skemagaji) - Number(b.id_skemagaji)
+                      )
+                      .map((item, index) => {
+                        const totalJam =
+                          (parseInt(item.jam_kerja_per_hari) || 0) *
+                          (parseInt(item.hari_kerja_per_bulan) || 0);
+                        const nominalGaji =
+                          parseFloat(item.gaji_bulanan) ||
+                          (parseFloat(item.upah_pokok) || 0) +
+                            (parseFloat(item.tunjangan_up) || 0);
+                        const rateVal =
+                          parseFloat(item.rate_per_jam) ||
+                          (totalJam > 0
+                            ? Math.round(nominalGaji / totalJam)
+                            : 0);
+                        const totalKaryawanNum =
+                          parseInt(item.total_karyawan) || 0;
+                        const rowNumber =
+                          pageSize === 'Semua'
+                            ? index + 1
+                            : (currentPage - 1) * Number(pageSize) + index + 1;
 
-                      return (
-                        <tr key={item.id_skemagaji}>
-                          <td>{rowNumber}</td>
-                          <td>
-                            <span className="golongan-name">{item.nama_golongan}</span>
-                            <span className="gaji-breakdown">ID: #{item.id_skemagaji}</span>
-                          </td>
-                          <td>
-                            <span className="gaji-amount">{formatRp(nominalGaji)}</span>
-                            {(parseFloat(item.upah_pokok) > 0 || parseFloat(item.tunjangan_up) > 0) && (
-                              <div className="gaji-breakdown">
-                                Pokok: {formatRp(item.upah_pokok)} | UP: {formatRp(item.tunjangan_up)}
-                              </div>
-                            )}
-                          </td>
-                          <td>{item.jam_kerja_per_hari || 9} Jam</td>
-                          <td>{item.hari_kerja_per_bulan || 22} Hari</td>
-                          <td>{totalJam} Jam</td>
-                          {/* <td>
+                        return (
+                          <tr key={item.id_skemagaji}>
+                            <td>{rowNumber}</td>
+                            <td>
+                              <span className="golongan-name">
+                                {item.nama_golongan}
+                              </span>
+                              <span className="gaji-breakdown">
+                                ID: #{item.id_skemagaji}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="gaji-amount">
+                                {formatRp(nominalGaji)}
+                              </span>
+                              {(parseFloat(item.upah_pokok) > 0 ||
+                                parseFloat(item.tunjangan_up) > 0) && (
+                                <div className="gaji-breakdown">
+                                  Pokok: {formatRp(item.upah_pokok)} | UP:{' '}
+                                  {formatRp(item.tunjangan_up)}
+                                </div>
+                              )}
+                            </td>
+                            <td>{item.jam_kerja_per_hari || 9} Jam</td>
+                            <td>{item.hari_kerja_per_bulan || 22} Hari</td>
+                            <td>{totalJam} Jam</td>
+                            {/* <td>
                             <span className="badge-rate">
                               {formatRp(rateVal)} / Jam
                             </span>
                           </td> */}
-                          <td>
-                            <span className={`badge-karyawan ${totalKaryawanNum > 0 ? 'active' : 'zero'}`}>
-                              <i className="bi bi-people-fill"></i>
-                              {totalKaryawanNum} Karyawan
-                            </span>
-                          </td>
-                          <td>
-                            <div className="table-actions" style={{ justifyContent: 'center' }}>
-                              <button
-                                className="btn-action btn-action-edit"
-                                onClick={() => handleEdit(item)}
-                                title="Edit Skema Gaji"
+                            <td>
+                              <span
+                                className={`badge-karyawan ${
+                                  totalKaryawanNum > 0 ? 'active' : 'zero'
+                                }`}
                               >
-                                <i className="bi bi-pencil-fill"></i> Edit
-                              </button>
-                              <button
-                                className="btn-action btn-action-delete"
-                                onClick={() => handleDelete(item)}
-                                title={totalKaryawanNum > 0 ? 'Tidak dapat dihapus karena digunakan karyawan' : 'Hapus Skema Gaji'}
+                                <i className="bi bi-people-fill"></i>
+                                {totalKaryawanNum} Karyawan
+                              </span>
+                            </td>
+                            <td>
+                              <div
+                                className="table-actions"
+                                style={{ justifyContent: 'center' }}
                               >
-                                <i className="bi bi-trash-fill"></i> Hapus
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
+                                <button
+                                  className="btn-action btn-action-edit"
+                                  onClick={() => handleEdit(item)}
+                                  title="Edit Skema Gaji"
+                                >
+                                  <i className="bi bi-pencil-fill"></i> Edit
+                                </button>
+                                <button
+                                  className="btn-action btn-action-delete"
+                                  onClick={() => handleDelete(item)}
+                                  title={
+                                    totalKaryawanNum > 0
+                                      ? 'Tidak dapat dihapus karena digunakan karyawan'
+                                      : 'Hapus Skema Gaji'
+                                  }
+                                >
+                                  <i className="bi bi-trash-fill"></i> Hapus
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
                   ) : (
                     <tr>
                       <td colSpan="9" className="empty-state-sg">

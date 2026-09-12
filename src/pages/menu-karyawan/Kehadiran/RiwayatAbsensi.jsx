@@ -3,7 +3,10 @@ import axios from 'axios';
 import './RiwayatAbsensi.css';
 import SelectSearch from '../../../components/SelectSearch';
 import Pagination from '../../../components/Pagination';
-import { formatJamMenit, formatMenitKeJamMenit } from '../../../utils/formatTime';
+import {
+  formatJamMenit,
+  formatMenitKeJamMenit,
+} from '../../../utils/formatTime';
 
 const RiwayatAbsensi = () => {
   const [riwayat, setRiwayat] = useState([]);
@@ -175,7 +178,9 @@ const RiwayatAbsensi = () => {
                         fontWeight: item.keterlambatan > 0 ? 'bold' : 'normal',
                       }}
                     >
-                      {item.keterlambatan > 0 ? formatMenitKeJamMenit(item.keterlambatan) : '0 menit'}
+                      {item.keterlambatan > 0
+                        ? formatMenitKeJamMenit(item.keterlambatan)
+                        : '0 menit'}
                     </td>
                     <td
                       style={{ color: item.lembur > 0 ? '#5cb85c' : 'inherit' }}
@@ -185,8 +190,9 @@ const RiwayatAbsensi = () => {
                     <td>{formatJamMenit(item.total_jam_kerja)}</td>
                     <td>
                       <span
-                        className={`badge ${item.status === 'Alpha' ? 'alpha' : item.is_approved
-                          }`}
+                        className={`badge ${
+                          item.status === 'Alpha' ? 'alpha' : item.is_approved
+                        }`}
                       >
                         {item.status === 'Alpha'
                           ? 'ALPHA'

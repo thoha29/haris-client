@@ -40,7 +40,7 @@ const PTKPTable = ({ data, onEdit, onDelete, loading }) => {
         </thead>
         <tbody>
           {data.map((item, index) => (
-            <tr key={item.id}>
+            <tr key={item.id_ptkp}>
               <td
                 style={{
                   textAlign: 'center',
@@ -67,7 +67,7 @@ const PTKPTable = ({ data, onEdit, onDelete, loading }) => {
                 <button
                   type="button"
                   className="btn-action-delete"
-                  onClick={() => onDelete(item.id, item.nama_transportasi)}
+                  onClick={() => onDelete(item.id_ptkp, item.status)}
                 >
                   Hapus
                 </button>

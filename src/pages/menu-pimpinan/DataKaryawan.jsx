@@ -102,7 +102,10 @@ const DataKaryawan = () => {
       username: karyawan.username || '',
       password: '',
       role: karyawan.role || 'karyawan',
-      jatah_cuti: karyawan.jatah_cuti !== undefined && karyawan.jatah_cuti !== null ? karyawan.jatah_cuti : 12,
+      jatah_cuti:
+        karyawan.jatah_cuti !== undefined && karyawan.jatah_cuti !== null
+          ? karyawan.jatah_cuti
+          : 12,
       id_skemagaji: karyawan.id_skemagaji || '',
     });
     window.scrollTo(0, 0);
@@ -207,7 +210,9 @@ const DataKaryawan = () => {
                     label: item.nama_golongan,
                   }))}
                   value={formData.id_skemagaji}
-                  onChange={(e) => setFormData({ ...formData, id_skemagaji: e.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, id_skemagaji: e.value })
+                  }
                   placeholder="Pilih Skema Gaji"
                   isClearable
                 />
@@ -275,14 +280,21 @@ const DataKaryawan = () => {
                       </td>
                       <td>
                         <span style={{ fontWeight: 500 }}>
-                          {k.jatah_cuti !== null && k.jatah_cuti !== undefined ? `${k.jatah_cuti} Hari` : '-'}
+                          {k.jatah_cuti !== null && k.jatah_cuti !== undefined
+                            ? `${k.jatah_cuti} Hari`
+                            : '-'}
                         </span>
                       </td>
                       <td>
                         {k.nama_golongan ? (
-                          <span className="badge badge-skema">{k.nama_golongan}</span>
+                          <span className="badge badge-skema">
+                            {k.nama_golongan}
+                          </span>
                         ) : (
-                          <span className="text-muted" style={{ fontSize: '13px', color: '#95a5a6' }}>
+                          <span
+                            className="text-muted"
+                            style={{ fontSize: '13px', color: '#95a5a6' }}
+                          >
                             Belum diatur
                           </span>
                         )}
