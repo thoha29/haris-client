@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import api from '../../../config/api';
+import { useNavigate } from 'react-router-dom';
 import './HrdApproval.css';
 
 const ProsesAbsensi = () => {
   // const [listUser, setListUser] = useState([]);
-  // const [idUser, setIdUser] = useState('');
+  const navigate = useNavigate();
   const [tanggalAwal, setTanggalAwal] = useState('');
   const [tanggalAkhir, setTanggalAkhir] = useState('');
   const [loading, setLoading] = useState(false);
@@ -49,17 +50,19 @@ const ProsesAbsensi = () => {
         tanggal_keluar: tanggalAkhir,
       });
 
-      Swal.fire({
+      await Swal.fire({
         icon: 'success',
         title: 'Berhasil',
         text: res.data.message || 'Proses absensi berhasil',
+        timer: 1500,
+        showConfirmButton: false,
       });
 
-      // reset form (optional)
-      setTanggalAwal('');
-      setTanggalAkhir('');
+      // Setelah SweetAlert selesai, pindah halaman
+      navigate('/Daftar-Gaji');
     } catch (err) {
       console.error(err);
+
       Swal.fire({
         icon: 'error',
         title: 'Gagal',
@@ -77,19 +80,6 @@ const ProsesAbsensi = () => {
       </div>
 
       <form className="form-proses" onSubmit={handleProses}>
-        {/* Dropdown Karyawan
-        <div className="form-group">
-          <label>Pilih Karyawan</label>
-          <select value={idUser} onChange={(e) => setIdUser(e.target.value)}>
-            <option value="">-- Pilih Karyawan --</option>
-            {listUser.map((user) => (
-              <option key={user.id_user} value={user.id_user}>
-                {user.username}
-              </option>
-            ))}
-          </select>
-        </div> */}
-
         {/* Tanggal Awal */}
         <div className="form-group">
           <label>Tanggal Awal</label>

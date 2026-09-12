@@ -37,6 +37,7 @@ import {
   PengaturanSkema,
   HrdSppdApproval,
   MasterSkemaGajiHRD,
+  MasterPTKP,
 } from '../pages/menu-hrd';
 
 // Named Imports dari Folder menu-keuangan
@@ -128,6 +129,7 @@ function MainContent({ isSidebarOpen }) {
         <Route path="MasterTransportasi" element={<MasterTransportasi />} />
         <Route path="PengaturanSkema" element={<PengaturanSkema />} />
         <Route path="HrdSppdApproval" element={<HrdSppdApproval />} />
+        <Route path="MasterPTKP" element={<MasterPTKP />} />
 
         <Route
           path="hrd/cuti/riwayat/:id_user"

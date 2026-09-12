@@ -1,39 +1,32 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Swal from 'sweetalert2';
-import TransportasiTable from './components/TransportasiTable';
-import TransportasiModal from './components/TransportasiModal';
-import {
-  getTransportasi,
-  createTransportasi,
-  updateTransportasi,
-  deleteTransportasi,
-} from './services/transportasiService';
-import '../MasterKomponenRab/MasterKomponenRab.css';
-import './MasterTransportasi.css';
+import api from '../../../config/api';
+import PTKPTable from './components/PTKPTable';
+import PTKPModal from './components/PTKPModal';
 
-const MasterTransportasi = () => {
-  const [transportasiList, setTransportasiList] = useState([]);
+export const MasterPTKP = () => {
+  const [ptkpList, setPtkpList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [showModal, setShowModal] = useState(false);
   const [editingData, setEditingData] = useState(null);
 
-  const fetchTransportasi = async () => {
+  const fetchPTKP = async () => {
     try {
       setLoading(true);
-      const res = await getTransportasi();
-      setTransportasiList(res.data || []);
+      const res = await api.get('/api/master-ptkp');
+      setPtkpList(res.data || []);
     } catch (err) {
-      console.error('Error fetching transportasi:', err);
-      Swal.fire('Error', 'Gagal memuat data transportasi perusahaan', 'error');
+      console.error('Error fetching PTKP:', err);
+      Swal.fire('Error', 'Gagal memuat data PTKP perusahaan', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTransportasi();
+    fetchPTKP();
   }, []);
 
   const handleOpenAdd = () => {
@@ -42,6 +35,8 @@ const MasterTransportasi = () => {
   };
 
   const handleOpenEdit = (item) => {
+    // console.log('DATA EDIT:', item);
+    // console.log('ID EDIT:', item.id);
     setEditingData(item);
     setShowModal(true);
   };
@@ -54,26 +49,26 @@ const MasterTransportasi = () => {
   const handleSave = async (formData) => {
     try {
       if (editingData) {
-        await updateTransportasi(editingData.id, formData);
+        await api.put(`/api/master-ptkp/${editingData.id_ptkp}`, formData);
         Swal.fire({
           icon: 'success',
           title: 'Berhasil',
-          text: 'Data kendaraan berhasil diperbarui!',
+          text: 'Data PTKP berhasil diperbarui!',
           timer: 1500,
           showConfirmButton: false,
         });
       } else {
-        await createTransportasi(formData);
+        await api.post(`/api/master-ptkp`, formData);
         Swal.fire({
           icon: 'success',
           title: 'Berhasil',
-          text: 'Kendaraan baru berhasil ditambahkan!',
+          text: 'PTKP baru berhasil ditambahkan!',
           timer: 1500,
           showConfirmButton: false,
         });
       }
       handleCloseModal();
-      fetchTransportasi();
+      fetchPTKP();
     } catch (err) {
       Swal.fire(
         'Gagal',
@@ -83,10 +78,10 @@ const MasterTransportasi = () => {
     }
   };
 
-  const handleDelete = async (id, nama) => {
+  const handleDelete = async (id, status) => {
     const result = await Swal.fire({
-      title: 'Hapus Kendaraan?',
-      text: `Apakah Anda yakin ingin menghapus "${nama}"?`,
+      title: 'Hapus PTKP?',
+      text: `Apakah Anda yakin ingin menghapus "${status}"?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#dc3545',
@@ -97,19 +92,19 @@ const MasterTransportasi = () => {
 
     if (result.isConfirmed) {
       try {
-        await deleteTransportasi(id);
+        await api.delete(`/api/master-ptkp/${id}`);
         Swal.fire({
           icon: 'success',
           title: 'Dihapus',
-          text: 'Data transportasi berhasil dihapus.',
+          text: 'Data PTKP berhasil dihapus.',
           timer: 1500,
           showConfirmButton: false,
         });
-        fetchTransportasi();
+        fetchPTKP();
       } catch (err) {
         Swal.fire(
           'Gagal',
-          err.response?.data?.error || 'Gagal menghapus data transportasi',
+          err.response?.data?.error || 'Gagal menghapus data PTKP',
           'error'
         );
       }
@@ -117,17 +112,13 @@ const MasterTransportasi = () => {
   };
 
   const filteredData = useMemo(() => {
-    return (transportasiList || []).filter((item) => {
+    return (ptkpList || []).filter((item) => {
       return (
-        (item.nama_transportasi || '')
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        (item.no_transportasi || '')
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+        (item.status || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.ptkp || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-  }, [transportasiList, searchTerm]);
+  }, [ptkpList, searchTerm]);
 
   return (
     <div className="hrd-page-container">
@@ -135,8 +126,8 @@ const MasterTransportasi = () => {
         {/* Header */}
         <div className="hrd-page-header">
           <div>
-            <h2>Master Transportasi Perusahaan</h2>
-            <p>Kelola daftar kendaraan operasional dinas milik perusahaan</p>
+            <h2>Master PTKP</h2>
+            <p>Kelola daftar PTKP milik perusahaan</p>
           </div>
           <div>
             <button
@@ -144,7 +135,7 @@ const MasterTransportasi = () => {
               className="btn-primary-custom"
               onClick={handleOpenAdd}
             >
-              + Tambah Kendaraan
+              + Tambah PTKP
             </button>
           </div>
         </div>
@@ -155,11 +146,11 @@ const MasterTransportasi = () => {
             className="filter-group search-group"
             style={{ maxWidth: '450px' }}
           >
-            <label>Cari Kendaraan:</label>
+            <label>Cari PTKP:</label>
             <input
               type="text"
               className="form-control-clean"
-              placeholder="Ketik plat nomor atau nama kendaraan..."
+              placeholder="Ketik status"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -167,15 +158,14 @@ const MasterTransportasi = () => {
         </div>
 
         {/* Table */}
-        <TransportasiTable
+        <PTKPTable
           data={filteredData}
           onEdit={handleOpenEdit}
           onDelete={handleDelete}
           loading={loading}
         />
       </div>
-
-      <TransportasiModal
+      <PTKPModal
         show={showModal}
         onClose={handleCloseModal}
         onSave={handleSave}
@@ -184,5 +174,3 @@ const MasterTransportasi = () => {
     </div>
   );
 };
-
-export default MasterTransportasi;

@@ -257,7 +257,7 @@ function SideBar({ isOpen }) {
             </li>
             <li className="nav-item">
               <NavLink
-                to="SkemaGajiHRD"
+                to="MasterPTKP"
                 className={({ isActive }) =>
                   'nav-link' + (isActive ? '' : ' collapsed')
                 }
@@ -384,29 +384,6 @@ function SideBar({ isOpen }) {
                 </li>
               </ul>
             </li>
-            <li className="nav-item">
-              <NavLink
-                to="Proses-Absensi"
-                className={({ isActive }) =>
-                  'nav-link' + (isActive ? '' : ' collapsed')
-                }
-              >
-                <i className="bi bi-calculator"></i>
-                <span>Proses Data Gaji</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="Daftar-Gaji"
-                className={({ isActive }) =>
-                  'nav-link' + (isActive ? '' : ' collapsed')
-                }
-              >
-                <i className="bi bi-cash-stack"></i>
-                <span>Daftar Gaji</span>
-              </NavLink>
-            </li>
-
             {/* Group SPPD & RAB */}
             <li className="nav-item">
               <a
@@ -446,6 +423,28 @@ function SideBar({ isOpen }) {
                   </NavLink>
                 </li>
               </ul>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="Proses-Absensi"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? '' : ' collapsed')
+                }
+              >
+                <i className="bi bi-calculator"></i>
+                <span>Proses Data Gaji</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="Daftar-Gaji"
+                className={({ isActive }) =>
+                  'nav-link' + (isActive ? '' : ' collapsed')
+                }
+              >
+                <i className="bi bi-cash-stack"></i>
+                <span>Daftar Gaji</span>
+              </NavLink>
             </li>
           </>
         )}

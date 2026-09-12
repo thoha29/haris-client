@@ -26,6 +26,7 @@ import MasterTransportasi from './MasterTransportasi';
 import PengaturanSkema from './PengaturanSkema';
 import HrdSppdApproval from './HrdSppd';
 import MasterSkemaGajiHRD from './MasterSkemaGaji/MasterSkemaGaji';
+import { MasterPTKP } from './MasterPTKP/MasterPTKP';
 
 export {
   DashboardHRD,
@@ -46,4 +47,5 @@ export {
   PengaturanSkema,
   HrdSppdApproval,
   MasterSkemaGajiHRD,
+  MasterPTKP,
 };
